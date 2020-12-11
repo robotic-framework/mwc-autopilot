@@ -1,6 +1,7 @@
 #if !defined(I2C_H_)
 #define I2C_H_
 
+#include <Arduino.h>
 #include <Wire.h>
 #include <stdint.h>
 

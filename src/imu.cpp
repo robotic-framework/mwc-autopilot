@@ -201,11 +201,6 @@ void IMU::calcEstimatedAttitude()
     accZTmp += mul(accSmooth[axis], estimatedGyroData.A16[2 * axis + 1]);
     // estimatedMagData.A32[axis] += (int32_t)(magData[axis] - estimatedMagData.A16[2 * axis + 1]) << (16 - GYR_CMPFM_FACTOR);
   }
-  // Serial.print(estimatedGyroData.V16.X);
-  // Serial.print(":");
-  // Serial.print(estimatedGyroData.V16.Y);
-  // Serial.print(":");
-  // Serial.println(estimatedGyroData.V16.Z);
 
   if (estimatedGyroData.V16.Z > ACCZ_25DEG)
   {
@@ -221,10 +216,6 @@ void IMU::calcEstimatedAttitude()
   invGyro = invSqrt(sqrtGyroXZ + mul(estimatedGyroData.V16.Y, estimatedGyroData.V16.Y));
   att.Angle[ROLL] = _atan2(estimatedGyroData.V16.X, estimatedGyroData.V16.Z);
   att.Angle[PITCH] = _atan2(estimatedGyroData.V16.Y, invSqrt(sqrtGyroXZ) * sqrtGyroXZ);
-
-  Serial.print(att.Angle[ROLL]);
-  Serial.print(":");
-  Serial.println(att.Angle[PITCH]);
 }
 
 void IMU::GetAttitude(int16_t *buf, uint8_t length)

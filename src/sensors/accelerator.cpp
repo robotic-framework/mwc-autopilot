@@ -3,6 +3,7 @@
 void Accelerator::Update()
 {
   this->getRawData();
+
   if (calibrateSteps > 0)
   {
     calibration();

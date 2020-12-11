@@ -27,5 +27,6 @@ void I2C::read(uint8_t address, uint8_t num, uint8_t _buff[])
   {
     errCode = 1;
   }
+
   Wire.endTransmission(); // end transmission
 }

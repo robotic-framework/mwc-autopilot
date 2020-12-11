@@ -2,7 +2,6 @@
 #define SENSOR_H_
 
 #include <stdint.h>
-#include <Arduino.h>
 #include "i2c.h"
 #include "../config.h"
 

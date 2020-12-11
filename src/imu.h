@@ -110,8 +110,8 @@ private:
   int16_t gyroPrevWeight[3] = {0, 0, 0};
   int16_t gyroWeight[3];
   uint16_t estPrevTime;
-  uint32_t accLPF[3];
   int16_t accSmooth[3];
+  uint32_t accLPF[3];
 
   t_int32_t_vector estimatedGyroData;
   t_int32_t_vector estimatedMagData;
