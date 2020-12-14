@@ -5,7 +5,12 @@
 #include "i2c.h"
 #include "../config.h"
 
-#define GYRO_ORIENTATION(X, Y, Z) {data[ROLL] = Y; data[PITCH] = -X; data[YAW] = -Z;}
+#define GYRO_ORIENTATION(X, Y, Z) \
+  {                               \
+    data[ROLL] = Y;               \
+    data[PITCH] = -X;             \
+    data[YAW] = -Z;               \
+  }
 
 class Gyroscope : public I2C
 {

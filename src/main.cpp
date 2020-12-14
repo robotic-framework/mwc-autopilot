@@ -5,10 +5,10 @@
 
 uint32_t currentTime = 0;
 uint16_t previousTime = 0;
-uint16_t cycleTime = 0;
 
 extern Motors motors;
 extern IMU imu;
+extern uint16_t cycleTime;
 
 void setup()
 {
@@ -34,6 +34,6 @@ void loop()
 #endif
   }
   previousTime = currentTime;
-  imu.Update();
+  imu.Update(currentTime);
   protocolHandler();
 }

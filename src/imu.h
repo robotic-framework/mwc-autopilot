@@ -17,6 +17,10 @@
 #define GYRO_SCALE (4 / 14.375 * PI / 180.0 / 1000000.0) // 14.375 LSB = 1 deg/s
 #endif
 
+#ifdef MAG_HMC5883L
+#include "sensors/HMC5883L.h"
+#endif
+
 /* Set the Low Pass Filter factor for ACC
    Increasing this value would reduce ACC noise (visible in GUI), but would increase ACC lag time
    Comment this if  you do not want filter at all.
@@ -37,56 +41,56 @@
 #define GYR_CMPFM_FACTOR 8 // that means a CMP_FACTOR of 256 (2^8)
 
 #define MultiS16X16to32(longRes, intIn1, intIn2) \
-  asm volatile(                                  \
-      "clr r26 \n\t"                             \
-      "mul %A1, %A2 \n\t"                        \
-      "movw %A0, r0 \n\t"                        \
-      "muls %B1, %B2 \n\t"                       \
-      "movw %C0, r0 \n\t"                        \
-      "mulsu %B2, %A1 \n\t"                      \
-      "sbc %D0, r26 \n\t"                        \
-      "add %B0, r0 \n\t"                         \
-      "adc %C0, r1 \n\t"                         \
-      "adc %D0, r26 \n\t"                        \
-      "mulsu %B1, %A2 \n\t"                      \
-      "sbc %D0, r26 \n\t"                        \
-      "add %B0, r0 \n\t"                         \
-      "adc %C0, r1 \n\t"                         \
-      "adc %D0, r26 \n\t"                        \
-      "clr r1 \n\t"                              \
-      : "=&r"(longRes)                           \
-      : "a"(intIn1),                             \
-        "a"(intIn2)                              \
-      : "r26")
+    asm volatile(                                \
+        "clr r26 \n\t"                           \
+        "mul %A1, %A2 \n\t"                      \
+        "movw %A0, r0 \n\t"                      \
+        "muls %B1, %B2 \n\t"                     \
+        "movw %C0, r0 \n\t"                      \
+        "mulsu %B2, %A1 \n\t"                    \
+        "sbc %D0, r26 \n\t"                      \
+        "add %B0, r0 \n\t"                       \
+        "adc %C0, r1 \n\t"                       \
+        "adc %D0, r26 \n\t"                      \
+        "mulsu %B1, %A2 \n\t"                    \
+        "sbc %D0, r26 \n\t"                      \
+        "add %B0, r0 \n\t"                       \
+        "adc %C0, r1 \n\t"                       \
+        "adc %D0, r26 \n\t"                      \
+        "clr r1 \n\t"                            \
+        : "=&r"(longRes)                         \
+        : "a"(intIn1),                           \
+          "a"(intIn2)                            \
+        : "r26")
 
 typedef struct
 {
-  int32_t X, Y, Z;
+    int32_t X, Y, Z;
 } t_int32_t_vector_def;
 
 typedef struct
 {
-  uint16_t XL;
-  int16_t X;
-  uint16_t YL;
-  int16_t Y;
-  uint16_t ZL;
-  int16_t Z;
+    uint16_t XL;
+    int16_t X;
+    uint16_t YL;
+    int16_t Y;
+    uint16_t ZL;
+    int16_t Z;
 } t_int16_t_vector_def;
 
 // note: we use implicit first 16 MSB bits 32 -> 16 cast. ie V32.X>>16 = V16.X
 typedef union
 {
-  int32_t A32[3];
-  t_int32_t_vector_def V32;
-  int16_t A16[6];
-  t_int16_t_vector_def V16;
+    int32_t A32[3];
+    t_int32_t_vector_def V32;
+    int16_t A16[6];
+    t_int16_t_vector_def V16;
 } t_int32_t_vector;
 
 typedef struct
 {
-  int16_t Angle[2]; // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
-  int16_t Heading;
+    int16_t Angle[2]; // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
+    int16_t Heading;
 } Attitude;
 
 int32_t __attribute__((noinline)) mul(int16_t a, int16_t b);
@@ -99,33 +103,35 @@ extern uint8_t smallAngle25;
 class IMU
 {
 private:
-  // sensors
-  Accelerator *acc;
-  Gyroscope *gyro;
+    // sensors
+    Accelerator *acc;
+    Gyroscope *gyro;
+    Meganetometer *mag;
 
-  // indicators
-  Attitude att;
-  int16_t gyroWeighted[3];
+    // indicators
+    Attitude att;
+    int16_t gyroWeighted[3];
 
-  int16_t gyroPrevWeight[3] = {0, 0, 0};
-  int16_t gyroWeight[3];
-  uint16_t estPrevTime;
-  int16_t accSmooth[3];
-  uint32_t accLPF[3];
+    int16_t gyroPrevWeight[3] = {0, 0, 0};
+    int16_t gyroWeight[3];
+    uint16_t estPrevTime;
+    int16_t accSmooth[3];
+    uint32_t accLPF[3];
 
-  t_int32_t_vector estimatedGyroData;
-  t_int32_t_vector estimatedMagData;
+    t_int32_t_vector estimatedGyroData;
+    t_int32_t_vector estimatedMagData;
 
-  void calcEstimatedAttitude();
+    void calcEstimatedAttitude();
 
 public:
-  IMU();
+    IMU();
 
-  void Init();
-  void Update();
-  void GetRawData(int16_t *buf, uint8_t length);
-  void Calibration();
-  void GetAttitude(int16_t *buf, uint8_t length);
+    void Init();
+    void Update(uint32_t currentTime);
+    void GetRawData(int16_t *buf, uint8_t length);
+    void AccCalibration();
+    void MagCalibration();
+    void GetAttitude(int16_t *buf, uint8_t length);
 };
 
 #endif // IMU_H_

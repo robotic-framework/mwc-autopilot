@@ -1,53 +1,62 @@
 #include "accelerator.h"
 
-void Accelerator::Update()
+void Accelerator::Update(uint32_t currentTime)
 {
-  this->getRawData();
+    this->getRawData();
 
-  if (calibrateSteps > 0)
-  {
-    calibration();
-  }
+    if (calibrateSteps > 0)
+    {
+        calibration(currentTime);
+    }
 
-  data[ROLL] -= offset[ROLL];
-  data[PITCH] -= offset[PITCH];
-  data[YAW] -= offset[YAW];
+    data[ROLL] -= offset[ROLL];
+    data[PITCH] -= offset[PITCH];
+    data[YAW] -= offset[YAW];
 }
 
 void Accelerator::Calibration()
 {
-  calibrateSteps = 512;
-  for (size_t i = 0; i < 3; i++)
-  {
-    offsetTotal[i] = 0;
-  }
+    calibrateSteps = 512;
+    for (size_t i = 0; i < 3; i++)
+    {
+        offsetTotal[i] = 0;
+    }
 }
 
-void Accelerator::calibration()
+void Accelerator::calibration(uint32_t currentTime)
 {
-  for (uint8_t i = 0; i < 3; i++)
-  {
-    offsetTotal[i] += data[i];
-    offset[i] = offsetTotal[i] >> 9;
-  }
+    // each read is spaced by 100ms
+    if (currentTime < stepTime)
+    {
+        return;
+    }
+    stepTime = currentTime + 10000;
 
-  if (calibrateSteps == 1)
-  {
-    // calibration done
-    offset[YAW] -= ACC_1G_LSB;
-  }
-  calibrateSteps--;
+    LEDPIN_ON
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        offsetTotal[i] += data[i];
+        offset[i] = offsetTotal[i] >> 9;
+    }
+
+    if (calibrateSteps == 1)
+    {
+        // calibration done
+        LEDPIN_OFF
+        offset[YAW] -= ACC_1G_LSB;
+    }
+    calibrateSteps--;
 }
 
 void Accelerator::GetData(int16_t *buf, uint8_t length)
 {
-  for (uint8_t i = 0; i < length; i++)
-  {
-    if (i > 2)
+    for (uint8_t i = 0; i < length; i++)
     {
-      break;
-    }
+        if (i > 2)
+        {
+            break;
+        }
 
-    *(buf + i) = this->data[i];
-  }
+        *(buf + i) = this->data[i];
+    }
 }
