@@ -106,8 +106,50 @@ void IMU::Init()
 
 void IMU::Update(uint32_t currentTime)
 {
-    mag->Update(currentTime);
+    // never call all functions in the same loop, to avoid high delay spikes
+    static uint8_t taskOrder = 0;
+    switch (taskOrder)
+    {
+    case 0:
+        taskOrder++;
+#if SENSOR_MAG
+        if (mag->Update(currentTime))
+        {
+            break;
+        }
+#endif
 
+    case 1:
+        taskOrder++;
+#if SENSOR_BARO
+
+#endif
+
+    case 2:
+        taskOrder++;
+#if SENSOR_BARO
+
+#endif
+
+    case 3:
+        taskOrder++;
+#if SENSOR_GPS
+
+#endif
+
+    case 4:
+        taskOrder = 0;
+#if SENSOR_SONAR
+
+#endif
+        break;
+    }
+
+    updateAttitude(currentTime);
+}
+
+void IMU::updateAttitude(uint32_t currentTime)
+{
     // update sensors data
     acc->Update(currentTime);
 
@@ -174,6 +216,29 @@ void IMU::GetRawData(int16_t *buf, uint8_t length)
     {
         mag->GetData(buf + 6, length);
     }
+}
+
+void IMU::GetAccData(int16_t *buf, uint8_t length)
+{
+    length = min(length, 3);
+    for (size_t i = 0; i < length; i++)
+    {
+        *(buf + i) = accSmooth[i];
+    }
+}
+
+void IMU::GetGyroData(int16_t *buf, uint8_t length)
+{
+    length = min(length, 3);
+    for (size_t i = 0; i < length; i++)
+    {
+        *(buf + 3 + i) = gyroWeighted[i];
+    }
+}
+
+void IMU::GetMagData(int16_t *buf, uint8_t length)
+{
+    mag->GetData(buf, length);
 }
 
 void IMU::calcEstimatedAttitude()

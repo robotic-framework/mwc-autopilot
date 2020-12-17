@@ -121,6 +121,7 @@ private:
     t_int32_t_vector estimatedGyroData;
     t_int32_t_vector estimatedMagData;
 
+    void updateAttitude(uint32_t currentTime);
     void calcEstimatedAttitude();
 
 public:
@@ -129,6 +130,9 @@ public:
     void Init();
     void Update(uint32_t currentTime);
     void GetRawData(int16_t *buf, uint8_t length);
+    void GetAccData(int16_t *buf, uint8_t length);
+    void GetGyroData(int16_t *buf, uint8_t length);
+    void GetMagData(int16_t *buf, uint8_t length);
     void AccCalibration();
     void MagCalibration();
     void GetAttitude(int16_t *buf, uint8_t length);

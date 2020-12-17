@@ -12,28 +12,29 @@ extern uint16_t cycleTime;
 
 void setup()
 {
-  LEDPIN_PINMODE
-  
-  motors.Init();
-  serialInit();
-
-  imu.Init();
+    LEDPIN_PINMODE
+    motors.Init();
+    imu.Init();
+    
+    serialInit();
+    loadDefaults();
 }
 
 void loop()
 {
-  while (1)
-  {
-    currentTime = micros();
-    cycleTime = currentTime - previousTime;
+    protocolHandler();
+    while (1)
+    {
+        currentTime = micros();
+        cycleTime = currentTime - previousTime;
 #if defined(LOOP_TIME)
-    if (cycleTime >= LOOP_TIME)
-      break;
+        if (cycleTime >= LOOP_TIME)
+            break;
 #else
-    break;
+        break;
 #endif
-  }
-  previousTime = currentTime;
-  imu.Update(currentTime);
-  protocolHandler();
+    }
+    previousTime = currentTime;
+    imu.Update(currentTime);
+    motors.Update();
 }

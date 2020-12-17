@@ -27,6 +27,10 @@
        in some cases, this value must be lowered down to 900 for some specific ESCs, otherwise they failed to initiate */
 #define MINCOMMAND 1000
 
+// #define ENABLE_ECS_CALIBRATION
+#define ECS_CALIBRATE_LOW MINCOMMAND
+#define ECS_CALIBRATE_HIGH 2000
+
 #define LOOP_TIME 2800
 
 /**
@@ -54,22 +58,23 @@
 #define ROBOT_TYPE 3
 #endif // QUADX
 
-#define SENSOR_ACC 0
-#define SENSOR_BARO 0
-#define SENSOR_MAG 0
-#define SENSOR_GPS 0
-#define SENSOR_SONAR 0
-
 #if defined(ACC_ADXL345)
 #define SENSOR_ACC 1
 #define ACC_1G_LSB 265 // full scale lsb
 #else
+#define SENSOR_ACC 0
 #define ACC_1G_LSB 0
 #endif
 
 #if defined(MAG_HMC5883L)
 #define SENSOR_MAG 1
+#else
+#define SENSOR_MAG 0
 #endif // MAG_HMC5883L
+
+#define SENSOR_BARO 0
+#define SENSOR_GPS 0
+#define SENSOR_SONAR 0
 
 #define ACCZ_25DEG (int16_t)(ACC_1G_LSB * 0.90631) // 0.90631 = cos(25deg) (cos(theta) of accZ comparison)
 

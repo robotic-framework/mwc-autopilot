@@ -1,7 +1,10 @@
 #include "protocol.h"
 
 extern IMU imu;
+extern Motors motors;
 extern uint16_t cycleTime;
+extern bool arm;
+extern SelfTune tunningMode;
 
 enum MSP_protocol_states
 {
@@ -138,6 +141,7 @@ void evaluateCommand(uint8_t cmd)
         break;
 
     case MSP_STATUS:
+        // uint32_t flag = 0;
         struct
         {
             uint16_t cycleTime, i2cErrorCount, sensor;
@@ -147,6 +151,21 @@ void evaluateCommand(uint8_t cmd)
         stat.cycleTime = cycleTime;
         stat.i2cErrorCount = I2C::GetErrCount();
         stat.sensor = SENSOR_ACC | SENSOR_BARO << 1 | SENSOR_MAG << 2 | SENSOR_GPS << 3 | SENSOR_SONAR << 4;
+
+        // if (tunningMode == ANGLE)
+        // {
+        //     flag |= 1 << 1;
+        // }
+        // if (tunningMode == HORIZEN)
+        // {
+        //     flag |= 1 << 2;
+        // }
+        // if (arm)
+        // {
+        //     flag |= 1;
+        // }
+        // stat.flag = flag;
+        
         responsePayload((uint8_t *)&stat, 11);
         break;
 
@@ -178,7 +197,15 @@ void evaluateCommand(uint8_t cmd)
         imu.MagCalibration();
         break;
 
-    default:
+    case MSP_MOTOR:
+        uint16_t motorData[8];
+        motors.GetMotors(motorData, 8);
+        responsePayload((uint8_t *)motorData, 16);
+        break;
+
+    case MSP_ARM:
+        responseEmpty();
+        arm = true;
         break;
     }
 }
