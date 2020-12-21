@@ -6,13 +6,6 @@
 #include "imu.h"
 #include "sensors/ADXL345.h"
 
-enum SelfTune
-{
-    DISABLED,
-    ANGLE,
-    HORIZEN
-};
-
 struct PID
 {
     uint8_t P;
@@ -35,6 +28,18 @@ enum pid
     PIDITEMS
 };
 
-void loadDefaults();
+enum box
+{
+    ARM,
+#if SENSOR_ACC
+    ANGLE,
+    HORIZEN,
+#endif
+    MAG,
+    BOXITEMS
+};
+
+void
+loadDefaults();
 
 #endif // DEF_H_

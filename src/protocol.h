@@ -61,6 +61,7 @@
 #define MSP_ACC_TRIM 240     //out message         get acc angle trim values
 #define MSP_BIND 241         //in message          no param
 #define MSP_ARM 242          //in message
+#define MSP_DIS_ARM 243      //in message
 
 #define MSP_EEPROM_WRITE 250 //in message          no param
 

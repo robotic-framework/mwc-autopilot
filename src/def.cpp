@@ -4,8 +4,9 @@ Motors motors(MOTOR_COUNT);
 IMU imu;
 uint8_t smallAngle25 = 1;
 uint16_t cycleTime = 0;
-bool arm = false;
-SelfTune tunningMode = ANGLE;
+bool arm = true;
+bool angleMode = 1;
+bool horizenMode = 1;
 
 int16_t rcCommand[4] = {0, 0, 0, 1460};
 PID pid[PIDITEMS];

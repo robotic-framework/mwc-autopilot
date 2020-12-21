@@ -4,7 +4,8 @@
 #define PIDMIX(X, Y, Z) rcCommand[THROTTLE] + pidOffset[ROLL] * X + pidOffset[PITCH] * Y + pidOffset[YAW] * Z
 
 extern IMU imu;
-extern SelfTune tunningMode;
+extern bool angleMode;
+extern bool horizenMode;
 extern bool arm;
 extern int16_t rcCommand[4];
 extern PID pid[PIDITEMS];
@@ -86,7 +87,7 @@ void Motors::applyPID()
     int16_t delta;
     static int16_t delta1[2], delta2[2];
 
-    if (tunningMode == HORIZEN)
+    if (horizenMode)
     {
         prop = min(max(abs(rcCommand[PITCH]), abs(rcCommand[ROLL])), 512);
     }
@@ -109,7 +110,7 @@ void Motors::applyPID()
         ITerm = (errorGyroI[axis] >> 7) * pid[axis].I >> 6;
         PTerm = mul(rc, pid[axis].P) >> 6;
 
-        if (tunningMode == ANGLE || tunningMode == HORIZEN)
+        if (angleMode || horizenMode)
         {
             errorAngle = constrain(rc, -500, 500) - attitude[axis];
             errorAngleI[axis] = constrain(errorAngleI[axis] + errorAngle, -10000, 10000);

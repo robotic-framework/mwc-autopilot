@@ -4,7 +4,8 @@ extern IMU imu;
 extern Motors motors;
 extern uint16_t cycleTime;
 extern bool arm;
-extern SelfTune tunningMode;
+extern bool angleMode;
+extern bool horizenMode;
 
 enum MSP_protocol_states
 {
@@ -124,6 +125,8 @@ static void responseError()
 
 void evaluateCommand(uint8_t cmd)
 {
+    uint32_t tmp = 0;
+
     switch (cmd)
     {
     case MSP_IDENT:
@@ -141,7 +144,6 @@ void evaluateCommand(uint8_t cmd)
         break;
 
     case MSP_STATUS:
-        // uint32_t flag = 0;
         struct
         {
             uint16_t cycleTime, i2cErrorCount, sensor;
@@ -152,20 +154,24 @@ void evaluateCommand(uint8_t cmd)
         stat.i2cErrorCount = I2C::GetErrCount();
         stat.sensor = SENSOR_ACC | SENSOR_BARO << 1 | SENSOR_MAG << 2 | SENSOR_GPS << 3 | SENSOR_SONAR << 4;
 
-        // if (tunningMode == ANGLE)
-        // {
-        //     flag |= 1 << 1;
-        // }
-        // if (tunningMode == HORIZEN)
-        // {
-        //     flag |= 1 << 2;
-        // }
-        // if (arm)
-        // {
-        //     flag |= 1;
-        // }
-        // stat.flag = flag;
-        
+#if SENSOR_ACC
+        if (angleMode)
+        {
+            tmp |= 1 << ANGLE;
+        }
+        if (horizenMode)
+        {
+            tmp |= 1 << HORIZEN;
+        }
+
+#endif
+        if (arm)
+        {
+            tmp |= 1 << ARM;
+        }
+        stat.flag = tmp;
+        stat.set = 0;
+
         responsePayload((uint8_t *)&stat, 11);
         break;
 
@@ -189,12 +195,18 @@ void evaluateCommand(uint8_t cmd)
 
     case MSP_ACC_CALIBRATION:
         responseEmpty();
-        imu.AccCalibration();
+        if (!arm)
+        {
+            imu.AccCalibration();
+        }
         break;
 
     case MSP_MAG_CALIBRATION:
         responseEmpty();
-        imu.MagCalibration();
+        if (!arm)
+        {
+            imu.MagCalibration();
+        }
         break;
 
     case MSP_MOTOR:
@@ -206,6 +218,13 @@ void evaluateCommand(uint8_t cmd)
     case MSP_ARM:
         responseEmpty();
         arm = true;
+        LEDPIN_ON
+        break;
+        
+    case MSP_DIS_ARM:
+        responseEmpty();
+        arm = false;
+        LEDPIN_OFF
         break;
     }
 }
@@ -216,6 +235,7 @@ void serialInit()
     while (!Serial)
     {
     }
+    blinkLED(2, 20, 10);
 }
 
 void protocolHandler()

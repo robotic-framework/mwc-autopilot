@@ -8,16 +8,18 @@
 #include "sensors/accelerator.h"
 #include "sensors/gyroscope.h"
 
-#ifdef ACC_ADXL345
+#if defined(ACC_ADXL345)
 #include "sensors/ADXL345.h"
 #endif
-
-#ifdef GYRO_ITG3205
-#include "sensors/ITG3205.h"
-#define GYRO_SCALE (4 / 14.375 * PI / 180.0 / 1000000.0) // 14.375 LSB = 1 deg/s
+#if defined(ACC_BMA180)
+#include "sensors/BMA180.h"
 #endif
 
-#ifdef MAG_HMC5883L
+#if defined(GYRO_ITG3205)
+#include "sensors/ITG3205.h"
+#endif
+
+#if defined(MAG_HMC5883L)
 #include "sensors/HMC5883L.h"
 #endif
 
@@ -104,9 +106,17 @@ class IMU
 {
 private:
     // sensors
+#if SENSOR_ACC
     Accelerator *acc;
+#endif
+
+#if SENSOR_GYRO
     Gyroscope *gyro;
+#endif
+
+#if SENSOR_MAG
     Meganetometer *mag;
+#endif
 
     // indicators
     Attitude att;

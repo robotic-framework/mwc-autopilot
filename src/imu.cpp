@@ -69,29 +69,39 @@ float invSqrt(float x)
 IMU::IMU()
 {
     estimatedGyroData = {0, 0, (int32_t)ACC_1G_LSB << 16};
-#ifdef ACC_ADXL345
+#if defined(ACC_ADXL345)
     acc = new ADXL345(ADXL345_DEVICE);
 #endif
+#if defined(ACC_BMA180)
+    acc = new BMA180(BMA180_DEVICE);
+#endif
 
-#ifdef GYRO_ITG3205
+#if defined(GYRO_ITG3205)
     gyro = new ITG3205(ITG3205_DEVICE);
 #endif
 
-#ifdef MAG_HMC5883L
+#if defined(MAG_HMC5883L)
     mag = new HMC5883L(HMC5883L_DEVICE);
 #endif
 }
 
 void IMU::Init()
 {
-    uint8_t attempt = 5;
     Wire.begin();
 
-    while (attempt--)
+    while (1)
     {
+#if SENSOR_ACC
         acc->Init();
+#endif
+
+#if SENSOR_GYRO
         gyro->Init();
+#endif
+
+#if SENSOR_MAG
         mag->Init();
+#endif
 
         if (I2C::GetErrCount() == 0)
         {
@@ -150,9 +160,12 @@ void IMU::Update(uint32_t currentTime)
 
 void IMU::updateAttitude(uint32_t currentTime)
 {
+#if SENSOR_ACC
     // update sensors data
     acc->Update(currentTime);
+#endif
 
+#if SENSOR_GYRO
     // calc gyro weights
     gyro->Update();
     gyro->GetData(gyroWeight, 3);
@@ -169,53 +182,71 @@ void IMU::updateAttitude(uint32_t currentTime)
 
     // calculate est attitude
     calcEstimatedAttitude();
+#endif
 }
 
 void IMU::AccCalibration()
 {
+#if SENSOR_ACC
     acc->Calibration();
+#endif
+
+#if SENSOR_GYRO
     gyro->Calibration();
+#endif
 }
 
 void IMU::MagCalibration()
 {
+#if SENSOR_MAG
     mag->Calibration();
+#endif
 }
 
 // Attention: the 'length' must be consistent with the length of the array pointed to by the 'buf'
 void IMU::GetRawData(int16_t *buf, uint8_t length)
 {
-    if (length < 3)
+    uint8_t stepLength = min(3, length);
+    for (size_t i = 0; i < stepLength; i++)
     {
-        // acc->GetData(buf, length);
-        for (size_t i = 0; i < 3; i++)
-        {
-            *(buf + i) = accSmooth[i];
-        }
+#if SENSOR_ACC || SENSOR_GYRO
+        *(buf + i) = accSmooth[i];
+#else
+        *(buf + i) = 0;
+#endif
+    }
+    if (stepLength < 3)
+    {
         return;
     }
-    else
+
+    length -= stepLength;
+    stepLength = min(3, length);
+    for (size_t i = 0; i < stepLength; i++)
     {
-        // acc->GetData(buf, length);
-        for (size_t i = 0; i < 3; i++)
-        {
-            *(buf + i) = accSmooth[i];
-        }
-        length -= 3;
+#if SENSOR_GYRO
+        *(buf + 3 + i) = gyroWeighted[i];
+#else
+        *(buf + 3 + i) = 0;
+#endif
     }
-    if (length >= 3)
+
+    if (stepLength < 3)
     {
-        // gyro->GetData(buf + 3, length);
-        for (size_t i = 0; i < 3; i++)
-        {
-            *(buf + 3 + i) = gyroWeighted[i];
-        }
-        length -= 3;
+        return;
     }
-    if (length > 0)
+
+    length -= stepLength;
+    stepLength = min(3, length);
+
+#if SENSOR_MAG
+    mag->GetData(buf + 6, stepLength);
+#else
+    for (size_t i = 0; i < stepLength; i++)
     {
-        mag->GetData(buf + 6, length);
+        *(buf + 6 + i) = 0;
     }
+#endif
 }
 
 void IMU::GetAccData(int16_t *buf, uint8_t length)
@@ -223,7 +254,11 @@ void IMU::GetAccData(int16_t *buf, uint8_t length)
     length = min(length, 3);
     for (size_t i = 0; i < length; i++)
     {
+#if SENSOR_ACC
         *(buf + i) = accSmooth[i];
+#else
+        *(buf + i) = 0;
+#endif
     }
 }
 
@@ -232,13 +267,25 @@ void IMU::GetGyroData(int16_t *buf, uint8_t length)
     length = min(length, 3);
     for (size_t i = 0; i < length; i++)
     {
-        *(buf + 3 + i) = gyroWeighted[i];
+#if SENSOR_GYRO
+        *(buf + i) = gyroWeighted[i];
+#else
+        *(buf + i) = 0;
+#endif
     }
 }
 
 void IMU::GetMagData(int16_t *buf, uint8_t length)
 {
+#if SENSOR_MAG
     mag->GetData(buf, length);
+#else
+    length = min(length, 3);
+    for (size_t i = 0; i < length; i++)
+    {
+        *(buf + i) = 0;
+    }
+#endif
 }
 
 void IMU::calcEstimatedAttitude()
@@ -246,7 +293,7 @@ void IMU::calcEstimatedAttitude()
     uint16_t currentTime = micros();
     uint8_t axis;
     float invGyro; // 1/|G|
-    int16_t accData[3];
+    int16_t accData[3] = {0, 0, 0};
     int16_t gyroData[3];
     int16_t magData[3];
     int32_t accMag = 0;
@@ -258,9 +305,14 @@ void IMU::calcEstimatedAttitude()
     float scale = (currentTime - estPrevTime) * (GYRO_SCALE * 65536);
     estPrevTime = currentTime;
 
-    // Initialization
+// Initialization
+#if SENSOR_ACC
     acc->GetData(accData, 3);
+#endif
+
+#if SENSOR_GYRO
     gyro->GetData(gyroData, 3);
+#endif
     for (axis = 0; axis < 3; axis++)
     {
         // valid as long as LPF_FACTOR is less than 15
@@ -280,7 +332,9 @@ void IMU::calcEstimatedAttitude()
     rotateV32(&estimatedMagData, deltaAngle);
 
     // Apply complimentary filter (Gyro drift correction)
+#if SENSOR_MAG
     mag->GetData(magData, 3);
+#endif
     for (axis = 0; axis < 3; axis++)
     {
         // If accel magnitude >1.15G or <0.85G and ACC vector outside of the limit range => we neutralize the effect of accelerometers in the angle estimation.
@@ -290,7 +344,9 @@ void IMU::calcEstimatedAttitude()
         {
             estimatedGyroData.A32[axis] += (int32_t)(accSmooth[axis] - estimatedGyroData.A16[2 * axis + 1]) << (16 - GYR_CMPF_FACTOR);
         }
+#if SENSOR_MAG
         estimatedMagData.A32[axis] += (int32_t)(magData[axis] - estimatedMagData.A16[2 * axis + 1]) << (16 - GYR_CMPFM_FACTOR);
+#endif
         accZTmp += mul(accSmooth[axis], estimatedGyroData.A16[2 * axis + 1]);
     }
 
@@ -312,7 +368,9 @@ void IMU::calcEstimatedAttitude()
         mul(estimatedMagData.V16.Z, estimatedGyroData.V16.X) - mul(estimatedMagData.V16.X, estimatedGyroData.V16.Z),
         (estimatedMagData.V16.Y * sqrtGyroXZ - (mul(estimatedMagData.V16.X, estimatedGyroData.V16.X) + mul(estimatedMagData.V16.Z, estimatedGyroData.V16.Z)) * estimatedGyroData.V16.Y) * invGyro);
 
+#if SENSOR_MAG
     // att.Heading += 地磁偏角 // set from GUI
+#endif
     att.Heading /= 10;
 }
 
