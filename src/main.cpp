@@ -1,9 +1,9 @@
-#include "avr8-stub.h" // start debug
-#include <avr/io.h>
 #include <Arduino.h>
 #include "def.h"
 #if !DEBUG
 #include "protocol.h"
+#else
+#include "avr8-stub.h"
 #endif
 
 uint32_t currentTime = 0;
@@ -45,6 +45,7 @@ void loop()
 #endif
     }
     previousTime = currentTime;
+    
     imu.Update(currentTime);
     motors.Update();
 }
