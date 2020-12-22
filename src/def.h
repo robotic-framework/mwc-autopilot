@@ -6,6 +6,10 @@
 #include "imu.h"
 #include "sensors/ADXL345.h"
 
+#if DEBUG
+#include "avr8-stub.h"
+#endif
+
 struct PID
 {
     uint8_t P;

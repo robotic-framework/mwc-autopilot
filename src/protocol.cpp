@@ -1,5 +1,6 @@
 #include "protocol.h"
 
+#if !DEBUG
 extern IMU imu;
 extern Motors motors;
 extern uint16_t cycleTime;
@@ -220,7 +221,7 @@ void evaluateCommand(uint8_t cmd)
         arm = true;
         LEDPIN_ON
         break;
-        
+
     case MSP_DIS_ARM:
         responseEmpty();
         arm = false;
@@ -302,3 +303,4 @@ void protocolHandler()
         }
     }
 }
+#endif

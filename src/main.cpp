@@ -1,7 +1,10 @@
+#include "avr8-stub.h" // start debug
 #include <avr/io.h>
 #include <Arduino.h>
 #include "def.h"
+#if !DEBUG
 #include "protocol.h"
+#endif
 
 uint32_t currentTime = 0;
 uint16_t previousTime = 0;
@@ -12,17 +15,24 @@ extern uint16_t cycleTime;
 
 void setup()
 {
+#if DEBUG
+    debug_init();
+#endif
     LEDPIN_PINMODE
     motors.Init();
     imu.Init();
-    
+
+#if !DEBUG
     serialInit();
+#endif
     loadDefaults();
 }
 
 void loop()
 {
+#if !DEBUG
     protocolHandler();
+#endif
     while (1)
     {
         currentTime = micros();
