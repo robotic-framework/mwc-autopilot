@@ -4,7 +4,7 @@ Motors motors(MOTOR_COUNT);
 IMU imu;
 uint8_t smallAngle25 = 1;
 uint16_t cycleTime = 0;
-bool arm = true;
+bool arm = false;
 bool angleMode = 1;
 bool horizenMode = 1;
 

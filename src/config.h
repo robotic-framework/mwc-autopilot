@@ -92,8 +92,7 @@
 #define MOTOR_COUNT 4
 #define ROBOT_TYPE 3
 #else
-#define MOTOR_COUNT 4
-#define ROBOT_TYPE 3
+#error "you have to define a robot type"
 #endif // QUADX
 
 // sensor lsb

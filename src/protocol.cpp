@@ -1,6 +1,6 @@
+#if !DEBUG
 #include "protocol.h"
 
-#if !DEBUG
 extern IMU imu;
 extern Motors motors;
 extern uint16_t cycleTime;
@@ -204,6 +204,8 @@ void evaluateCommand(uint8_t cmd)
 
     case MSP_MAG_CALIBRATION:
         responseEmpty();
+        // TODO remove arm = true;
+        arm = true;
         if (!arm)
         {
             imu.MagCalibration();

@@ -1,3 +1,4 @@
+#if !DEBUG
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
@@ -5,7 +6,6 @@
 #include <stdint.h>
 #include "def.h"
 
-#if !DEBUG
 /************************************** MultiWii Serial Protocol *******************************************************/
 // Multiwii Serial Protocol 100
 #define MSP_VERSION 100
@@ -72,5 +72,5 @@
 void serialInit();
 void protocolHandler();
 
-#endif
 #endif // PROTOCOL_H_
+#endif

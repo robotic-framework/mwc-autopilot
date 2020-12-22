@@ -69,6 +69,9 @@ float invSqrt(float x)
 IMU::IMU()
 {
     estimatedGyroData = {0, 0, (int32_t)ACC_1G_LSB << 16};
+#if !SENSOR_MAG
+    estimatedMagData = {0, (int32_t)1 << 24, 0};
+#endif
 #if defined(ACC_ADXL345)
     acc = new ADXL345(ADXL345_DEVICE);
 #endif
@@ -372,6 +375,8 @@ void IMU::calcEstimatedAttitude()
     // att.Heading += 地磁偏角 // set from GUI
 #endif
     att.Heading /= 10;
+
+    Serial.println(att.Heading);
 }
 
 void IMU::GetAttitude(int16_t *buf, uint8_t length)
