@@ -24,18 +24,34 @@ typedef enum {
 
 typedef enum {
     TASK_SYSTEM,
+#if SENSOR_ACC
+    TASK_GET_ACC,
+#endif
+#if SENSOR_GYRO
+    TASK_GET_GYRO,
+#endif
+#if SENSOR_MAG
+    TASK_GET_MAG,
+#endif
+#if SENSOR_BARO
+    TASK_GET_BARO,
+#endif
+#if SENSOR_SONAR
+    TASK_GET_SONAR,
+#endif
+#if SENSOR_GPS
+    TASK_GET_GPS,
+#endif
 #if SENSOR_ACC || SENSOR_GYRO
     TASK_UPDATE_ATT,
 #endif
 #if SENSOR_BARO || SENSOR_SONAR
     TASK_UPDATE_ALT,
 #endif
-#if SENSOR_GPS
-    TASK_GPS,
-#endif
 #if SENSOR_ACC || SENSOR_GYRO
     TASK_MOTOR_PID,
 #endif
+    TASK_UPDATE_MOTORS,
     TASK_COUNT,
     TASK_NONE = TASK_COUNT,
     TASK_SELF
