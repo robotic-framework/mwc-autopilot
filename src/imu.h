@@ -124,20 +124,25 @@ private:
 
     int16_t gyroPrevWeight[3] = {0, 0, 0};
     int16_t gyroWeight[3];
-    uint16_t estPrevTime;
+    uint32_t estPrevTime;
     int16_t accSmooth[3];
     uint32_t accLPF[3];
 
     t_int32_t_vector estimatedGyroData;
     t_int32_t_vector estimatedMagData;
 
-    void updateAttitude(uint32_t currentTime);
-    void calcEstimatedAttitude();
-
 public:
     IMU();
 
     void Init();
+    void UpdateAcc(uint32_t currentTime);
+    void UpdateGyro(uint32_t currentTime);
+    void UpdateMag(uint32_t currentTime);
+    void UpdateBaro(uint32_t currentTime);
+    void UpdateSonar(uint32_t currentTime);
+    void UpdateAttitude(uint32_t currentTime);
+    void UpdateAltitude(uint32_t currentTime);
+
     void Update(uint32_t currentTime);
     void GetRawData(int16_t *buf, uint8_t length);
     void GetAccData(int16_t *buf, uint8_t length);

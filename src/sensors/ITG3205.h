@@ -53,7 +53,7 @@ protected:
 public:
   ITG3205(uint8_t address) : Gyroscope(address){};
 
-  void Update();
+  void Update(uint32_t currentTime);
 };
 
 #endif // ITG3205_H_

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "def.h"
+#include "tasks/tasks.h"
 #if !DEBUG
 #include "protocol.h"
 #else
@@ -9,6 +10,7 @@
 uint32_t currentTime = 0;
 uint16_t previousTime = 0;
 
+Tasks scheduler;
 extern Motors motors;
 extern IMU imu;
 extern uint16_t cycleTime;
@@ -45,7 +47,5 @@ void loop()
 #endif
     }
     previousTime = currentTime;
-    
-    imu.Update(currentTime);
-    motors.Update();
+    scheduler.Schedule();
 }

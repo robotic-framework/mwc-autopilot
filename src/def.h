@@ -4,7 +4,6 @@
 #include "config.h"
 #include "motors.h"
 #include "imu.h"
-#include "sensors/ADXL345.h"
 
 struct PID
 {

@@ -1,6 +1,6 @@
 #include "gyroscope.h"
 
-void Gyroscope::Update()
+void Gyroscope::Update(uint32_t currentTime)
 {
   this->getRawData();
   if (calibrateSteps > 0)

@@ -239,6 +239,7 @@ void serialInit()
     {
     }
     blinkLED(2, 20, 10);
+    LEDPIN_OFF;
 }
 
 void protocolHandler()
@@ -276,6 +277,7 @@ void protocolHandler()
 
             dataSize = c;
             checksum = c;
+            dataOffset = 0;
             state = HEADER_SIZE;
         }
         else if (state == HEADER_SIZE)

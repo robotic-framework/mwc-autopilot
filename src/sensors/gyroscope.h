@@ -29,7 +29,7 @@ protected:
 public:
   Gyroscope(uint8_t address) : I2C(address) {}
 
-  void Update();
+  void Update(uint32_t currentTime);
   void Calibration();
   void GetData(int16_t *buf, uint8_t length);
   void SetData(int16_t *data, uint8_t length);

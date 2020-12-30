@@ -62,7 +62,7 @@ void Motors::Init()
     this->WriteMotorsTrottle(MINCOMMAND);
 }
 
-void Motors::Update()
+void Motors::UpdatePID(uint32_t currentTime)
 {
     if (!arm)
     {
@@ -70,8 +70,15 @@ void Motors::Update()
     }
 
     applyPID();
+}
+
+void Motors::UpdateMotors(uint32_t currentTime) {
     mixPID();
-    writeMotors();
+
+    if (arm)
+    {
+        writeMotors();
+    }
 }
 
 void Motors::applyPID()

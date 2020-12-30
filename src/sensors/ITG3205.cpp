@@ -19,9 +19,9 @@ void ITG3205::getRawData()
     ((_buff[4] << 8) | _buff[5]) >> 2);
 }
 
-void ITG3205::Update()
+void ITG3205::Update(uint32_t currentTime)
 {
-  Gyroscope::Update();
+  Gyroscope::Update(currentTime);
 
   for (size_t i = 0; i < 3; i++)
   {
