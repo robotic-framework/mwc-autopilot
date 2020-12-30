@@ -7,22 +7,6 @@
 void taskSystem(uint32_t currentTime) {
 }
 
-void taskGetAcc(uint32_t currentTime) {
-    imu.UpdateAcc(currentTime);
-}
-
-void taskGetGyro(uint32_t currentTime) {
-    imu.UpdateGyro(currentTime);
-}
-
-void taskGetMag(uint32_t currentTime) {
-    imu.UpdateMag(currentTime);
-}
-
-void taskGetBaro(uint32_t currentTime) {
-    imu.UpdateBaro(currentTime);
-}
-
 void taskGetSonar(uint32_t currentTime) {
     imu.UpdateSonar(currentTime);
 }
@@ -32,6 +16,8 @@ void taskGetGPS(uint32_t currentTime) {
 }
 
 void taskUpdateAttitude(uint32_t currentTime) {
+    imu.UpdateAcc(currentTime);
+    imu.UpdateGyro(currentTime);
     imu.UpdateAttitude(currentTime);
 }
 
@@ -41,9 +27,6 @@ void taskUpdateAltitude(uint32_t currentTime) {
 
 void taskUpdateMotorPID(uint32_t currentTime) {
     motors.UpdatePID(currentTime);
-}
-
-void taskUpdateMotors(uint32_t currentTime) {
     motors.UpdateMotors(currentTime);
 }
 
@@ -55,53 +38,8 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .staticPriority = TASK_PRIORITY_HIGH,
                 .desiredPeriod = TASK_PERIOD_HZ(10),
         },
-#if SENSOR_ACC
-        [TASK_GET_ACC] = {
-                .taskName = "ACC",
-                .checkFunc = NULL,
-                .taskFunc = taskGetAcc,
-                .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(1000),
-        },
-#endif
-#if SENSOR_GYRO
-        [TASK_GET_GYRO] = {
-                .taskName = "GYRO",
-                .checkFunc = NULL,
-                .taskFunc = taskGetGyro,
-                .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(1000),
-        },
-#endif
-#if SENSOR_MAG
-        [TASK_GET_MAG] = {
-                .taskName = "MAG",
-                .checkFunc = NULL,
-                .taskFunc = taskGetMag,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
-        },
-#endif
-#if SENSOR_BARO
-        [TASK_GET_BARO] = {
-                .taskName = "BARO",
-                .checkFunc = NULL,
-                .taskFunc = taskGetBaro,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
-        },
-#endif
-#if SENSOR_SONAR
-        [TASK_GET_SONAR] = {
-                .taskName = "SONAR",
-                .checkFunc = NULL,
-                .taskFunc = taskGetSonar,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
-        },
-#endif
 #if SENSOR_GPS
-        [TASK_GET_GPS] = {
+        [TASK_GPS] = {
                 .taskName = "GPS",
                 .checkFunc = NULL,
                 .taskFunc = taskGetGPS,
@@ -115,7 +53,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskUpdateAttitude,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(1000),
+                .desiredPeriod = TASK_PERIOD_US(2800),
         },
 #endif
 #if SENSOR_BARO || SENSOR_SONAR
@@ -133,16 +71,9 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskUpdateMotorPID,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(1000),
+                .desiredPeriod = TASK_PERIOD_US(2800),
         },
 #endif
-        [TASK_UPDATE_MOTORS] = {
-                .taskName = "MOTOR",
-                .checkFunc = NULL,
-                .taskFunc = taskUpdateMotors,
-                .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(1000),
-        }
 };
 
 Tasks::Tasks() {
@@ -154,24 +85,8 @@ Tasks::~Tasks() {}
 void Tasks::init() {
     queueClear();
     queueAdd(&tasks[TASK_SYSTEM]);
-
-#if SENSOR_ACC
-    SetTaskEnabled(TASK_GET_ACC, true);
-#endif
-#if SENSOR_GYRO
-    SetTaskEnabled(TASK_GET_GYRO, true);
-#endif
-#if SENSOR_MAG
-    SetTaskEnabled(TASK_GET_MAG, true);
-#endif
-#if SENSOR_BARO
-    SetTaskEnabled(TASK_GET_BARO, true);
-#endif
-#if SENSOR_SONAR
-    SetTaskEnabled(TASK_GET_SONAR, true);
-#endif
 #if SENSOR_GPS
-    SetTaskEnabled(TASK_GET_GPS, true);
+    SetTaskEnabled(TASK_GPS, true);
 #endif
 #if SENSOR_ACC || SENSOR_GYRO
     SetTaskEnabled(TASK_UPDATE_ATT, true);
@@ -182,7 +97,6 @@ void Tasks::init() {
 #if SENSOR_ACC || SENSOR_GYRO
     SetTaskEnabled(TASK_MOTOR_PID, true);
 #endif
-    SetTaskEnabled(TASK_UPDATE_MOTORS, true);
 }
 
 bool Tasks::queueAdd(Task_t *task) {

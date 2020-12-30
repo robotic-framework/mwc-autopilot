@@ -35,17 +35,8 @@ void loop()
 #if !DEBUG
     protocolHandler();
 #endif
-    while (1)
-    {
-        currentTime = micros();
-        cycleTime = currentTime - previousTime;
-#if defined(LOOP_TIME)
-        if (cycleTime >= LOOP_TIME)
-            break;
-#else
-        break;
-#endif
-    }
+    currentTime = micros();
+    cycleTime = currentTime - previousTime;
     previousTime = currentTime;
     scheduler.Schedule();
 }

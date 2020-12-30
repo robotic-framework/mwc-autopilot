@@ -64,17 +64,14 @@ void Motors::Init()
 
 void Motors::UpdatePID(uint32_t currentTime)
 {
-    if (!arm)
+    if (arm)
     {
-        return;
+        applyPID();
+        mixPID();
     }
-
-    applyPID();
 }
 
 void Motors::UpdateMotors(uint32_t currentTime) {
-    mixPID();
-
     if (arm)
     {
         writeMotors();
