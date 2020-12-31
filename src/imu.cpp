@@ -257,9 +257,11 @@ void IMU::UpdateGyro(uint32_t currentTime) {
 #if SENSOR_GYRO
     // calc gyro weights
     gyro->Update(currentTime);
+    gyro->GetData(gyroWeight, 3);
 
     // update gyroscope
     int16_t currentGyro[3];
+    gyro->Update(currentTime);
     gyro->GetData(currentGyro, 3);
     for (size_t i = 0; i < 3; i++) {
         gyroWeight[i] = currentGyro[i] + gyroWeight[i];

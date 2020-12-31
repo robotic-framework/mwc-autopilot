@@ -7,6 +7,14 @@
 void taskSystem(uint32_t currentTime) {
 }
 
+void taskAll(uint32_t currentTime) {
+    imu.UpdateAcc(currentTime);
+    imu.UpdateGyro(currentTime);
+    imu.UpdateAttitude(currentTime);
+    motors.UpdatePID(currentTime);
+    motors.UpdateMotors(currentTime);
+}
+
 void taskGetAcc(uint32_t currentTime) {
     imu.UpdateAcc(currentTime);
 }
@@ -54,6 +62,13 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskFunc = taskSystem,
                 .staticPriority = TASK_PRIORITY_HIGH,
                 .desiredPeriod = TASK_PERIOD_HZ(10),
+        },
+        [TASK_ALL] = {
+                .taskName = "ALL",
+                .checkFunc = NULL,
+                .taskFunc = taskAll,
+                .staticPriority = TASK_PRIORITY_REALTIME,
+                .desiredPeriod = TASK_PERIOD_US(2800),
         },
 #if SENSOR_ACC
         [TASK_GET_ACC] = {
@@ -154,6 +169,7 @@ Tasks::~Tasks() {}
 void Tasks::init() {
     queueClear();
     queueAdd(&tasks[TASK_SYSTEM]);
+    // SetTaskEnabled(TASK_ALL, true);
 
 #if SENSOR_ACC
     SetTaskEnabled(TASK_GET_ACC, true);
@@ -297,7 +313,6 @@ void Tasks::Schedule() {
     currentTask = selectedTask;
 
     if (selectedTask) {
-        Serial.println(selectedTask->taskName);
         selectedTask->lastExecutedAt = currentTime;
         selectedTask->dynamicPriority = 0;
 

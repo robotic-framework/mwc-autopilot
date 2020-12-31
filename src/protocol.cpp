@@ -153,7 +153,7 @@ void evaluateCommand(uint8_t cmd)
         } stat;
         stat.cycleTime = cycleTime;
         stat.i2cErrorCount = I2C::GetErrCount();
-        stat.sensor = SENSOR_ACC | SENSOR_BARO << 1 | SENSOR_MAG << 2 | SENSOR_GPS << 3 | SENSOR_SONAR << 4;
+        stat.sensor = SENSOR_ACC | SENSOR_BARO << 1 | SENSOR_MAG << 2 | SENSOR_GPS << 3 | SENSOR_SONAR << 4 | SENSOR_GYRO << 5;
 
 #if SENSOR_ACC
         if (angleMode)

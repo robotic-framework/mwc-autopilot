@@ -24,6 +24,7 @@ typedef enum {
 
 typedef enum {
     TASK_SYSTEM,
+    TASK_ALL,
 #if SENSOR_ACC
     TASK_GET_ACC,
 #endif
