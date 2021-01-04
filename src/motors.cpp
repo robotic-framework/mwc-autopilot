@@ -10,11 +10,15 @@ extern bool arm;
 extern int16_t rcCommand[4];
 extern PID pid[PIDITEMS];
 
+#if defined(PROMINI)
 uint8_t Motors::Pins[8] = {9, 10, 11, 3, 6, 5, A2, 12};
+#endif
+#if defined(MEGA)
+uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
+#endif
 
-Motors::Motors(uint8_t motorCount)
+Motors::Motors()
 {
-    this->motorCount = motorCount;
 }
 
 Motors::~Motors()
@@ -23,27 +27,62 @@ Motors::~Motors()
 
 void Motors::Init()
 {
-    for (uint8_t i = 0; i < this->motorCount; i++)
+    for (uint8_t i = 0; i < MOTOR_COUNT; i++)
     {
         pinMode(Motors::Pins[i], OUTPUT);
     }
 
-    if (this->motorCount > 0)
-    {
-        TCCR1A |= _BV(COM1A1); // connect pin 9 to timer 1 channel A
-    }
-    if (this->motorCount > 1)
-    {
-        TCCR1A |= _BV(COM1B1); // connect pin 10 to timer 1 channel B
-    }
-    if (this->motorCount > 2)
-    {
-        TCCR2A |= _BV(COM2A1); // connect pin 11 to timer 2 channel A
-    }
-    if (this->motorCount > 3)
-    {
-        TCCR2A |= _BV(COM2B1); // connect pin 3 to timer 2 channel B
-    }
+#if defined(PROMINI)
+#if MOTOR_COUNT > 0
+    TCCR1A |= _BV(COM1A1); // connect pin 9 to timer 1 channel A
+#endif
+#if MOTOR_COUNT > 1
+    TCCR1A |= _BV(COM1B1); // connect pin 10 to timer 1 channel B
+#endif
+#if MOTOR_COUNT > 2
+    TCCR2A |= _BV(COM2A1); // connect pin 11 to timer 2 channel A
+#endif
+#if MOTOR_COUNT > 3
+    TCCR2A |= _BV(COM2B1); // connect pin 3 to timer 2 channel B
+#endif
+#endif
+#if defined(MEGA)
+#if MOTOR_COUNT > 0
+    // init 16bit timer 3
+    TCCR3A |= (1 << WGM31); // phase correct mode
+    TCCR3A &= ~(1 << WGM30);
+    TCCR3B |= (1 << WGM33);
+    TCCR3B &= ~(1 << CS31); // no prescaler
+    ICR3 |= 0x3FFF;         // TOP to 16383;
+
+    TCCR3A |= _BV(COM3C1); // connect pin 3 to timer 3 channel C
+#endif
+#if MOTOR_COUNT > 1
+    TCCR3A |= _BV(COM3A1); // connect pin 5 to timer 3 channel A
+#endif
+#if MOTOR_COUNT > 2
+    // init 16bit timer 4
+    TCCR4A |= (1 << WGM41); // phase correct mode
+    TCCR4A &= ~(1 << WGM40);
+    TCCR4B |= (1 << WGM43);
+    TCCR4B &= ~(1 << CS41); // no prescaler
+    ICR4 |= 0x3FFF;         // TOP to 16383;
+
+    TCCR4A |= _BV(COM4A1); // connect pin 6 to timer 4 channel A
+#endif
+#if MOTOR_COUNT > 3
+    TCCR3A |= _BV(COM3B1); // connect pin 2 to timer 3 channel B
+#endif
+#if MOTOR_COUNT > 4
+    TCCR4A |= _BV(COM4B1); // connect pin 7 to timer 4 channel B
+    TCCR4A |= _BV(COM4C1); // connect pin 8 to timer 4 channel C
+#endif
+#if MOTOR_COUNT > 6
+    // timer 2 is a 8bit timer so we cant change its range
+    TCCR2A |= _BV(COM2B1); // connect pin 9 to timer 2 channel B
+    TCCR2A |= _BV(COM2A1); // connect pin 10 to timer 2 channel A
+#endif
+#endif
 
 #if defined(ENABLE_ECS_CALIBRATION)
     WriteMotorsTrottle(ECS_CALIBRATE_HIGH);
@@ -71,7 +110,8 @@ void Motors::UpdatePID(uint32_t currentTime)
     }
 }
 
-void Motors::UpdateMotors(uint32_t currentTime) {
+void Motors::UpdateMotors(uint32_t currentTime)
+{
     if (arm)
     {
         writeMotors();
@@ -206,12 +246,12 @@ void Motors::GetMotors(uint16_t *buf, uint8_t length)
 
 uint8_t Motors::GetMotorCount()
 {
-    return this->motorCount;
+    return MOTOR_COUNT;
 }
 
 void Motors::WriteMotorsTrottle(uint16_t throttle)
 {
-    for (uint8_t i = 0; i < this->motorCount; i++)
+    for (uint8_t i = 0; i < MOTOR_COUNT; i++)
     {
         this->motors[i] = throttle;
     }
@@ -220,20 +260,40 @@ void Motors::WriteMotorsTrottle(uint16_t throttle)
 
 void Motors::writeMotors()
 {
-    if (this->motorCount > 0)
-    {
-        OCR1A = this->motors[0] >> 3; //  pin 9
-    }
-    if (this->motorCount > 1)
-    {
-        OCR1B = this->motors[1] >> 3; //  pin 10
-    }
-    if (this->motorCount > 2)
-    {
-        OCR2A = this->motors[2] >> 3; //  pin 11
-    }
-    if (this->motorCount > 3)
-    {
-        OCR2B = this->motors[3] >> 3; //  pin 3
-    }
+#if defined(PROMINI)
+#if MOTOR_COUNT > 0
+    OCR1A = this->motors[0] >> 3; // pin 9
+#endif
+#if MOTOR_COUNT > 1
+    OCR1B = this->motors[1] >> 3; // pin 10
+#endif
+#if MOTOR_COUNT > 2
+    OCR2A = this->motors[2] >> 3; // pin 11
+#endif
+#if MOTOR_COUNT > 3
+    OCR2B = this->motors[3] >> 3; // pin 3
+#endif
+#endif
+#if defined(MEGA)
+#if MOTOR_COUNT > 0
+    OCR3C = this->motors[0] << 3; // pin 3
+#endif
+#if MOTOR_COUNT > 1
+    OCR3A = this->motors[1] << 3; // pin 5
+#endif
+#if MOTOR_COUNT > 2
+    OCR4A = this->motors[2] << 3; // pin 6
+#endif
+#if MOTOR_COUNT > 3
+    OCR3B = this->motors[3] << 3; // pin 2
+#endif
+#if MOTOR_COUNT > 4
+    OCR4B = motor[4] << 3; // pin 7
+    OCR4C = motor[5] << 3; // pin 8
+#endif
+#if MOTOR_COUNT > 6
+    OCR2B = motor[6] >> 3; // pin 9
+    OCR2A = motor[7] >> 3; // pin 10
+#endif
+#endif
 }

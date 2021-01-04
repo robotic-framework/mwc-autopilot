@@ -8,7 +8,6 @@ class Motors
 {
 private:
     uint16_t motors[8] = {};
-    uint8_t motorCount;
     int16_t pidOffset[3];
     int32_t prop;
 
@@ -19,7 +18,7 @@ private:
 public:
     static uint8_t Pins[8];
 
-    Motors(uint8_t motorCount);
+    Motors();
     ~Motors();
 
     void Init();
