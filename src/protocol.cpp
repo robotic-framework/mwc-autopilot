@@ -194,6 +194,16 @@ void evaluateCommand(uint8_t cmd)
         responsePayload((uint8_t *)att, 6);
         break;
 
+    case MSP_ALTITUDE:
+        struct
+        {
+            int32_t alt;
+            int16_t vario;
+        } altData;
+        imu.GetAltitude(&altData.alt, &altData.vario);
+        responsePayload((uint8_t *)&altData, 6);
+        break;
+
     case MSP_ACC_CALIBRATION:
         responseEmpty();
         if (!arm)

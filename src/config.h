@@ -48,6 +48,9 @@
 // Meganetometer
 // #define MAG_HMC5883L
 
+// Baro
+#define BARO_BMP085
+
 /**
  * definition (do not modify anything)
  */
@@ -131,7 +134,12 @@
 #define SENSOR_MAG 0
 #endif
 
+#if defined(BARO_BMP085)
+#define SENSOR_BARO 1
+#else
 #define SENSOR_BARO 0
+#endif
+
 #define SENSOR_GPS 0
 #define SENSOR_SONAR 0
 

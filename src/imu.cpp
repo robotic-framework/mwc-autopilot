@@ -1,13 +1,15 @@
 #include "imu.h"
 
-int32_t __attribute__((noinline)) mul(int16_t a, int16_t b) {
+int32_t __attribute__((noinline)) mul(int16_t a, int16_t b)
+{
     int32_t r;
     MultiS16X16to32(r, a, b); //r = (int32_t)a*b; without asm requirement
     return r;
 }
 
 // Rotate Estimated vector(s) with small angle approximation, according to the gyro data
-void rotateV32(t_int32_t_vector *v, int16_t *delta) {
+void rotateV32(t_int32_t_vector *v, int16_t *delta)
+{
     int16_t X = v->V16.X;
     int16_t Y = v->V16.Y;
     int16_t Z = v->V16.Z;
@@ -18,25 +20,33 @@ void rotateV32(t_int32_t_vector *v, int16_t *delta) {
 }
 
 //return angle , unit: 1/10 degree
-int16_t _atan2(int32_t y, int32_t x) {
+int16_t _atan2(int32_t y, int32_t x)
+{
     float z = y;
     int16_t a;
     uint8_t c;
     c = abs(y) < abs(x);
-    if (c) {
+    if (c)
+    {
         z = z / x;
-    } else {
+    }
+    else
+    {
         z = x / z;
     }
     a = 2046.43 * (z / (3.5714 + z * z));
-    if (c) {
-        if (x < 0) {
+    if (c)
+    {
+        if (x < 0)
+        {
             if (y < 0)
                 a -= 1800;
             else
                 a += 1800;
         }
-    } else {
+    }
+    else
+    {
         a = 900 - a;
         if (y < 0)
             a -= 1800;
@@ -44,8 +54,10 @@ int16_t _atan2(int32_t y, int32_t x) {
     return a;
 }
 
-float invSqrt(float x) {
-    union {
+float invSqrt(float x)
+{
+    union
+    {
         int32_t i;
         float f;
     } conv;
@@ -54,10 +66,11 @@ float invSqrt(float x) {
     return conv.f * (1.68191409f - 0.703952253f * x * conv.f * conv.f);
 }
 
-IMU::IMU() {
-    estimatedGyroData = {0, 0, (int32_t) ACC_1G_LSB << 16};
+IMU::IMU()
+{
+    estimatedGyroData = {0, 0, (int32_t)ACC_1G_LSB << 16};
 #if !SENSOR_MAG
-    estimatedMagData = {0, (int32_t) 1 << 24, 0};
+    estimatedMagData = {0, (int32_t)1 << 24, 0};
 #endif
 #if defined(ACC_ADXL345)
     acc = new ADXL345(ADXL345_DEVICE);
@@ -73,12 +86,18 @@ IMU::IMU() {
 #if defined(MAG_HMC5883L)
     mag = new HMC5883L(HMC5883L_DEVICE);
 #endif
+
+#if defined(BARO_BMP085)
+    baro = new BMP085(BMP085_DEVICE);
+#endif
 }
 
-void IMU::Init() {
+void IMU::Init()
+{
     Wire.begin();
 
-    while (1) {
+    while (1)
+    {
 #if SENSOR_ACC
         acc->Init();
 #endif
@@ -91,7 +110,12 @@ void IMU::Init() {
         mag->Init();
 #endif
 
-        if (I2C::GetErrCount() == 0) {
+#if SENSOR_BARO
+        baro->Init();
+#endif
+
+        if (I2C::GetErrCount() == 0)
+        {
             break;
         }
         blinkLED(2, 100, 3);
@@ -102,47 +126,8 @@ void IMU::Init() {
     LEDPIN_OFF;
 }
 
-void IMU::Update(uint32_t currentTime) {
-    // never call all functions in the same loop, to avoid high delay spikes
-    static uint8_t taskOrder = 0;
-    switch (taskOrder) {
-        case 0:
-            taskOrder++;
-#if SENSOR_MAG
-            if (mag->Update(currentTime))
-            {
-                break;
-            }
-#endif
-
-        case 1:
-            taskOrder++;
-#if SENSOR_BARO
-
-#endif
-
-        case 2:
-            taskOrder++;
-#if SENSOR_BARO
-
-#endif
-
-        case 3:
-            taskOrder++;
-#if SENSOR_GPS
-
-#endif
-
-        case 4:
-            taskOrder = 0;
-#if SENSOR_SONAR
-
-#endif
-            break;
-    }
-}
-
-void IMU::AccCalibration() {
+void IMU::AccCalibration()
+{
 #if SENSOR_ACC
     acc->Calibration();
 #endif
@@ -152,29 +137,34 @@ void IMU::AccCalibration() {
 #endif
 }
 
-void IMU::MagCalibration() {
+void IMU::MagCalibration()
+{
 #if SENSOR_MAG
     mag->Calibration();
 #endif
 }
 
 // Attention: the 'length' must be consistent with the length of the array pointed to by the 'buf'
-void IMU::GetRawData(int16_t *buf, uint8_t length) {
+void IMU::GetRawData(int16_t *buf, uint8_t length)
+{
     uint8_t stepLength = min(3, length);
-    for (size_t i = 0; i < stepLength; i++) {
+    for (size_t i = 0; i < stepLength; i++)
+    {
 #if SENSOR_ACC || SENSOR_GYRO
         *(buf + i) = accSmooth[i];
 #else
         *(buf + i) = 0;
 #endif
     }
-    if (stepLength < 3) {
+    if (stepLength < 3)
+    {
         return;
     }
 
     length -= stepLength;
     stepLength = min(3, length);
-    for (size_t i = 0; i < stepLength; i++) {
+    for (size_t i = 0; i < stepLength; i++)
+    {
 #if SENSOR_GYRO
         *(buf + 3 + i) = gyroWeighted[i];
 #else
@@ -182,7 +172,8 @@ void IMU::GetRawData(int16_t *buf, uint8_t length) {
 #endif
     }
 
-    if (stepLength < 3) {
+    if (stepLength < 3)
+    {
         return;
     }
 
@@ -192,15 +183,18 @@ void IMU::GetRawData(int16_t *buf, uint8_t length) {
 #if SENSOR_MAG
     mag->GetData(buf + 6, stepLength);
 #else
-    for (size_t i = 0; i < stepLength; i++) {
+    for (size_t i = 0; i < stepLength; i++)
+    {
         *(buf + 6 + i) = 0;
     }
 #endif
 }
 
-void IMU::GetAccData(int16_t *buf, uint8_t length) {
+void IMU::GetAccData(int16_t *buf, uint8_t length)
+{
     length = min(length, 3);
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++)
+    {
 #if SENSOR_ACC
         *(buf + i) = accSmooth[i];
 #else
@@ -209,9 +203,11 @@ void IMU::GetAccData(int16_t *buf, uint8_t length) {
     }
 }
 
-void IMU::GetGyroData(int16_t *buf, uint8_t length) {
+void IMU::GetGyroData(int16_t *buf, uint8_t length)
+{
     length = min(length, 3);
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++)
+    {
 #if SENSOR_GYRO
         *(buf + i) = gyroWeighted[i];
 #else
@@ -220,40 +216,57 @@ void IMU::GetGyroData(int16_t *buf, uint8_t length) {
     }
 }
 
-void IMU::GetMagData(int16_t *buf, uint8_t length) {
+void IMU::GetMagData(int16_t *buf, uint8_t length)
+{
 #if SENSOR_MAG
     mag->GetData(buf, length);
 #else
     length = min(length, 3);
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++)
+    {
         *(buf + i) = 0;
     }
 #endif
 }
 
-void IMU::GetAttitude(int16_t *buf, uint8_t length) {
-    if (length < 3) {
-        if (length > 1) {
+void IMU::GetAttitude(int16_t *buf, uint8_t length)
+{
+    if (length < 3)
+    {
+        if (length > 1)
+        {
             *buf = att.Angle[ROLL];
             *(buf + 1) = att.Angle[PITCH];
-        } else {
+        }
+        else
+        {
             *buf = att.Angle[ROLL];
         }
-    } else {
+    }
+    else
+    {
         *buf = att.Angle[ROLL];
         *(buf + 1) = att.Angle[PITCH];
         *(buf + 2) = att.Heading;
     }
 }
 
-void IMU::UpdateAcc(uint32_t currentTime) {
+void IMU::GetAltitude(int32_t *alt, int16_t *vario)
+{
+    *alt = this->alt.Alt;
+    *vario = this->alt.Vario;
+}
+
+void IMU::UpdateAcc(uint32_t currentTime)
+{
 #if SENSOR_ACC
     // update sensors data
     acc->Update(currentTime);
 #endif
 }
 
-void IMU::UpdateGyro(uint32_t currentTime) {
+void IMU::UpdateGyro(uint32_t currentTime)
+{
 #if SENSOR_GYRO
     // calc gyro weights
     gyro->Update(currentTime);
@@ -263,7 +276,8 @@ void IMU::UpdateGyro(uint32_t currentTime) {
     int16_t currentGyro[3];
     gyro->Update(currentTime);
     gyro->GetData(currentGyro, 3);
-    for (size_t i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 3; i++)
+    {
         gyroWeight[i] = currentGyro[i] + gyroWeight[i];
         gyroWeighted[i] = (gyroWeight[i] + gyroPrevWeight[i]) / 3;
         gyroPrevWeight[i] = gyroWeight[i] >> 1;
@@ -271,25 +285,29 @@ void IMU::UpdateGyro(uint32_t currentTime) {
 #endif
 }
 
-void IMU::UpdateMag(uint32_t currentTime) {
+void IMU::UpdateMag(uint32_t currentTime)
+{
 #if SENSOR_MAG
     mag->Update();
 #endif
 }
 
-void IMU::UpdateBaro(uint32_t currentTime) {
+void IMU::UpdateBaro(uint32_t currentTime)
+{
 #if SENSOR_BARO
-    baro->Update();
+    baro->Update(currentTime);
 #endif
 }
 
-void IMU::UpdateSonar(uint32_t currentTime) {
+void IMU::UpdateSonar(uint32_t currentTime)
+{
 #if SENSOR_SONAR
     sonar->Update();
 #endif
 }
 
-void IMU::UpdateAttitude(uint32_t currentTime) {
+void IMU::UpdateAttitude(uint32_t currentTime)
+{
     uint8_t axis;
     float invGyro; // 1/|G|
     int16_t accData[3] = {0, 0, 0};
@@ -308,7 +326,8 @@ void IMU::UpdateAttitude(uint32_t currentTime) {
 #if SENSOR_ACC && SENSOR_GYRO
     acc->GetData(accData, 3);
     gyro->GetData(gyroData, 3);
-    for (axis = 0; axis < 3; axis++) {
+    for (axis = 0; axis < 3; axis++)
+    {
         // valid as long as LPF_FACTOR is less than 15
         accSmooth[axis] = accLPF[axis] >> ACC_LPF_FACTOR;
         accLPF[axis] += accData[axis] - accSmooth[axis];
@@ -330,13 +349,15 @@ void IMU::UpdateAttitude(uint32_t currentTime) {
 #if SENSOR_MAG
     mag->GetData(magData, 3);
 #endif
-    for (axis = 0; axis < 3; axis++) {
+    for (axis = 0; axis < 3; axis++)
+    {
         // If accel magnitude >1.15G or <0.85G and ACC vector outside of the limit range => we neutralize the effect of accelerometers in the angle estimation.
         // To do that, we just skip filter, as EstV already rotated by Gyro
-        if ((int16_t) (accMag >> 8) > (int16_t) (0.85 * ACC_1G_LSB * ACC_1G_LSB / 256) &&
-            (int16_t) (accMag >> 8) < (int16_t) (1.15 * ACC_1G_LSB * ACC_1G_LSB / 256)) {
+        if ((int16_t)(accMag >> 8) > (int16_t)(0.85 * ACC_1G_LSB * ACC_1G_LSB / 256) &&
+            (int16_t)(accMag >> 8) < (int16_t)(1.15 * ACC_1G_LSB * ACC_1G_LSB / 256))
+        {
             estimatedGyroData.A32[axis] +=
-                    (int32_t) (accSmooth[axis] - estimatedGyroData.A16[2 * axis + 1]) << (16 - GYR_CMPF_FACTOR);
+                (int32_t)(accSmooth[axis] - estimatedGyroData.A16[2 * axis + 1]) << (16 - GYR_CMPF_FACTOR);
         }
 #if SENSOR_MAG
         estimatedMagData.A32[axis] += (int32_t)(magData[axis] - estimatedMagData.A16[2 * axis + 1]) << (16 - GYR_CMPFM_FACTOR);
@@ -344,9 +365,12 @@ void IMU::UpdateAttitude(uint32_t currentTime) {
         accZTmp += mul(accSmooth[axis], estimatedGyroData.A16[2 * axis + 1]);
     }
 
-    if (estimatedGyroData.V16.Z > ACCZ_25DEG) {
+    if (estimatedGyroData.V16.Z > ACCZ_25DEG)
+    {
         smallAngle25 = 1;
-    } else {
+    }
+    else
+    {
         smallAngle25 = 0;
     }
 
@@ -357,10 +381,11 @@ void IMU::UpdateAttitude(uint32_t currentTime) {
     att.Angle[ROLL] = _atan2(estimatedGyroData.V16.X, estimatedGyroData.V16.Z);
     att.Angle[PITCH] = _atan2(estimatedGyroData.V16.Y, invSqrt(sqrtGyroXZ) * sqrtGyroXZ);
     att.Heading = _atan2(
-            mul(estimatedMagData.V16.Z, estimatedGyroData.V16.X) - mul(estimatedMagData.V16.X, estimatedGyroData.V16.Z),
-            (estimatedMagData.V16.Y * sqrtGyroXZ - (mul(estimatedMagData.V16.X, estimatedGyroData.V16.X) +
-                                                    mul(estimatedMagData.V16.Z, estimatedGyroData.V16.Z)) *
-                                                   estimatedGyroData.V16.Y) * invGyro);
+        mul(estimatedMagData.V16.Z, estimatedGyroData.V16.X) - mul(estimatedMagData.V16.X, estimatedGyroData.V16.Z),
+        (estimatedMagData.V16.Y * sqrtGyroXZ - (mul(estimatedMagData.V16.X, estimatedGyroData.V16.X) +
+                                                mul(estimatedMagData.V16.Z, estimatedGyroData.V16.Z)) *
+                                                   estimatedGyroData.V16.Y) *
+            invGyro);
 
 #if SENSOR_MAG
     // att.Heading += 地磁偏角 // set from GUI
@@ -368,6 +393,8 @@ void IMU::UpdateAttitude(uint32_t currentTime) {
     att.Heading /= 10;
 }
 
-void IMU::UpdateAltitude(uint32_t currentTime) {
-
+void IMU::UpdateAltitude(uint32_t currentTime)
+{
+    int32_t baroAlt = (baro->GetLogBaroGroundPressureSum() - log(baro->GetCCPData())) * baro->GetBaroGroundTemperatureScale();
+    alt.Alt = (alt.Alt * 6 + baroAlt * 2) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
 }

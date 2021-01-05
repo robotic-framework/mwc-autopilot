@@ -46,3 +46,27 @@ void I2C::read(uint8_t address, uint8_t num, uint8_t _buff[])
         return;
     }
 }
+
+uint8_t I2C::read8(uint8_t address)
+{
+    uint8_t buff[1];
+    read(address, 1, buff);
+    return buff[0];
+}
+
+uint16_t I2C::read16(uint8_t address)
+{
+    uint8_t raw[2];
+    
+    read(address, 2, raw);
+    return raw[1] | (raw[0] << 8);
+}
+
+uint32_t I2C::read32(uint8_t address)
+{
+    uint32_t val;
+    uint8_t raw[4];
+
+    read(address, 4, raw);
+    return raw[3] | (raw[2] << 8) | (raw[1] << 16) | (raw[0] << 24);
+}

@@ -62,6 +62,10 @@ protected:
     void write(uint8_t innerAddress, uint8_t value);
     void read(uint8_t address, uint8_t num, uint8_t _buff[]);
 
+    uint8_t read8(uint8_t address);
+    uint16_t read16(uint8_t address);
+    uint32_t read32(uint8_t address);
+
     virtual void init() = 0;
 
 private:

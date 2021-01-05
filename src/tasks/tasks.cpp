@@ -93,8 +93,8 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskName = "MAG",
                 .checkFunc = NULL,
                 .taskFunc = taskGetMag,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #endif
 #if SENSOR_BARO
@@ -102,8 +102,8 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskName = "BARO",
                 .checkFunc = NULL,
                 .taskFunc = taskGetBaro,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #endif
 #if SENSOR_SONAR
@@ -111,8 +111,8 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskName = "SONAR",
                 .checkFunc = NULL,
                 .taskFunc = taskGetSonar,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #endif
 #if SENSOR_GPS
@@ -120,8 +120,8 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskName = "GPS",
                 .checkFunc = NULL,
                 .taskFunc = taskGetGPS,
-                .staticPriority = TASK_PRIORITY_MEDIUM,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #endif
 #if SENSOR_ACC || SENSOR_GYRO
@@ -139,7 +139,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskUpdateAltitude,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
+                .desiredPeriod = TASK_PERIOD_HZ(40),
         },
 #endif
 #if SENSOR_ACC || SENSOR_GYRO
@@ -313,6 +313,7 @@ void Tasks::Schedule() {
     currentTask = selectedTask;
 
     if (selectedTask) {
+        Serial.println(selectedTask->taskName);
         selectedTask->lastExecutedAt = currentTime;
         selectedTask->dynamicPriority = 0;
 

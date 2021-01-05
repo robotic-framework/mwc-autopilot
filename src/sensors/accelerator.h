@@ -1,5 +1,5 @@
-#ifndef SENSOR_H_
-#define SENSOR_H_
+#ifndef ACC_H_
+#define ACC_H_
 
 #include <stdint.h>
 #include "i2c.h"
@@ -35,4 +35,4 @@ public:
     void GetData(int16_t *buf, uint8_t length);
 };
 
-#endif // SENSOR_H_
+#endif // ACC_H_

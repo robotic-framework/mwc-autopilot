@@ -5,8 +5,19 @@
 #include "config.h"
 #include "def.h"
 #include "led.h"
+
+#if SENSOR_ACC
 #include "sensors/accelerator.h"
+#endif
+#if SENSOR_GYRO
 #include "sensors/gyroscope.h"
+#endif
+#if SENSOR_MAG
+#include "sensors/meganetometer.h"
+#endif
+#if SENSOR_BARO
+#include "sensors/baro.h"
+#endif
 
 #if defined(ACC_ADXL345)
 #include "sensors/ADXL345.h"
@@ -21,6 +32,10 @@
 
 #if defined(MAG_HMC5883L)
 #include "sensors/HMC5883L.h"
+#endif
+
+#if defined(BARO_BMP085)
+#include "sensors/BMP085.h"
 #endif
 
 /* Set the Low Pass Filter factor for ACC
@@ -94,6 +109,11 @@ typedef struct
     int16_t Angle[2]; // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
     int16_t Heading;
 } Attitude;
+typedef struct
+{
+    int32_t Alt;
+    int16_t Vario;
+} Altitude;
 
 int32_t __attribute__((noinline)) mul(int16_t a, int16_t b);
 void rotateV32(t_int32_t_vector *v, int16_t *delta);
@@ -118,8 +138,13 @@ private:
     Meganetometer *mag;
 #endif
 
+#if SENSOR_BARO
+    Baro *baro;
+#endif
+
     // indicators
     Attitude att;
+    Altitude alt;
     int16_t gyroWeighted[3];
 
     int16_t gyroPrevWeight[3] = {0, 0, 0};
@@ -143,7 +168,6 @@ public:
     void UpdateAttitude(uint32_t currentTime);
     void UpdateAltitude(uint32_t currentTime);
 
-    void Update(uint32_t currentTime);
     void GetRawData(int16_t *buf, uint8_t length);
     void GetAccData(int16_t *buf, uint8_t length);
     void GetGyroData(int16_t *buf, uint8_t length);
@@ -151,6 +175,7 @@ public:
     void AccCalibration();
     void MagCalibration();
     void GetAttitude(int16_t *buf, uint8_t length);
+    void GetAltitude(int32_t *alt, int16_t *vario);
 };
 
 #endif // IMU_H_
