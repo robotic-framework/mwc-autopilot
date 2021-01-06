@@ -90,6 +90,9 @@ IMU::IMU()
 #if defined(BARO_BMP085)
     baro = new BMP085(BMP085_DEVICE);
 #endif
+
+    alt.Alt = 0;
+    alt.Vario = 0;
 }
 
 void IMU::Init()
@@ -141,6 +144,13 @@ void IMU::MagCalibration()
 {
 #if SENSOR_MAG
     mag->Calibration();
+#endif
+}
+
+void IMU::BaroCalibration()
+{
+#if SENSOR_BARO
+    baro->Calibration(200);
 #endif
 }
 
@@ -229,6 +239,17 @@ void IMU::GetMagData(int16_t *buf, uint8_t length)
 #endif
 }
 
+void IMU::GetBaroData(int16_t *ct, int32_t *cp)
+{
+#if SENSOR_BARO
+    *ct = baro->GetCTData();
+    *cp = baro->GetCPData();
+#else
+    *ct = 0;
+    *cp = 0;
+#endif
+}
+
 void IMU::GetAttitude(int16_t *buf, uint8_t length)
 {
     if (length < 3)
@@ -255,6 +276,16 @@ void IMU::GetAltitude(int32_t *alt, int16_t *vario)
 {
     *alt = this->alt.Alt;
     *vario = this->alt.Vario;
+}
+
+void IMU::GetAltitude(int32_t *alt)
+{
+    *alt = this->alt.Alt;
+}
+
+void IMU::SetAltitudeVario(int16_t vario)
+{
+    alt.Vario = vario;
 }
 
 void IMU::UpdateAcc(uint32_t currentTime)
@@ -308,6 +339,26 @@ void IMU::UpdateSonar(uint32_t currentTime)
 
 void IMU::UpdateAttitude(uint32_t currentTime)
 {
+// check if is in calibration
+#if SENSOR_ACC
+    if (acc->IsCalibrating())
+    {
+        return;
+    }
+#endif
+#if SENSOR_GYRO
+    if (gyro->IsCalibrating())
+    {
+        return;
+    }
+#endif
+#if SENSOR_MAG
+    if (mag->IsCalibrating())
+    {
+        return;
+    }
+#endif
+
     uint8_t axis;
     float invGyro; // 1/|G|
     int16_t accData[3] = {0, 0, 0};
@@ -315,13 +366,25 @@ void IMU::UpdateAttitude(uint32_t currentTime)
     int16_t magData[3];
     int32_t accMag = 0;
     int32_t accZTmp = 0;
+    static int16_t accZoffset = 0;
     int16_t deltaAngle[3];
+
+    if (estPrevTime == 0)
+    {
+        estPrevTime = currentTime;
+        return;
+    }
+
+    // Serial.print(currentTime - estPrevTime);
+    // Serial.println("> ");
 
     // unit: radian per bit, scaled by 2^16 for further multiplication
     // with a delta time of 3000 us, and GYRO scale of most gyros, scale = a little bit less than 1
     float scale = (currentTime - estPrevTime) * (GYRO_SCALE * 65536);
     estPrevTime = currentTime;
 
+    // Serial.print(scale);
+    // Serial.print("  ");
 // Initialization
 #if SENSOR_ACC && SENSOR_GYRO
     acc->GetData(accData, 3);
@@ -336,6 +399,13 @@ void IMU::UpdateAttitude(uint32_t currentTime)
         // unit: radian scaled by 2^16
         // imu.gyroADC[axis] is 14 bit long, the scale factor ensure deltaGyroAngle16[axis] is still 14 bit long
         deltaAngle[axis] = gyroData[axis] * scale;
+        // Serial.print("(G:");
+        // Serial.print(gyroData[axis]);
+        // Serial.print(", D:");
+        // Serial.print(deltaAngle[axis]);
+        // Serial.print(", E:");
+        // Serial.print(estimatedGyroData.A16[axis * 2 + 1]);
+        // Serial.print(") ");
     }
 #endif
 
@@ -387,14 +457,40 @@ void IMU::UpdateAttitude(uint32_t currentTime)
                                                    estimatedGyroData.V16.Y) *
             invGyro);
 
+    // Serial.print("x: ");
+    // Serial.print(estimatedGyroData.V16.X);
+    // Serial.print(", z: ");
+    // Serial.print(estimatedGyroData.V16.Z);
+    // Serial.print(", roll: ");
+    // Serial.print(att.Angle[ROLL]);
+    // Serial.print(", pitch: ");
+    // Serial.println(att.Angle[PITCH]);
+
 #if SENSOR_MAG
     // att.Heading += 地磁偏角 // set from GUI
 #endif
     att.Heading /= 10;
+
+    accZ = accZTmp * invGyro;
+    if (!arm)
+    {
+        accZoffset -= accZoffset >> 3;
+        accZoffset += accZ;
+    }
+    accZ -= accZoffset >> 3;
 }
 
 void IMU::UpdateAltitude(uint32_t currentTime)
 {
-    int32_t baroAlt = (baro->GetLogBaroGroundPressureSum() - log(baro->GetCCPData())) * baro->GetBaroGroundTemperatureScale();
-    alt.Alt = (alt.Alt * 6 + baroAlt * 2) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
+    if (!baro->GetCCPData())
+    {
+        return;
+    }
+    int32_t baroAlt = (log(baro->GetCCPData()) - baro->GetLogBaroGroundPressureSum()) * baro->GetBaroGroundTemperatureScale();
+    alt.Alt = (alt.Alt * 7 + baroAlt) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
+}
+
+int16_t IMU::GetACCZ()
+{
+    return accZ;
 }

@@ -63,6 +63,9 @@
 #define MSP_BIND 241         //in message          no param
 #define MSP_ARM 242          //in message
 #define MSP_DIS_ARM 243      //in message
+#define MSP_RAW_BARO 244     // out message
+#define MSP_ALT_HOLD 245     // in message
+#define MSP_ALT_UNLOCK 246   // in message
 
 #define MSP_EEPROM_WRITE 250 //in message          no param
 

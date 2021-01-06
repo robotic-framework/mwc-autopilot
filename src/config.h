@@ -109,6 +109,7 @@
 #define ACC_1G_LSB 256
 #endif
 #define ACCZ_25DEG (int16_t)(ACC_1G_LSB * 0.90631) // 0.90631 = cos(25deg) (cos(theta) of accZ comparison)
+#define ACC_VelScale (9.80665f / 10000.0f / ACC_1G_LSB)
 
 // gyro scale
 #if defined(GYRO_ITG3205)

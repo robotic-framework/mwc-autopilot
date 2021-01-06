@@ -9,9 +9,10 @@ void Accelerator::Update(uint32_t currentTime)
         calibration(currentTime);
     }
 
-    data[ROLL] -= offset[ROLL];
-    data[PITCH] -= offset[PITCH];
-    data[YAW] -= offset[YAW];
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        data[i] -= offset[i];
+    }
 }
 
 void Accelerator::Calibration()
@@ -23,15 +24,13 @@ void Accelerator::Calibration()
     }
 }
 
+bool Accelerator::IsCalibrating()
+{
+    return (calibrateSteps > 0);
+}
+
 void Accelerator::calibration(uint32_t currentTime)
 {
-    // each read is spaced by 100ms
-    if (currentTime < stepTime)
-    {
-        return;
-    }
-    stepTime = currentTime + 10000;
-
     LEDPIN_ON
     for (uint8_t i = 0; i < 3; i++)
     {

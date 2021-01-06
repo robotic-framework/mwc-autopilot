@@ -6,8 +6,13 @@ void Baro::Update(uint32_t currentTime)
 
     if (calibrateSteps > 0)
     {
+        LEDPIN_ON;
         calibration(currentTime);
         calibrateSteps--;
+        if (calibrateSteps == 0)
+        {
+            LEDPIN_OFF;
+        }
     }
 }
 

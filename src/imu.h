@@ -121,6 +121,7 @@ int16_t _atan2(int32_t y, int32_t x);
 float invSqrt(float x);
 
 extern uint8_t smallAngle25;
+extern bool arm;
 
 class IMU
 {
@@ -156,6 +157,8 @@ private:
     t_int32_t_vector estimatedGyroData;
     t_int32_t_vector estimatedMagData;
 
+    int16_t accZ;
+
 public:
     IMU();
 
@@ -172,10 +175,16 @@ public:
     void GetAccData(int16_t *buf, uint8_t length);
     void GetGyroData(int16_t *buf, uint8_t length);
     void GetMagData(int16_t *buf, uint8_t length);
+    void GetBaroData(int16_t *ct, int32_t *cp);
     void AccCalibration();
     void MagCalibration();
+    void BaroCalibration();
     void GetAttitude(int16_t *buf, uint8_t length);
     void GetAltitude(int32_t *alt, int16_t *vario);
+    void GetAltitude(int32_t *alt);
+    void SetAltitudeVario(int16_t vario);
+
+    int16_t GetACCZ();
 };
 
 #endif // IMU_H_

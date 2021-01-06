@@ -14,6 +14,7 @@ void BMP085::init()
     ctx.mb = read16(BMP085_CAL_MB);
     ctx.mc = read16(BMP085_CAL_MC);
     ctx.md = read16(BMP085_CAL_MD);
+    ctx.deadline = micros() + 5000;
 
     startReadUT();
 }

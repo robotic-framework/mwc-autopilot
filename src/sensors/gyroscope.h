@@ -18,6 +18,7 @@ private:
   uint16_t calibrateSteps;
   int16_t offset[3];
   uint32_t offsetTotal[3];
+  int16_t prevData[3] = {0, 0, 0};
 
   void calibration();
 
@@ -31,6 +32,7 @@ public:
 
   void Update(uint32_t currentTime);
   void Calibration();
+  bool IsCalibrating();
   void GetData(int16_t *buf, uint8_t length);
   void SetData(int16_t *data, uint8_t length);
 };

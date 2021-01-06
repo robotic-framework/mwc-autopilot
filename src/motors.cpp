@@ -3,6 +3,22 @@
 
 #define PIDMIX(X, Y, Z) rcCommand[THROTTLE] + pidOffset[ROLL] * X + pidOffset[PITCH] * Y + pidOffset[YAW] * Z
 
+#define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
+
+#define applyDeadband(value, deadband) \
+    if (abs(value) < deadband)         \
+    {                                  \
+        value = 0;                     \
+    }                                  \
+    else if (value > 0)                \
+    {                                  \
+        value -= deadband;             \
+    }                                  \
+    else if (value < 0)                \
+    {                                  \
+        value += deadband;             \
+    }
+
 extern IMU imu;
 extern bool angleMode;
 extern bool horizenMode;
@@ -17,7 +33,9 @@ uint8_t Motors::Pins[8] = {9, 10, 11, 3, 6, 5, A2, 12};
 uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
 #endif
 
-Motors::Motors()
+int16_t Motors::errorAltI = 0;
+
+Motors::Motors() : pidOffsetAlt(0)
 {
 }
 
@@ -105,7 +123,7 @@ void Motors::UpdatePID(uint32_t currentTime)
 {
     if (arm)
     {
-        applyPID();
+        applyPID(currentTime);
         mixPID();
     }
 }
@@ -118,7 +136,7 @@ void Motors::UpdateMotors(uint32_t currentTime)
     }
 }
 
-void Motors::applyPID()
+void Motors::applyPID(uint32_t currentTime)
 {
     uint8_t axis;
     int16_t error, errorAngle;
@@ -129,7 +147,19 @@ void Motors::applyPID()
     static int16_t errorAngleI[2] = {0, 0};
     int16_t PTerm = 0, ITerm = 0, DTerm, PTermACC, ITermACC;
     int16_t delta;
+
+    static uint16_t previousTime = 0;
+    uint16_t deltaTime;
+
     static int16_t delta1[2], delta2[2];
+
+    if (previousTime == 0)
+    {
+        previousTime = currentTime;
+        return;
+    }
+    deltaTime = currentTime - previousTime;
+    previousTime = currentTime;
 
     if (horizenMode)
     {
@@ -200,12 +230,53 @@ void Motors::applyPID()
 
     ITerm = constrain((int16_t)(errorGyroI_YAW >> 13), -GYRO_I_MAX, GYRO_I_MAX);
     pidOffset[YAW] = PTerm + ITerm;
+
+    // ALT HOLD
+    if (baroMode)
+    {
+        int32_t alt;
+        int16_t vario;
+        imu.GetAltitude(&alt, &vario);
+        int16_t errorAlt = constrain(altHold - alt, -300, 300);
+        applyDeadband(errorAlt, 10);
+        pidOffsetAlt = constrain(pid[PIDALT].P * errorAlt >> 7, -150, 150);
+
+        errorAltI += pid[PIDALT].I * errorAlt >> 6;
+        errorAltI = constrain(errorAltI, -30000, 30000);
+        pidOffsetAlt += errorAltI >> 9;
+
+        int16_t accZ = imu.GetACCZ();
+        applyDeadband(accZ, ACC_Z_DEADBAND);
+
+        static int32_t lastAlt;
+        static float vel = 0.f;
+        int16_t altVel = mul((alt - lastAlt), 40); // altitude update interval is 40Hz
+        lastAlt = alt;
+        altVel = constrain(altVel, -300, 300);
+        applyDeadband(altVel, 10);
+
+        // Integrator - velocity, cm/sec
+        vel += accZ * ACC_VelScale * deltaTime;
+        // apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity).
+        // By using CF it's possible to correct the drift of integrated accZ (velocity) without loosing the phase, i.e without delay
+        vel = vel * 0.985f + altVel * 0.015f;
+
+        vario = vel;
+        applyDeadband(vario, 5);
+        imu.SetAltitudeVario(vario);
+        pidOffsetAlt -= constrain(pid[PIDALT].D * vario >> 4, -150, 150);
+    }
 }
 
 void Motors::mixPID()
 {
     uint16_t maxMotor;
     uint8_t i;
+
+    if (baroMode)
+    {
+        rcCommand[THROTTLE] += pidOffsetAlt;
+    }
 
     motors[0] = PIDMIX(-1, 1, -1);
     motors[1] = PIDMIX(-1, -1, 1);

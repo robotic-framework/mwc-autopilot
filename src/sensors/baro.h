@@ -38,7 +38,17 @@ protected:
     virtual void getRawData(uint32_t currentTime) = 0;
 
 public:
-    Baro(uint8_t address) : I2C(address){};
+    Baro(uint8_t address) : I2C(address),
+                            historyPressureIndex(0),
+                            ccp(0),
+                            ct(0),
+                            cp(0)
+    {
+        for (uint8_t i = 0; i < BARO_HISTORY_SIZE; i++)
+        {
+            historyPressure[i] = 0;
+        }
+    };
 
     void Update(uint32_t currentTime);
     void Calibration(uint16_t steps);

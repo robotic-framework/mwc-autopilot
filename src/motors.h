@@ -4,15 +4,20 @@
 #include <stdint.h>
 #include <Arduino.h>
 
+extern int32_t altHold;
+extern bool baroMode;
+
 class Motors
 {
 private:
     uint16_t motors[8] = {};
     int16_t pidOffset[3];
+    int16_t pidOffsetAlt;
     int32_t prop;
+    static int16_t errorAltI;
 
     void writeMotors();
-    void applyPID();
+    void applyPID(uint32_t currentTime);
     void mixPID();
 
 public:

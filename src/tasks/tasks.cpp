@@ -94,7 +94,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskGetMag,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_US(2000),
+                .desiredPeriod = TASK_PERIOD_HZ(10),
         },
 #endif
 #if SENSOR_BARO
@@ -130,7 +130,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskUpdateAttitude,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_US(2000),
+                .desiredPeriod = TASK_PERIOD_US(500),
         },
 #endif
 #if SENSOR_BARO || SENSOR_SONAR
@@ -313,7 +313,6 @@ void Tasks::Schedule() {
     currentTask = selectedTask;
 
     if (selectedTask) {
-        Serial.println(selectedTask->taskName);
         selectedTask->lastExecutedAt = currentTime;
         selectedTask->dynamicPriority = 0;
 

@@ -33,6 +33,7 @@ public:
 
     uint8_t Update(uint32_t currentTime);
     void Calibration();
+    bool IsCalibrating();
     void GetData(int16_t *buf, uint8_t length);
 };
 

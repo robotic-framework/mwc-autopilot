@@ -28,6 +28,10 @@ void setup()
     serialInit();
 #endif
     loadDefaults();
+
+    imu.AccCalibration();
+    imu.MagCalibration();
+    imu.BaroCalibration();
 }
 
 void loop()

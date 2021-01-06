@@ -7,6 +7,8 @@ uint16_t cycleTime = 0;
 bool arm = false;
 bool angleMode = 1;
 bool horizenMode = 1;
+bool baroMode = 1;
+int32_t altHold = 0;
 
 int16_t rcCommand[4] = {0, 0, 0, 1460};
 PID pid[PIDITEMS];
@@ -25,4 +27,7 @@ void loadDefaults()
     pid[PIDLEVEL].P = 90;
     pid[PIDLEVEL].I = 10;
     pid[PIDLEVEL].D = 100;
+    pid[PIDALT].P = 64;
+    pid[PIDALT].I = 25;
+    pid[PIDALT].D = 24;
 }

@@ -7,6 +7,8 @@ extern uint16_t cycleTime;
 extern bool arm;
 extern bool angleMode;
 extern bool horizenMode;
+extern bool baroMode;
+extern int32_t altHold;
 
 enum MSP_protocol_states
 {
@@ -188,6 +190,17 @@ void evaluateCommand(uint8_t cmd)
         responsePayload((uint8_t *)&imuData, 18);
         break;
 
+    case MSP_RAW_BARO:
+        struct
+        {
+            int16_t ct;
+            int32_t cp;
+        } baroRaw;
+
+        imu.GetBaroData(&baroRaw.ct, &baroRaw.cp);
+        responsePayload((uint8_t *)&baroRaw, 6);
+        break;
+
     case MSP_ATTITUDE:
         int16_t att[3];
         imu.GetAttitude(att, 3);
@@ -214,11 +227,10 @@ void evaluateCommand(uint8_t cmd)
 
     case MSP_MAG_CALIBRATION:
         responseEmpty();
-        // TODO remove arm = true;
-        arm = true;
         if (!arm)
         {
             imu.MagCalibration();
+            imu.BaroCalibration();
         }
         break;
 
@@ -238,6 +250,12 @@ void evaluateCommand(uint8_t cmd)
         responseEmpty();
         arm = false;
         LEDPIN_OFF
+        break;
+
+    case MSP_ALT_HOLD:
+        responseEmpty();
+        baroMode = true;
+        imu.GetAltitude(&altHold);
         break;
     }
 }

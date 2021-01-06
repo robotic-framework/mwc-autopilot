@@ -2,12 +2,6 @@
 
 uint8_t Meganetometer::Update(uint32_t currentTime)
 {
-    // each read is spaced by 100ms
-    if (currentTime < stepTime)
-    {
-        return 0;
-    }
-    stepTime = currentTime + 100000;
     this->getRawData();
 
     for (uint8_t i = 0; i < 3; i++)
@@ -21,7 +15,7 @@ uint8_t Meganetometer::Update(uint32_t currentTime)
 
     if (calibrating)
     {
-        calibration(stepTime);
+        calibration(currentTime);
     }
 
     return 1;
@@ -30,6 +24,11 @@ uint8_t Meganetometer::Update(uint32_t currentTime)
 void Meganetometer::Calibration()
 {
     calibrating = true;
+}
+
+bool Meganetometer::IsCalibrating()
+{
+    return calibrating;
 }
 
 void Meganetometer::calibration(uint32_t stepTime)
