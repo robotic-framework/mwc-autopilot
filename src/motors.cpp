@@ -253,6 +253,10 @@ void Motors::applyPID(uint32_t currentTime)
         int16_t vario;
         imu.GetAltitude(&alt, &vario);
         int16_t errorAlt = constrain(altHold - alt, -300, 300);
+        // Serial.print("hold: ");
+        // Serial.print(altHold);
+        // Serial.print(", alt: ");
+        // Serial.print(alt);
         applyDeadband(errorAlt, 10);
         pidOffsetAlt = constrain(pid[PIDALT].P * errorAlt >> 7, -150, 150);
 
@@ -264,22 +268,32 @@ void Motors::applyPID(uint32_t currentTime)
         applyDeadband(accZ, ACC_Z_DEADBAND);
 
         static int32_t lastAlt;
-        static float vel = 0.f;
+        static float zVel = 0.f;
         int16_t altVel = mul((alt - lastAlt), 40); // altitude update interval is 40Hz
         lastAlt = alt;
         altVel = constrain(altVel, -300, 300);
         applyDeadband(altVel, 10);
 
         // Integrator - velocity, cm/sec
-        vel += accZ * ACC_VelScale * deltaTime;
+        zVel += accZ * ACC_VelScale * deltaTime;
         // apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity).
         // By using CF it's possible to correct the drift of integrated accZ (velocity) without loosing the phase, i.e without delay
-        vel = vel * 0.985f + altVel * 0.015f;
+        zVel = zVel * 0.985f + altVel * 0.015f;
 
-        vario = vel;
+        vario = zVel;
         applyDeadband(vario, 5);
         imu.SetAltitudeVario(vario);
         pidOffsetAlt -= constrain(pid[PIDALT].D * vario >> 4, -150, 150);
+        // Serial.print(", accZ: ");
+        // Serial.print(accZ);
+        // Serial.print(", dt: ");
+        // Serial.print(deltaTime);
+        // Serial.print(", altVel: ");
+        // Serial.print(altVel);
+        // Serial.print(", zVel: ");
+        // Serial.print(zVel);
+        // Serial.print(", offsetD: ");
+        // Serial.print(pidOffsetAlt);
     }
 
     if (baroMode /* || takeOffMode || landingMode */)
@@ -298,6 +312,18 @@ void Motors::mixPID()
     motors[1] = PIDMIX(-1, -1, 1);
     motors[2] = PIDMIX(1, 1, 1);
     motors[3] = PIDMIX(1, -1, -1);
+
+    // Serial.print(", throttle: ");
+    // Serial.print(rcCommand[THROTTLE]);
+    // Serial.print(", motors: (");
+    // Serial.print(motors[0]);
+    // Serial.print(", ");
+    // Serial.print(motors[1]);
+    // Serial.print(", ");
+    // Serial.print(motors[2]);
+    // Serial.print(", ");
+    // Serial.print(motors[3]);
+    // Serial.println(") ");
 
     maxMotor = motors[0];
     for (i = 0; i < MOTOR_COUNT; i++)

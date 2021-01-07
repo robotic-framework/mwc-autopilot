@@ -2,6 +2,7 @@
 #define CONFIG_H_
 
 #define DEBUG 0
+#define TEST_ALTHOLD
 
 #define VERSION 100
 /**

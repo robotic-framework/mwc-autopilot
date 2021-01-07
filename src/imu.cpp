@@ -372,16 +372,11 @@ void IMU::UpdateAttitude(uint32_t currentTime)
         return;
     }
 
-    // Serial.print(currentTime - estPrevTime);
-    // Serial.println("> ");
-
     // unit: radian per bit, scaled by 2^16 for further multiplication
     // with a delta time of 3000 us, and GYRO scale of most gyros, scale = a little bit less than 1
     float scale = (currentTime - estPrevTime) * (GYRO_SCALE * 65536);
     estPrevTime = currentTime;
 
-    // Serial.print(scale);
-    // Serial.print("  ");
 // Initialization
 #if SENSOR_ACC && SENSOR_GYRO
     int16_t accData[3] = {0, 0, 0};
@@ -399,13 +394,6 @@ void IMU::UpdateAttitude(uint32_t currentTime)
         // unit: radian scaled by 2^16
         // imu.gyroADC[axis] is 14 bit long, the scale factor ensure deltaGyroAngle16[axis] is still 14 bit long
         deltaAngle[axis] = gyroData[axis] * scale;
-        // Serial.print("(G:");
-        // Serial.print(gyroData[axis]);
-        // Serial.print(", D:");
-        // Serial.print(deltaAngle[axis]);
-        // Serial.print(", E:");
-        // Serial.print(estimatedGyroData.A16[axis * 2 + 1]);
-        // Serial.print(") ");
     }
 #endif
 
@@ -458,15 +446,6 @@ void IMU::UpdateAttitude(uint32_t currentTime)
                                                    estimatedGyroData.V16.Y) *
             invGyro);
 
-    // Serial.print("x: ");
-    // Serial.print(estimatedGyroData.V16.X);
-    // Serial.print(", z: ");
-    // Serial.print(estimatedGyroData.V16.Z);
-    // Serial.print(", roll: ");
-    // Serial.print(att.Angle[ROLL]);
-    // Serial.print(", pitch: ");
-    // Serial.println(att.Angle[PITCH]);
-
 #if SENSOR_MAG
     // att.Heading += 地磁偏角 // set from GUI
 #endif
@@ -489,9 +468,20 @@ void IMU::UpdateAltitude(uint32_t currentTime)
     }
     int32_t baroAlt = (log(baro->GetCCPData()) - baro->GetLogBaroGroundPressureSum()) * baro->GetBaroGroundTemperatureScale();
     alt.Alt = (alt.Alt * 7 + baroAlt) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
+
+    #if defined(TEST_ALTHOLD)
+    alt.Alt = (alt.Alt * 4 + testAltBase * 4) >> 3;
+    #endif
 }
 
 int16_t IMU::GetACCZ()
 {
     return accZ;
 }
+
+#if defined(TEST_ALTHOLD)
+void IMU::SetTestAltBase(uint16_t a)
+{
+    testAltBase = a;
+}
+#endif

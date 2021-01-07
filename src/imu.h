@@ -159,6 +159,10 @@ private:
 
     int16_t accZ;
 
+    #if defined(TEST_ALTHOLD)
+    int32_t testAltBase;
+    #endif
+
 public:
     IMU();
 
@@ -183,8 +187,11 @@ public:
     void GetAltitude(int32_t *alt, int16_t *vario);
     void GetAltitude(int32_t *alt);
     void SetAltitudeVario(int16_t vario);
-
     int16_t GetACCZ();
+
+    #if defined(TEST_ALTHOLD)
+    void SetTestAltBase(uint16_t a);
+    #endif
 };
 
 #endif // IMU_H_

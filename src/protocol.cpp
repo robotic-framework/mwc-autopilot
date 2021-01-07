@@ -253,9 +253,9 @@ void evaluateCommand(uint8_t cmd)
         break;
 
     case MSP_ALT_HOLD:
-        responseEmpty();
         baroMode = true;
         imu.GetAltitude(&altHold);
+        responsePayload((uint8_t *)&altHold, 4);
         break;
 
     case MSP_ALT_UNLOCK:
@@ -263,6 +263,14 @@ void evaluateCommand(uint8_t cmd)
         baroMode = false;
         altHold = 0;
         break;
+
+    #if defined(TEST_ALTHOLD)
+    case MSP_TEST_ALTHOLD:
+        responseEmpty();
+        uint16_t p = read16();
+        imu.SetTestAltBase(p);
+        break;
+    #endif
     }
 }
 
@@ -333,6 +341,7 @@ void protocolHandler()
                 // the last byte is checksum, check if equel
                 if (checksum == c)
                 {
+                    inputBufferIndex = 0;
                     evaluateCommand(command);
                 }
                 state = IDLE;
