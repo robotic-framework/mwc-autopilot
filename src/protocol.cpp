@@ -257,6 +257,12 @@ void evaluateCommand(uint8_t cmd)
         baroMode = true;
         imu.GetAltitude(&altHold);
         break;
+
+    case MSP_ALT_UNLOCK:
+        responseEmpty();
+        baroMode = false;
+        altHold = 0;
+        break;
     }
 }
 

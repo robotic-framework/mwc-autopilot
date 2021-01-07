@@ -35,7 +35,7 @@ uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
 
 int16_t Motors::errorAltI = 0;
 
-Motors::Motors() : pidOffsetAlt(0)
+Motors::Motors()
 {
 }
 
@@ -141,6 +141,7 @@ void Motors::applyPID(uint32_t currentTime)
     uint8_t axis;
     int16_t error, errorAngle;
     int16_t rc;
+    int16_t pidOffsetAlt;
     static int16_t lastGyro[2] = {0, 0};
     static int16_t errorGyroI[2] = {0, 0};
     static int32_t errorGyroI_YAW;
@@ -232,6 +233,20 @@ void Motors::applyPID(uint32_t currentTime)
     pidOffset[YAW] = PTerm + ITerm;
 
     // ALT HOLD
+    if (baroMode != lastBaroMode)
+    {
+        isBaroModeChanged = 1;
+        lastBaroMode = baroMode;
+    }
+    if (isBaroModeChanged)
+    {
+        if (baroMode)
+        {
+            errorAltI = 0;
+        }
+        initialThrottleHold = rcCommand[THROTTLE];
+        isBaroModeChanged = 0;
+    }
     if (baroMode)
     {
         int32_t alt;
@@ -266,17 +281,18 @@ void Motors::applyPID(uint32_t currentTime)
         imu.SetAltitudeVario(vario);
         pidOffsetAlt -= constrain(pid[PIDALT].D * vario >> 4, -150, 150);
     }
+
+    if (baroMode /* || takeOffMode || landingMode */)
+    {
+        // throttle compensation
+        rcCommand[THROTTLE] = initialThrottleHold + pidOffsetAlt;
+    }
 }
 
 void Motors::mixPID()
 {
     uint16_t maxMotor;
     uint8_t i;
-
-    if (baroMode)
-    {
-        rcCommand[THROTTLE] += pidOffsetAlt;
-    }
 
     motors[0] = PIDMIX(-1, 1, -1);
     motors[1] = PIDMIX(-1, -1, 1);

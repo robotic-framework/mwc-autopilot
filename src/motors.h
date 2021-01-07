@@ -12,9 +12,11 @@ class Motors
 private:
     uint16_t motors[8] = {};
     int16_t pidOffset[3];
-    int16_t pidOffsetAlt;
     int32_t prop;
     static int16_t errorAltI;
+    uint8_t lastBaroMode = baroMode;
+    uint8_t isBaroModeChanged = 1;
+    int16_t initialThrottleHold = 0;
 
     void writeMotors();
     void applyPID(uint32_t currentTime);

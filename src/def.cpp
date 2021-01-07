@@ -4,10 +4,10 @@ Motors motors;
 IMU imu;
 uint8_t smallAngle25 = 1;
 uint16_t cycleTime = 0;
-bool arm = false;
+bool arm = 0;
 bool angleMode = 1;
 bool horizenMode = 1;
-bool baroMode = 1;
+bool baroMode = 0;
 int32_t altHold = 0;
 
 int16_t rcCommand[4] = {0, 0, 0, 1460};

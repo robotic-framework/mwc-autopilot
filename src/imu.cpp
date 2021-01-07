@@ -361,9 +361,6 @@ void IMU::UpdateAttitude(uint32_t currentTime)
 
     uint8_t axis;
     float invGyro; // 1/|G|
-    int16_t accData[3] = {0, 0, 0};
-    int16_t gyroData[3];
-    int16_t magData[3];
     int32_t accMag = 0;
     int32_t accZTmp = 0;
     static int16_t accZoffset = 0;
@@ -387,6 +384,9 @@ void IMU::UpdateAttitude(uint32_t currentTime)
     // Serial.print("  ");
 // Initialization
 #if SENSOR_ACC && SENSOR_GYRO
+    int16_t accData[3] = {0, 0, 0};
+    int16_t gyroData[3];
+    
     acc->GetData(accData, 3);
     gyro->GetData(gyroData, 3);
     for (axis = 0; axis < 3; axis++)
@@ -417,6 +417,7 @@ void IMU::UpdateAttitude(uint32_t currentTime)
 
     // Apply complimentary filter (Gyro drift correction)
 #if SENSOR_MAG
+    int16_t magData[3];
     mag->GetData(magData, 3);
 #endif
     for (axis = 0; axis < 3; axis++)
