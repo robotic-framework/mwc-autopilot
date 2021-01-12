@@ -33,7 +33,7 @@ public:
     void UpdateMotors(uint32_t currentTime);
     void GetMotors(uint16_t *buf, uint8_t length);
     uint8_t GetMotorCount();
-    void WriteMotorsTrottle(uint16_t throttle);
+    void WriteMotorsThrottle(uint16_t throttle);
 };
 
 #endif /* MOTORS_H_ */

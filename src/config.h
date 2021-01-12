@@ -53,6 +53,18 @@
 #define BARO_BMP085
 
 /**
+ * GPS
+ */
+#define GPS_SERIAL 1
+#define GPS_BAUD 9600
+
+/**
+ * Mission
+ */
+// if we are within this distance to a waypoint then we consider it reached (distance is in cm)
+#define MISSION_WP_RADIUS 100 // (cm)
+
+/**
  * definition (do not modify anything)
  */
 
@@ -75,6 +87,15 @@
 #define LEDPIN_TOGGLE PINB |= 1 << 5; //switch LEDPIN state (digital PIN 13)
 #define LEDPIN_OFF PORTB &= ~(1 << 5);
 #define LEDPIN_ON PORTB |= (1 << 5);
+
+#if defined(GPS_SERIAL)
+#if GPS_SERIAL == 1
+#define GPS_SERIAL_DEVICE Serial
+#else
+#error "Mega do not supportted Serial port more than 3"
+#endif
+#endif
+
 #endif
 
 #if defined(MEGA)
@@ -90,6 +111,18 @@
 #define LEDPIN_OFF      \
     PORTB &= ~(1 << 7); \
     PORTC &= ~(1 << 7);
+
+#if defined(GPS_SERIAL)
+#if GPS_SERIAL == 1
+#define GPS_SERIAL_DEVICE Serial1
+#elif GPS_SERIAL == 2
+#define GPS_SERIAL_DEVICE Serial2
+#elif GGPS_SERIAL == 3
+#define GPS_SERIAL_DEVICE Serial3
+#else
+#error "Mega do not supportted Serial port more than 3"
+#endif
+#endif
 #endif
 
 #if defined(QUADX)
@@ -144,5 +177,11 @@
 
 #define SENSOR_GPS 0
 #define SENSOR_SONAR 0
+
+#if defined(GPS_SERIAL)
+#define GPS_ENABLED 1
+#else
+#define GPS_ENABLED 0
+#endif
 
 #endif // CONFIG_H_

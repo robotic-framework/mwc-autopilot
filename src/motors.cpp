@@ -116,7 +116,7 @@ void Motors::Init()
     }
 #endif // ENABLE_ECS_CALIBRATION
 
-    this->WriteMotorsTrottle(MINCOMMAND);
+    this->WriteMotorsThrottle(MINCOMMAND);
 }
 
 void Motors::UpdatePID(uint32_t currentTime)
@@ -133,6 +133,10 @@ void Motors::UpdateMotors(uint32_t currentTime)
     if (arm)
     {
         writeMotors();
+    }
+    else
+    {
+        WriteMotorsThrottle(MINCOMMAND);
     }
 }
 
@@ -362,7 +366,7 @@ uint8_t Motors::GetMotorCount()
     return MOTOR_COUNT;
 }
 
-void Motors::WriteMotorsTrottle(uint16_t throttle)
+void Motors::WriteMotorsThrottle(uint16_t throttle)
 {
     for (uint8_t i = 0; i < MOTOR_COUNT; i++)
     {

@@ -13,6 +13,10 @@ int32_t altHold = 0;
 int16_t rcCommand[4] = {0, 0, 0, 1460};
 PID pid[PIDITEMS];
 
+#if GPS_ENABLED
+Navigation nav;
+#endif
+
 void loadDefaults()
 {
     pid[ROLL].P = 33;

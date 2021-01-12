@@ -15,6 +15,10 @@ extern Motors motors;
 extern IMU imu;
 extern uint16_t cycleTime;
 
+#if GPS_ENABLED
+extern GPS gps;
+#endif
+
 void setup()
 {
 #if DEBUG
@@ -25,6 +29,9 @@ void setup()
     imu.Init();
 
 #if !DEBUG
+#if GPS_ENABLED
+    gps.Init();
+#endif
     serialInit();
 #endif
     loadDefaults();

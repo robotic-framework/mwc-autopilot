@@ -281,7 +281,7 @@ void serialInit()
     {
     }
     blinkLED(2, 20, 10);
-    LEDPIN_OFF;
+    LEDPIN_OFF
 }
 
 void protocolHandler()

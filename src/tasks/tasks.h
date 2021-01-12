@@ -53,6 +53,10 @@ typedef enum {
     TASK_MOTOR_PID,
 #endif
     TASK_UPDATE_MOTORS,
+#if GPS_ENABLED
+    TASK_GPS,
+    TASK_NAV,
+#endif
     TASK_COUNT,
     TASK_NONE = TASK_COUNT,
     TASK_SELF
@@ -74,6 +78,10 @@ typedef struct {
 
 extern IMU imu;
 extern Motors motors;
+
+#if GPS_ENABLED
+extern Navigation nav;
+#endif
 
 class Tasks {
 public:

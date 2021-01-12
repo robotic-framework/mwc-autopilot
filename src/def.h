@@ -4,6 +4,9 @@
 #include "config.h"
 #include "motors.h"
 #include "imu.h"
+#if GPS_ENABLED
+#include "navigation.h"
+#endif
 
 struct PID
 {
@@ -34,7 +37,9 @@ enum box
     ANGLE,
     HORIZEN,
 #endif
+#if SENSOR_MAG
     MAG,
+#endif
     BOXITEMS
 };
 

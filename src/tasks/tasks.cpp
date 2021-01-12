@@ -55,6 +55,14 @@ void taskUpdateMotors(uint32_t currentTime) {
     motors.UpdateMotors(currentTime);
 }
 
+void taskUpdateGPS(uint32_t currentTime) {
+    nav.UpdateGPS(currentTime);
+}
+
+void taskUpdateNav(uint32_t currentTime) {
+    nav.Update(currentTime);
+}
+
 Task_t Tasks::tasks[TASK_COUNT] = {
         [TASK_SYSTEM] = {
                 .taskName = "SYSTEM",
@@ -157,7 +165,24 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskFunc = taskUpdateMotors,
                 .staticPriority = TASK_PRIORITY_HIGH,
                 .desiredPeriod = TASK_PERIOD_US(2000),
-        }
+        },
+
+#if GPS_ENABLED
+        [TASK_GPS] = {
+                .taskName = "GPS",
+                .checkFunc = NULL,
+                .taskFunc = taskUpdateGPS,
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_HZ(10),
+        },
+        [TASK_NAV] = {
+                .taskName = "NAV",
+                .checkFunc = NULL,
+                .taskFunc = taskUpdateNav,
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_HZ(100),
+        },
+#endif
 };
 
 Tasks::Tasks() {
@@ -199,6 +224,10 @@ void Tasks::init() {
     SetTaskEnabled(TASK_MOTOR_PID, true);
 #endif
     SetTaskEnabled(TASK_UPDATE_MOTORS, true);
+#if GPS_ENABLED
+    SetTaskEnabled(TASK_GPS, true);
+    SetTaskEnabled(TASK_NAV, true);
+#endif
 }
 
 bool Tasks::queueAdd(Task_t *task) {
