@@ -56,7 +56,7 @@
  * GPS
  */
 #define GPS_SERIAL 1
-#define GPS_BAUD 9600
+#define GPS_BAUD 38400
 
 /**
  * Mission
