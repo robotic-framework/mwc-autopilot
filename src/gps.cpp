@@ -2,6 +2,8 @@
 // Created by 李翌文 on 2021/1/8.
 //
 
+#if GPS_ENABLED
+
 #include "gps.h"
 #include "led.h"
 
@@ -44,3 +46,5 @@ void GPS::Update(uint32_t currentTime) {
         isNewData = true;
     }
 }
+
+#endif

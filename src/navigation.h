@@ -5,6 +5,8 @@
 #ifndef AUTOPILOT_NAVIGATION_H
 #define AUTOPILOT_NAVIGATION_H
 
+#if GPS_ENABLED
+
 #include "stdint.h"
 #include "gps.h"
 
@@ -86,5 +88,6 @@ public:
     void Update(uint32_t currentTime);
 };
 
+#endif
 
 #endif //AUTOPILOT_NAVIGATION_H

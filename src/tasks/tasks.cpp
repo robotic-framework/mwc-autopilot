@@ -55,6 +55,7 @@ void taskUpdateMotors(uint32_t currentTime) {
     motors.UpdateMotors(currentTime);
 }
 
+#if GPS_ENABLED
 void taskUpdateGPS(uint32_t currentTime) {
     nav.UpdateGPS(currentTime);
 }
@@ -62,6 +63,7 @@ void taskUpdateGPS(uint32_t currentTime) {
 void taskUpdateNav(uint32_t currentTime) {
     nav.Update(currentTime);
 }
+#endif
 
 Task_t Tasks::tasks[TASK_COUNT] = {
         [TASK_SYSTEM] = {

@@ -2,6 +2,8 @@
 // Created by 李翌文 on 2021/1/11.
 //
 
+#if GPS_ENABLED
+
 #include "Arduino.h"
 #include "navigation.h"
 #include "def.h"
@@ -140,3 +142,5 @@ void Navigation::resetHome(const int32_t *posLat, const int32_t *posLon)
     calcLongitudeScaling(*posLat);
     isSetHome = true;
 }
+
+#endif

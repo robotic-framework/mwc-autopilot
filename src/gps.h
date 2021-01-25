@@ -5,6 +5,8 @@
 #ifndef AUTOPILOT_GPS_H
 #define AUTOPILOT_GPS_H
 
+#if GPS_ENABLED
+
 #include <stdint.h>
 #include "TinyGPS++.h"
 
@@ -57,5 +59,7 @@ public:
 
     uint16_t GetGroundCourse() { return groundCourse; }
 };
+
+#endif
 
 #endif //AUTOPILOT_GPS_H
