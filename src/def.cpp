@@ -10,7 +10,7 @@ bool horizenMode = 1;
 bool baroMode = 0;
 int32_t altHold = 0;
 
-int16_t rcCommand[4] = {0, 0, 0, 1460};
+int16_t rcCommand[4] = {0, 0, 0, MINTHROTTLE};
 PID pid[PIDITEMS];
 
 #if GPS_ENABLED

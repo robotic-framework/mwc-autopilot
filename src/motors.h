@@ -3,23 +3,15 @@
 
 #include <stdint.h>
 #include <Arduino.h>
-
-extern int32_t altHold;
-extern bool baroMode;
+#include "pid.h"
 
 class Motors
 {
 private:
+    PIDController *pid;
     uint16_t motors[8] = {};
-    int16_t pidOffset[3];
-    int32_t prop;
-    static int16_t errorAltI;
-    uint8_t lastBaroMode = baroMode;
-    uint8_t isBaroModeChanged = 1;
-    int16_t initialThrottleHold = 0;
 
     void writeMotors();
-    void applyPID(uint32_t currentTime);
     void mixPID();
 
 public:

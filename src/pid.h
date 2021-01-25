@@ -2,11 +2,6 @@
 #define _PID_H_
 
 #include "stdint.h"
-#include "def.h"
-
-extern int32_t altHold;
-extern bool baroMode;
-extern int16_t rcCommand[4];
 
 class PIDController
 {

@@ -4,25 +4,29 @@
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 
 #define applyDeadband(value, deadband) \
-    if (abs(value) < deadband)         \
+    if (abs(value) < (deadband))         \
     {                                  \
-        value = 0;                     \
+        (value) = 0;                     \
     }                                  \
-    else if (value > 0)                \
+    else if ((value) > 0)                \
     {                                  \
-        value -= deadband;             \
+        (value) -= (deadband);             \
     }                                  \
-    else if (value < 0)                \
+    else if ((value) < 0)                \
     {                                  \
-        value += deadband;             \
+        (value) += (deadband);             \
     }
 
+extern int32_t altHold;
+extern bool baroMode;
 extern IMU imu;
 extern bool angleMode;
 extern bool horizenMode;
 extern bool arm;
 extern int16_t rcCommand[4];
 extern PID pid[PIDITEMS];
+
+int16_t PIDController::errorAltI = 0;
 
 PIDController::PIDController() : lastBaroMode(baroMode),
                                  isBaroModeChanged(1),
