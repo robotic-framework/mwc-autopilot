@@ -2,11 +2,11 @@
 // Created by 李翌文 on 2021/1/11.
 //
 
+#include "config.h"
 #if GPS_ENABLED
 
 #include "Arduino.h"
 #include "navigation.h"
-#include "def.h"
 
 extern bool arm;
 

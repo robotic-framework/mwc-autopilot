@@ -5,6 +5,7 @@
 #ifndef AUTOPILOT_NAVIGATION_H
 #define AUTOPILOT_NAVIGATION_H
 
+#include "config.h"
 #if GPS_ENABLED
 
 #include "stdint.h"

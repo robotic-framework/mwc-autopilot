@@ -2,6 +2,7 @@
 // Created by 李翌文 on 2021/1/8.
 //
 
+#include "config.h"
 #if GPS_ENABLED
 
 #include "gps.h"
