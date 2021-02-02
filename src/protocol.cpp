@@ -35,7 +35,7 @@ uint8_t command = 0;
 
 void serialWrite()
 {
-    Serial.write(txBuffer, txBufferHead);
+    PROTOCOL_SERIAL.write(txBuffer, txBufferHead);
     txBufferHead = 0;
 }
 
@@ -276,8 +276,8 @@ void evaluateCommand(uint8_t cmd)
 
 void serialInit()
 {
-    Serial.begin(115200);
-    while (!Serial)
+    PROTOCOL_SERIAL.begin(BLE_BAUD);
+    while (!PROTOCOL_SERIAL)
     {
     }
     blinkLED(2, 20, 10);
@@ -286,10 +286,10 @@ void serialInit()
 
 void protocolHandler()
 {
-    uint8_t a = Serial.available();
+    uint8_t a = PROTOCOL_SERIAL.available();
     while (a--)
     {
-        uint8_t c = Serial.read();
+        uint8_t c = PROTOCOL_SERIAL.read();
         if (state == IDLE)
         {
             if (c == '$')

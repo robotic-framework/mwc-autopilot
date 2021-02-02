@@ -4,6 +4,12 @@
 #define DEBUG 0
 #define TEST_ALTHOLD
 
+/**
+ * BLE Protocol
+ */
+#define BLE_SERIAL 2
+#define BLE_BAUD 115200
+
 #define VERSION 100
 /**
  * Robot type
@@ -92,7 +98,15 @@
 #if GPS_SERIAL == 1
 #define GPS_SERIAL_DEVICE Serial
 #else
-#error "Mega do not supportted Serial port more than 3"
+#error "Pro mini do not supportted Serial port more than 1"
+#endif
+#endif
+
+#if defined(BLE_SERIAL)
+#if BLE_SERIAL == 1
+#define PROTOCOL_SERIAL Serial
+#else
+#error "Pro mini do not supportted Serial port more than 1"
 #endif
 #endif
 
@@ -119,6 +133,18 @@
 #define GPS_SERIAL_DEVICE Serial2
 #elif GGPS_SERIAL == 3
 #define GPS_SERIAL_DEVICE Serial3
+#else
+#error "Mega do not supportted Serial port more than 3"
+#endif
+#endif
+
+#if defined(BLE_SERIAL)
+#if BLE_SERIAL == 1
+#define PROTOCOL_SERIAL Serial1
+#elif BLE_SERIAL == 2
+#define PROTOCOL_SERIAL Serial2
+#elif BLE_SERIAL == 3
+#define PROTOCOL_SERIAL Serial3
 #else
 #error "Mega do not supportted Serial port more than 3"
 #endif
