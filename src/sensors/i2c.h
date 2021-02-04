@@ -5,22 +5,6 @@
 #include <Wire.h>
 #include <stdint.h>
 
-enum RC
-{
-    ROLL,
-    PITCH,
-    YAW,
-    THROTTLE,
-    AUX1,
-    AUX2,
-    AUX3,
-    AUX4,
-    AUX5,
-    AUX6,
-    AUX7,
-    AUX8
-};
-
 enum I2CError
 {
     SUCCESS,

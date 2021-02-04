@@ -7,7 +7,7 @@
 /**
  * BLE Protocol
  */
-#define BLE_SERIAL 2
+//#define BLE_SERIAL 2
 #define BLE_BAUD 115200
 
 #define VERSION 100
@@ -148,6 +148,8 @@
 #else
 #error "Mega do not supportted Serial port more than 3"
 #endif
+#else
+#define PROTOCOL_SERIAL Serial
 #endif
 #endif
 

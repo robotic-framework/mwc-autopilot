@@ -8,14 +8,14 @@
 #define BMA180_TO_READ 6   // num of bytes we are going to read each time (two bytes for each axis)
 #define BMA180_DATAX0 0x02
 
-class BMA180 : public Accelerator
-{
+class BMA180 : public Accelerator {
 private:
     /* data */
     uint8_t _buff[BMA180_TO_READ];
 
 protected:
     void getRawData() override;
+
     void init() override;
 
 public:

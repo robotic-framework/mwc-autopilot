@@ -10,6 +10,7 @@ bool horizenMode = 1;
 bool baroMode = 0;
 int32_t altHold = 0;
 
+Configuration conf;
 int16_t rcCommand[4] = {0, 0, 0, MINTHROTTLE};
 PID pid[PIDITEMS];
 
@@ -19,6 +20,9 @@ Navigation nav;
 
 void loadDefaults()
 {
+    // load from eeprom otherwise load default
+    conf.Load();
+
     pid[ROLL].P = 33;
     pid[ROLL].I = 30;
     pid[ROLL].D = 23;

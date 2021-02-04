@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "i2c.h"
 #include "../config.h"
+#include "../type_def.h"
 
 #define ACC_ORIENTATION(X, Y, Z) \
     {                            \
@@ -12,8 +13,7 @@
         data[YAW] = Z;           \
     }
 
-class Accelerator : public I2C
-{
+class Accelerator : public I2C {
 private:
     uint16_t calibrateSteps;
     uint32_t stepTime = 0;
@@ -28,11 +28,14 @@ protected:
     virtual void getRawData() = 0;
 
 public:
-    Accelerator(uint8_t address) : I2C(address){};
+    Accelerator(uint8_t address) : I2C(address) {};
 
     void Update(uint32_t currentTime);
+
     void Calibration();
+
     bool IsCalibrating();
+
     void GetData(int16_t *buf, uint8_t length);
 };
 
