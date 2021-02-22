@@ -14,6 +14,7 @@ Tasks scheduler;
 extern Motors motors;
 extern IMU imu;
 extern uint16_t cycleTime;
+extern Configuration conf;
 
 #if GPS_ENABLED
 extern GPS gps;
@@ -34,11 +35,12 @@ void setup()
 #endif
     serialInit();
 #endif
-    loadDefaults();
 
-    imu.AccCalibration();
-    imu.MagCalibration();
-    imu.BaroCalibration();
+    conf.Load(0);
+
+//    imu.AccCalibration();
+//    imu.MagCalibration();
+//    imu.BaroCalibration();
 }
 
 void loop()

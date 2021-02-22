@@ -3,14 +3,11 @@
 
 #include "stdint.h"
 #include "config.h"
+#include "configuration/configuration.h"
 #include "motors.h"
 #include "imu.h"
 #if GPS_ENABLED
 #include "navigation.h"
 #endif
-#include "configuration.h"
-
-void
-loadDefaults();
 
 #endif // DEF_H_

@@ -2,13 +2,13 @@
 // Created by 李翌文 on 2021/1/11.
 //
 
-#include "config.h"
+#include "def.h"
 #if GPS_ENABLED
 
 #include "Arduino.h"
 #include "navigation.h"
 
-extern bool arm;
+extern Configuration conf;
 
 Navigation::Navigation()
 {
@@ -28,7 +28,7 @@ void Navigation::Update(uint32_t currentTime)
         gps->GetGPSPos(&posLat, &posLon);
 
         // auto set home position
-        if (!isSetHome && arm)
+        if (!isSetHome && conf.arm)
         {
             resetHome(&posLat, &posLon);
         }

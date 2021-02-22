@@ -17,18 +17,13 @@
         (value) += (deadband);             \
     }
 
-extern int32_t altHold;
-extern bool baroMode;
+extern Configuration conf;
 extern IMU imu;
-extern bool angleMode;
-extern bool horizenMode;
-extern bool arm;
 extern int16_t rcCommand[4];
-extern PID pid[PIDITEMS];
 
 int16_t PIDController::errorAltI = 0;
 
-PIDController::PIDController() : lastBaroMode(baroMode),
+PIDController::PIDController() : lastBaroMode(conf.baroMode),
                                  isBaroModeChanged(1),
                                  initialThrottleHold(0)
 {
@@ -60,7 +55,7 @@ void PIDController::Update(uint32_t currentTime)
     deltaTime = currentTime - previousTime;
     previousTime = currentTime;
 
-    if (horizenMode)
+    if (conf.horizonMode)
     {
         prop = min(max(abs(rcCommand[PITCH]), abs(rcCommand[ROLL])), 512);
     }
@@ -80,20 +75,20 @@ void PIDController::Update(uint32_t currentTime)
         {
             errorGyroI[axis] = 0;
         }
-        ITerm = (errorGyroI[axis] >> 7) * pid[axis].I >> 6;
-        PTerm = mul(rc, pid[axis].P) >> 6;
+        ITerm = (errorGyroI[axis] >> 7) * conf.raw.pid[axis].I >> 6;
+        PTerm = mul(rc, conf.raw.pid[axis].P) >> 6;
 
-        if (angleMode || horizenMode)
+        if (conf.angleMode || conf.horizonMode)
         {
             errorAngle = constrain(rc, -500, 500) - attitude[axis];
             errorAngleI[axis] = constrain(errorAngleI[axis] + errorAngle, -10000, 10000);
 
-            PTermACC = mul(errorAngle, pid[PIDLEVEL].P) >> 7;
+            PTermACC = mul(errorAngle, conf.raw.pid[PIDLEVEL].P) >> 7;
 
-            int16_t limit = pid[PIDLEVEL].D * 5;
+            int16_t limit = conf.raw.pid[PIDLEVEL].D * 5;
             PTermACC = constrain(PTermACC, -limit, limit);
 
-            ITermACC = mul(errorAngleI[axis], pid[PIDLEVEL].I) >> 12;
+            ITermACC = mul(errorAngleI[axis], conf.raw.pid[PIDLEVEL].I) >> 12;
 
             ITerm = ITermACC + ((ITerm - ITermACC) * prop >> 9);
             PTerm = PTermACC + ((PTerm - PTermACC) * prop >> 9);
@@ -117,48 +112,48 @@ void PIDController::Update(uint32_t currentTime)
 
     rc = mul(rcCommand[YAW], 30) >> 5;
     error = rc - gyroData[YAW];
-    errorGyroI_YAW += mul(error, pid[YAW].I);
+    errorGyroI_YAW += mul(error, conf.raw.pid[YAW].I);
     errorGyroI_YAW = constrain(errorGyroI_YAW, 2 - ((int32_t)1 << 28), -2 + ((int32_t)1 << 28));
     if (abs(rc) > 50)
     {
         errorGyroI_YAW = 0;
     }
-    PTerm = mul(error, pid[YAW].P) >> 6;
-    int16_t limit = GYRO_P_MAX - pid[YAW].D;
+    PTerm = mul(error, conf.raw.pid[YAW].P) >> 6;
+    int16_t limit = GYRO_P_MAX - conf.raw.pid[YAW].D;
     PTerm = constrain(PTerm, -limit, limit);
 
     ITerm = constrain((int16_t)(errorGyroI_YAW >> 13), -GYRO_I_MAX, GYRO_I_MAX);
     pidOffset[YAW] = PTerm + ITerm;
 
     // ALT HOLD
-    if (baroMode != lastBaroMode)
+    if (conf.baroMode != lastBaroMode)
     {
         isBaroModeChanged = 1;
-        lastBaroMode = baroMode;
+        lastBaroMode = conf.baroMode;
     }
     if (isBaroModeChanged)
     {
-        if (baroMode)
+        if (conf.baroMode)
         {
             errorAltI = 0;
         }
         initialThrottleHold = rcCommand[THROTTLE];
         isBaroModeChanged = 0;
     }
-    if (baroMode)
+    if (conf.baroMode)
     {
         int32_t alt;
         int16_t vario;
         imu.GetAltitude(&alt, &vario);
-        int16_t errorAlt = constrain(altHold - alt, -300, 300);
+        int16_t errorAlt = constrain(conf.altHold - alt, -300, 300);
         // Serial.print("hold: ");
         // Serial.print(altHold);
         // Serial.print(", alt: ");
         // Serial.print(alt);
         applyDeadband(errorAlt, 10);
-        pidOffsetAlt = constrain(pid[PIDALT].P * errorAlt >> 7, -150, 150);
+        pidOffsetAlt = constrain(conf.raw.pid[PIDALT].P * errorAlt >> 7, -150, 150);
 
-        errorAltI += pid[PIDALT].I * errorAlt >> 6;
+        errorAltI += conf.raw.pid[PIDALT].I * errorAlt >> 6;
         errorAltI = constrain(errorAltI, -30000, 30000);
         pidOffsetAlt += errorAltI >> 9;
 
@@ -181,7 +176,7 @@ void PIDController::Update(uint32_t currentTime)
         vario = zVel;
         applyDeadband(vario, 5);
         imu.SetAltitudeVario(vario);
-        pidOffsetAlt -= constrain(pid[PIDALT].D * vario >> 4, -150, 150);
+        pidOffsetAlt -= constrain(conf.raw.pid[PIDALT].D * vario >> 4, -150, 150);
         // Serial.print(", accZ: ");
         // Serial.print(accZ);
         // Serial.print(", dt: ");
@@ -194,7 +189,7 @@ void PIDController::Update(uint32_t currentTime)
         // Serial.print(pidOffsetAlt);
     }
 
-    if (baroMode /* || takeOffMode || landingMode */)
+    if (conf.baroMode /* || conf.takeOffMode || conf.landingMode */)
     {
         // throttle compensation
         rcCommand[THROTTLE] = initialThrottleHold + pidOffsetAlt;

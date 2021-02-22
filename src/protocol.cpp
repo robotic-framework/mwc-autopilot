@@ -5,12 +5,6 @@
 extern IMU imu;
 extern Motors motors;
 extern uint16_t cycleTime;
-extern bool arm;
-extern bool angleMode;
-extern bool horizenMode;
-extern bool baroMode;
-extern int32_t altHold;
-
 extern Configuration conf;
 
 enum MSP_protocol_states {
@@ -149,15 +143,15 @@ void evaluateCommand(uint8_t cmd) {
                           SENSOR_GYRO << 5;
 
 #if SENSOR_ACC
-            if (angleMode) {
+            if (conf.angleMode) {
                 tmp |= 1 << ANGLE;
             }
-            if (horizenMode) {
+            if (conf.horizonMode) {
                 tmp |= 1 << HORIZEN;
             }
 
 #endif
-            if (arm) {
+            if (conf.arm) {
                 tmp |= 1 << ARM;
             }
             stat.flag = tmp;
@@ -209,7 +203,7 @@ void evaluateCommand(uint8_t cmd) {
 
         case MSP_ACC_CALIBRATION: {
             responseEmpty();
-            if (!arm) {
+            if (!conf.arm) {
                 imu.AccCalibration();
             }
             break;
@@ -217,7 +211,7 @@ void evaluateCommand(uint8_t cmd) {
 
         case MSP_MAG_CALIBRATION: {
             responseEmpty();
-            if (!arm) {
+            if (!conf.arm) {
                 imu.MagCalibration();
                 imu.BaroCalibration();
             }
@@ -233,29 +227,29 @@ void evaluateCommand(uint8_t cmd) {
 
         case MSP_ARM: {
             responseEmpty();
-            arm = true;
+            conf.arm = true;
             LEDPIN_ON
             break;
         }
 
         case MSP_DIS_ARM: {
             responseEmpty();
-            arm = false;
+            conf.arm = false;
             LEDPIN_OFF
             break;
         }
 
         case MSP_ALT_HOLD: {
-            baroMode = true;
-            imu.GetAltitude(&altHold);
-            responsePayload((uint8_t *) &altHold, 4);
+            conf.baroMode = true;
+            imu.GetAltitude(&conf.altHold);
+            responsePayload((uint8_t *) &conf.altHold, 4);
             break;
         }
 
         case MSP_ALT_UNLOCK: {
             responseEmpty();
-            baroMode = false;
-            altHold = 0;
+            conf.baroMode = false;
+            conf.altHold = 0;
             break;
         }
 
@@ -269,13 +263,14 @@ void evaluateCommand(uint8_t cmd) {
 #endif
 
         case MSP_PID: {
-            responsePayload((uint8_t *) &conf.pid, 3 * PIDITEMS);
+            responsePayload((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
             break;
         }
 
         case MSP_SET_PID: {
             responseEmpty();
-            structWrite((uint8_t *) &conf.pid, 3 * PIDITEMS);
+            structWrite((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
+            conf.Write(0);
             break;
         }
     }

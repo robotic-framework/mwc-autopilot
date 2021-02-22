@@ -1,4 +1,7 @@
 #include "accelerator.h"
+#include "../def.h"
+
+extern Configuration conf;
 
 void Accelerator::Update(uint32_t currentTime)
 {
@@ -11,7 +14,7 @@ void Accelerator::Update(uint32_t currentTime)
 
     for (uint8_t i = 0; i < 3; i++)
     {
-        data[i] -= offset[i];
+        data[i] -= conf.raw.accOffset[i];
     }
 }
 
@@ -35,14 +38,14 @@ void Accelerator::calibration(uint32_t currentTime)
     for (uint8_t i = 0; i < 3; i++)
     {
         offsetTotal[i] += data[i];
-        offset[i] = offsetTotal[i] >> 9;
+        conf.raw.accOffset[i] = offsetTotal[i] >> 9;
     }
 
     if (calibrateSteps == 1)
     {
         // calibration done
         LEDPIN_OFF
-        offset[YAW] -= ACC_1G_LSB;
+        conf.raw.accOffset[YAW] -= ACC_1G_LSB;
     }
     calibrateSteps--;
 }

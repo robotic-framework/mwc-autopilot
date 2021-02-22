@@ -19,7 +19,7 @@
         value += deadband;             \
     }
 
-extern bool arm;
+extern Configuration conf;
 
 #if defined(PROMINI)
 uint8_t Motors::Pins[8] = {9, 10, 11, 3, 6, 5, A2, 12};
@@ -116,7 +116,7 @@ void Motors::Init()
 
 void Motors::UpdatePID(uint32_t currentTime)
 {
-    if (arm)
+    if (conf.arm)
     {
         pid->Update(currentTime);
         mixPID();
@@ -125,7 +125,7 @@ void Motors::UpdatePID(uint32_t currentTime)
 
 void Motors::UpdateMotors(uint32_t currentTime)
 {
-    if (arm)
+    if (conf.arm)
     {
         writeMotors();
     }
@@ -173,7 +173,7 @@ void Motors::mixPID()
         }
         motors[i] = constrain(motors[i], MINTHROTTLE, MAXTHROTTLE);
 
-        if (!arm)
+        if (!conf.arm)
         {
             motors[i] = MINCOMMAND;
         }

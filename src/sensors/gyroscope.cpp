@@ -1,4 +1,7 @@
 #include "gyroscope.h"
+#include "../def.h"
+
+extern Configuration conf;
 
 void Gyroscope::Update(uint32_t currentTime)
 {
@@ -10,7 +13,7 @@ void Gyroscope::Update(uint32_t currentTime)
 
     for (uint8_t i = 0; i < 3; i++)
     {
-        data[i] -= offset[i];
+        data[i] -= conf.raw.gyroOffset[i];
         data[i] = constrain(data[i], prevData[i] - 800, prevData[i] + 800);
         prevData[i] = data[i];
     }
@@ -36,7 +39,7 @@ void Gyroscope::calibration()
     for (uint8_t i = 0; i < 3; i++)
     {
         offsetTotal[i] += data[i];
-        offset[i] = offsetTotal[i] >> 9;
+        conf.raw.gyroOffset[i] = offsetTotal[i] >> 9;
     }
 
     if (calibrateSteps == 1)

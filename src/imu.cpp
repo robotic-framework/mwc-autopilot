@@ -452,7 +452,7 @@ void IMU::UpdateAttitude(uint32_t currentTime)
     att.Heading /= 10;
 
     accZ = accZTmp * invGyro;
-    if (!arm)
+    if (!conf.arm)
     {
         accZoffset -= accZoffset >> 3;
         accZoffset += accZ;

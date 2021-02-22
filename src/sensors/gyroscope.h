@@ -17,7 +17,6 @@ class Gyroscope : public I2C
 {
 private:
   uint16_t calibrateSteps;
-  int16_t offset[3];
   uint32_t offsetTotal[3];
   int16_t prevData[3] = {0, 0, 0};
 

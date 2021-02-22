@@ -121,7 +121,7 @@ int16_t _atan2(int32_t y, int32_t x);
 float invSqrt(float x);
 
 extern uint8_t smallAngle25;
-extern bool arm;
+extern Configuration conf;
 
 class IMU
 {

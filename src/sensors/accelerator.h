@@ -17,7 +17,6 @@ class Accelerator : public I2C {
 private:
     uint16_t calibrateSteps;
     uint32_t stepTime = 0;
-    int16_t offset[3];
     uint32_t offsetTotal[3];
 
     void calibration(uint32_t stepTime);

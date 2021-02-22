@@ -1,4 +1,7 @@
 #include "meganetometer.h"
+#include "../def.h"
+
+extern Configuration conf;
 
 uint8_t Meganetometer::Update(uint32_t currentTime)
 {
@@ -9,7 +12,7 @@ uint8_t Meganetometer::Update(uint32_t currentTime)
         data[i] *= magGain[i];
         if (!calibrating)
         {
-            data[i] -= offset[i];
+            data[i] -= conf.raw.magOffset[i];
         }
     }
 
@@ -61,7 +64,7 @@ void Meganetometer::calibration(uint32_t stepTime)
             {
                 magZeroTempMax[i] = data[i];
             }
-            offset[i] = (magZeroTempMin[i] + magZeroTempMax[i]) >> 1;
+            conf.raw.magOffset[i] = (magZeroTempMin[i] + magZeroTempMax[i]) >> 1;
         }
     }
     else

@@ -19,7 +19,6 @@ private:
     bool calibrating;
     uint32_t stepTime = 0;
     uint32_t calibrationTime = 0;
-    int16_t offset[3];
 
     void calibration(uint32_t stepTime);
 
