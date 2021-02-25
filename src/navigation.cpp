@@ -3,6 +3,7 @@
 //
 
 #include "def.h"
+
 #if GPS_ENABLED
 
 #include "Arduino.h"
@@ -10,26 +11,22 @@
 
 extern Configuration conf;
 
-Navigation::Navigation()
-{
+Navigation::Navigation() : mode(GPS_MODE_NONE),
+                           state(NAV_STATE_NONE) {
     gps = new GPS;
 }
 
-void Navigation::Update(uint32_t currentTime)
-{
-    if (!gps->AvailableThen())
-    {
+void Navigation::Update(uint32_t currentTime) {
+    if (!gps->AvailableThen()) {
         return;
     }
 
-    if (gps->HasFix() && gps->GetGPSSatellites() >= 5)
-    {
+    if (gps->HasFix() && gps->GetGPSSatellites() >= 5) {
         int32_t posLat, posLon;
         gps->GetGPSPos(&posLat, &posLon);
 
         // auto set home position
-        if (!isSetHome && conf.arm)
-        {
+        if (!isSetHome && conf.arm) {
             resetHome(&posLat, &posLon);
         }
 
@@ -38,25 +35,21 @@ void Navigation::Update(uint32_t currentTime)
         int32_t dir;   //temp variable to store dir to copter
         getBearing(&posLat, &posLon, &home[LAT], &home[LON], &dir);
         getDistance(&posLat, &posLon, &home[LAT], &home[LON], &dist);
-        if (isSetHome)
-        {
+        if (isSetHome) {
             distanceToHome = dist / 100;
             directionToHome = dir / 100;
-        }
-        else
-        {
+        } else {
             distanceToHome = 0;
             directionToHome = 0;
         }
 
         uint32_t currentMillis = millis();
-        if (prevTime == 0)
-        {
+        if (prevTime == 0) {
             prevTime = currentMillis; // prevTime in millisecond.
             return;
         }
 
-        deltaTime = (float)(currentMillis - prevTime) / 1000.f;
+        deltaTime = (float) (currentMillis - prevTime) / 1000.f;
         prevTime = currentMillis;
 
         deltaTime = min(deltaTime, 1.0);
@@ -65,11 +58,42 @@ void Navigation::Update(uint32_t currentTime)
     }
 }
 
-void Navigation::navigation(const int32_t *posLat, const int32_t *posLon, uint32_t currentTime)
-{
-    if (mode == GPS_MODE_NONE)
-    {
+void Navigation::navigation(const int32_t *posLat, const int32_t *posLon, uint32_t currentTime) {
+    if (mode == GPS_MODE_NONE) {
         return;
+    }
+
+    getBearing(posLat, posLon, &waypoint[LAT], &waypoint[LON], &directionToWP);
+    getErrorDistance(&lead[LAT], &lead[LON], &waypoint[LAT], &waypoint[LON], &distanceToWP);
+    calcErrorDistance(&waypoint[LAT], &waypoint[LON], &lead[LAT], &lead[LON]);
+
+    switch (state) {
+        case NAV_STATE_NONE:
+            break;
+        case NAV_STATE_RTH_START:
+            break;
+        case NAV_STATE_RTH_ENROUTE:
+            break;
+        case NAV_STATE_HOLD_INFINIT:
+            break;
+        case NAV_STATE_HOLD_TIMED:
+            break;
+        case NAV_STATE_WP_ENROUTE:
+            break;
+        case NAV_STATE_PROCESS_NEXT:
+            break;
+        case NAV_STATE_DO_JUMP:
+            break;
+        case NAV_STATE_LAND_START:
+            break;
+        case NAV_STATE_LAND_IN_PROGRESS:
+            break;
+        case NAV_STATE_LANDED:
+            break;
+        case NAV_STATE_LAND_SETTLE:
+            break;
+        case NAV_STATE_LAND_START_DESCENT:
+            break;
     }
 }
 
@@ -77,14 +101,12 @@ void Navigation::getBearing(const int32_t *targetLat,
                             const int32_t *targetLon,
                             const int32_t *sourceLat,
                             const int32_t *sourceLon,
-                            int32_t *bearing) const
-{
+                            int32_t *bearing) const {
     int32_t offX = *sourceLon - *targetLon;
     int32_t offY = (*sourceLat - *targetLat) / scaleLonDown;
 
     *bearing = 9000 + atan2(-offY, offX) * 5729.57795f; //Convert the output radians to 100*deg
-    if (*bearing < 0)
-    {
+    if (*bearing < 0) {
         *bearing += 36000;
     }
 }
@@ -93,50 +115,53 @@ void Navigation::getDistance(const int32_t *targetLat,
                              const int32_t *targetLon,
                              const int32_t *sourceLat,
                              const int32_t *sourceLon,
-                             uint32_t *dist)
-{
-    float dLat = (float)(*sourceLat - *targetLat);
-    float dLon = (float)(*sourceLon - *targetLon);
+                             uint32_t *dist) {
+    float dLat = (float) (*sourceLat - *targetLat);
+    float dLon = (float) (*sourceLon - *targetLon);
     *dist = sqrt(sq(dLat) + sq(dLon)) * 1.11318845f;
 }
 
 void Navigation::calcErrorDistance(const int32_t *targetLat,
                                    const int32_t *targetLon,
                                    const int32_t *sourceLat,
-                                   const int32_t *sourceLon)
-{
+                                   const int32_t *sourceLon) {
     errorDistance[LAT] = *targetLat - *sourceLat;
-    errorDistance[LON] = (float)(*targetLon - *sourceLon) * scaleLonDown;
+    errorDistance[LON] = (float) (*targetLon - *sourceLon) * scaleLonDown;
 }
 
-void Navigation::calcLongitudeScaling(int32_t lat)
-{
+void Navigation::getErrorDistance(const int32_t *targetLat, const int32_t *targetLon, const int32_t *sourceLat,
+                                  const int32_t *sourceLon, uint32_t *dist) {
+    float dLat = (float) (*targetLat - *sourceLat);
+    float dLon = (float) (*targetLon - *sourceLon) * scaleLonDown;
+    *dist = sqrt(sq(dLat) + sq(dLon)) * 1.11318845f;
+}
+
+void Navigation::calcLongitudeScaling(int32_t lat) {
     scaleLonDown = cos(lat * 1.0e-7f * 0.01745329251f);
 }
 
-void Navigation::calcVelocityByDeltaTime(const int32_t *posLat, const int32_t *posLon)
-{
-    static int16_t velOld[2] = {0, 0};
-    if (prevPos[LAT] && prevPos[LON])
-    {
-        calcSpeed[LON] = (float)(*posLon - prevPos[LON]) * scaleLonDown / deltaTime;
-        calcSpeed[LAT] = (float)(*posLat - prevPos[LAT]) / deltaTime;
+void Navigation::calcVelocityByDeltaTime(const int32_t *posLat, const int32_t *posLon) {
+//    static int16_t velOld[2] = {0, 0};
+    if (prevPos[LAT] && prevPos[LON]) {
+        float dt = 1.0f / deltaTime;
+        calcSpeed[LON] = (float) (*posLon - prevPos[LON]) * scaleLonDown * dt;
+        calcSpeed[LAT] = (float) (*posLat - prevPos[LAT]) * dt;
     }
 
     prevPos[LAT] = *posLat;
     prevPos[LON] = *posLon;
+    lead[LON] = lonFilter.GetPosition(*posLon, calcSpeed[LON], GPS_LAG);
+    lead[LAT] = latFilter.GetPosition(*posLat, calcSpeed[LAT], GPS_LAG);
 }
 
-void Navigation::ResetHome()
-{
+void Navigation::ResetHome() {
     int32_t posLat, posLon;
     gps->GetGPSPos(&posLat, &posLon);
 
     resetHome(&posLat, &posLon);
 }
 
-void Navigation::resetHome(const int32_t *posLat, const int32_t *posLon)
-{
+void Navigation::resetHome(const int32_t *posLat, const int32_t *posLon) {
     home[LAT] = *posLat;
     home[LON] = *posLon;
     calcLongitudeScaling(*posLat);

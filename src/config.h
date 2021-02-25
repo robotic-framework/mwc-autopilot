@@ -63,6 +63,7 @@
  */
 #define GPS_SERIAL 1
 #define GPS_BAUD 38400
+#define GPS_LAG 1.0f
 
 /**
  * Mission
