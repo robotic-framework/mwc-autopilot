@@ -7,7 +7,7 @@
 
 enum I2CError
 {
-    SUCCESS,
+    OK,
     DATA_TO_LONG,
     ADDRESS_NACK,
     DATA_NACK,

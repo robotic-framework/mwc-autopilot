@@ -8,7 +8,7 @@ void I2C::write(uint8_t innerAddress, uint8_t value)
     Wire.write(innerAddress);
     Wire.write(value);
     errCode = (I2CError)Wire.endTransmission();
-    if (errCode != SUCCESS)
+    if (errCode != OK)
     {
         errCount++;
     }
@@ -19,7 +19,7 @@ void I2C::read(uint8_t address, uint8_t num, uint8_t _buff[])
     Wire.beginTransmission(this->deviceAddress); // start transmission to device
     Wire.write(address);                         // sends address to read from
     errCode = (I2CError)Wire.endTransmission();                      // end transmission
-    if (errCode != SUCCESS)
+    if (errCode != OK)
     {
         errCount++;
         return;
@@ -40,7 +40,7 @@ void I2C::read(uint8_t address, uint8_t num, uint8_t _buff[])
     }
 
     errCode = (I2CError)Wire.endTransmission(); // end transmission
-    if (errCode != SUCCESS)
+    if (errCode != OK)
     {
         errCount++;
         return;

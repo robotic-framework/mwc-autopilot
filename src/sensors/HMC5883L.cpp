@@ -46,7 +46,7 @@ void HMC5883L::getRawData()
 
 bool HMC5883L::biasCollect(uint8_t bias)
 {
-    int16_t abs;
+    int16_t absN;
 
     write(HMC5883L_CONFIG_REGA, bias);
     for (size_t i = 0; i < 10; i++)
@@ -56,9 +56,9 @@ bool HMC5883L::biasCollect(uint8_t bias)
         getRawData();
         for (size_t axis = 0; axis < 3; axis++)
         {
-            abs = abs(data[axis]);
-            magTotal[axis] += abs;
-            if ((int16_t)(1 << 12) < abs)
+            absN = abs(data[axis]);
+            magTotal[axis] += absN;
+            if ((int16_t)(1 << 12) < absN)
             {
                 return false;
             }

@@ -6,7 +6,7 @@
 #define AUTOPILOT_NAVIGATION_H
 
 #include "config.h"
-#include "lead_filter.h"
+#include "acs/lead_filter.h"
 
 #if GPS_ENABLED
 

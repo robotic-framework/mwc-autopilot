@@ -2,7 +2,7 @@
 #include "def.h"
 #include "tasks/tasks.h"
 #if !DEBUG
-#include "protocol.h"
+#include "communication/protocol.h"
 #else
 #include "avr8-stub.h"
 #endif

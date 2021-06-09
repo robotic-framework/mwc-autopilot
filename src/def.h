@@ -4,10 +4,10 @@
 #include "stdint.h"
 #include "config.h"
 #include "configuration/configuration.h"
-#include "motors.h"
-#include "imu.h"
+#include "acs/motors.h"
+#include "acs/imu.h"
 #if GPS_ENABLED
-#include "navigation.h"
+#include "nav/navigation.h"
 #endif
 
 #endif // DEF_H_
