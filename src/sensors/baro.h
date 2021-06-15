@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "i2c.h"
-#include "../config.h"
+#include "../definition.h"
 
 #define BARO_HISTORY_SIZE 21
 

@@ -6,7 +6,7 @@
 #define AUTOPILOT_TASKS_H
 
 #include "stdint.h"
-#include "../def.h"
+#include "../global.h"
 
 #define TASK_PERIOD_HZ(hz) (1000000 / (hz))
 #define TASK_PERIOD_MS(ms) ((ms) * 1000)
@@ -76,8 +76,7 @@ typedef struct {
     uint32_t lastExecutedAt;
 } Task_t;
 
-extern IMU imu;
-extern Motors motors;
+extern ACSController acs;
 
 #if GPS_ENABLED
 extern Navigation nav;

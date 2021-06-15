@@ -7,8 +7,7 @@
 
 #include "stdint.h"
 
-enum RC
-{
+enum RC {
     ROLL,
     PITCH,
     YAW,
@@ -23,15 +22,17 @@ enum RC
     AUX8
 };
 
-struct PID
-{
+struct PID {
     uint8_t P;
     uint8_t I;
     uint8_t D;
 };
 
-enum PIDType
-{
+enum AAType {
+    MWC,
+};
+
+enum PIDType {
     PIDROLL,
     PIDPITCH,
     PIDYAW,
@@ -45,8 +46,7 @@ enum PIDType
     PIDITEMS
 };
 
-enum BoxType
-{
+enum BoxType {
     ARM,
 #if SENSOR_ACC
     ANGLE,

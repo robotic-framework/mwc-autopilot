@@ -1,5 +1,5 @@
 #include "meganetometer.h"
-#include "../def.h"
+#include "../global.h"
 
 extern Configuration conf;
 

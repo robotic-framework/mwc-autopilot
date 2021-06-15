@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
-#include "def.h"
+#include "global.h"
 
 /************************************** MultiWii Serial Protocol *******************************************************/
 // Multiwii Serial Protocol 100

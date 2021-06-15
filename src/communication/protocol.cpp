@@ -2,8 +2,7 @@
 
 #include "protocol.h"
 
-extern IMU imu;
-extern Motors motors;
+extern ACSController acs;
 extern uint16_t cycleTime;
 extern Configuration conf;
 
@@ -168,7 +167,7 @@ void evaluateCommand(uint8_t cmd) {
                 int16_t mag[3];
             } imuData;
 
-            imu.GetRawData(imuData.acc, 9);
+            acs.GetRawData(imuData.acc, 9);
             responsePayload((uint8_t *) &imuData, 18);
             break;
         }
@@ -179,14 +178,14 @@ void evaluateCommand(uint8_t cmd) {
                 int32_t cp;
             } baroRaw;
 
-            imu.GetBaroData(&baroRaw.ct, &baroRaw.cp);
+            acs.GetBaroData(&baroRaw.ct, &baroRaw.cp);
             responsePayload((uint8_t *) &baroRaw, 6);
             break;
         }
 
         case MSP_ATTITUDE: {
             int16_t att[3];
-            imu.GetAttitude(att, 3);
+            acs.GetAttitude(att, 3);
             responsePayload((uint8_t *) att, 6);
             break;
         }
@@ -196,7 +195,7 @@ void evaluateCommand(uint8_t cmd) {
                 int32_t alt;
                 int16_t vario;
             } altData;
-            imu.GetAltitude(&altData.alt, &altData.vario);
+            acs.GetAltitude(&altData.alt, &altData.vario);
             responsePayload((uint8_t *) &altData, 6);
             break;
         }
@@ -204,7 +203,7 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_ACC_CALIBRATION: {
             responseEmpty();
             if (!conf.arm) {
-                imu.AccCalibration();
+                acs.AccCalibration();
             }
             break;
         }
@@ -212,15 +211,15 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_MAG_CALIBRATION: {
             responseEmpty();
             if (!conf.arm) {
-                imu.MagCalibration();
-                imu.BaroCalibration();
+                acs.MagCalibration();
+                acs.BaroCalibration();
             }
             break;
         }
 
         case MSP_MOTOR: {
             uint16_t motorData[8];
-            motors.GetMotors(motorData, 8);
+            acs.GetMotors(motorData, 8);
             responsePayload((uint8_t *) motorData, 16);
             break;
         }
@@ -241,7 +240,7 @@ void evaluateCommand(uint8_t cmd) {
 
         case MSP_ALT_HOLD: {
             conf.baroMode = true;
-            imu.GetAltitude(&conf.altHold);
+            acs.GetAltitude(&conf.altHold);
             responsePayload((uint8_t *) &conf.altHold, 4);
             break;
         }
@@ -257,7 +256,7 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_TEST_ALTHOLD: {
             responseEmpty();
             uint16_t p = read16();
-            imu.SetTestAltBase(p);
+            acs.SetTestAltBase(p);
             break;
         }
 #endif

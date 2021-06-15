@@ -3,8 +3,8 @@
 
 #include <Wire.h>
 #include "config.h"
-#include "def.h"
 #include "utils/led.h"
+#include "attitude_algorithm/mwc_algorithm.h"
 
 #if SENSOR_ACC
 #include "sensors/accelerator.h"
@@ -38,91 +38,6 @@
 #include "sensors/BMP085.h"
 #endif
 
-/* Set the Low Pass Filter factor for ACC
-   Increasing this value would reduce ACC noise (visible in GUI), but would increase ACC lag time
-   Comment this if  you do not want filter at all.
-   unit = n power of 2 */
-// this one is also used for ALT HOLD calculation, should not be changed
-#ifndef ACC_LPF_FACTOR
-#define ACC_LPF_FACTOR 4 // that means a LPF of 16
-#endif
-
-/* Set the Gyro Weight for Gyro/Acc complementary filter
-   Increasing this value would reduce and delay Acc influence on the output of the filter*/
-#ifndef GYR_CMPF_FACTOR
-#define GYR_CMPF_FACTOR 10 //  that means a CMP_FACTOR of 1024 (2^10)
-#endif
-
-/* Set the Gyro Weight for Gyro/Magnetometer complementary filter
-   Increasing this value would reduce and delay Magnetometer influence on the output of the filter*/
-#define GYR_CMPFM_FACTOR 8 // that means a CMP_FACTOR of 256 (2^8)
-
-#define MultiS16X16to32(longRes, intIn1, intIn2) \
-    asm volatile(                                \
-        "clr r26 \n\t"                           \
-        "mul %A1, %A2 \n\t"                      \
-        "movw %A0, r0 \n\t"                      \
-        "muls %B1, %B2 \n\t"                     \
-        "movw %C0, r0 \n\t"                      \
-        "mulsu %B2, %A1 \n\t"                    \
-        "sbc %D0, r26 \n\t"                      \
-        "add %B0, r0 \n\t"                       \
-        "adc %C0, r1 \n\t"                       \
-        "adc %D0, r26 \n\t"                      \
-        "mulsu %B1, %A2 \n\t"                    \
-        "sbc %D0, r26 \n\t"                      \
-        "add %B0, r0 \n\t"                       \
-        "adc %C0, r1 \n\t"                       \
-        "adc %D0, r26 \n\t"                      \
-        "clr r1 \n\t"                            \
-        : "=&r"(longRes)                         \
-        : "a"(intIn1),                           \
-          "a"(intIn2)                            \
-        : "r26")
-
-typedef struct
-{
-    int32_t X, Y, Z;
-} t_int32_t_vector_def;
-
-typedef struct
-{
-    uint16_t XL;
-    int16_t X;
-    uint16_t YL;
-    int16_t Y;
-    uint16_t ZL;
-    int16_t Z;
-} t_int16_t_vector_def;
-
-// note: we use implicit first 16 MSB bits 32 -> 16 cast. ie V32.X>>16 = V16.X
-typedef union
-{
-    int32_t A32[3];
-    t_int32_t_vector_def V32;
-    int16_t A16[6];
-    t_int16_t_vector_def V16;
-} t_int32_t_vector;
-
-typedef struct
-{
-    int16_t Angle[2]; // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
-    int16_t Heading;
-} Attitude;
-typedef struct
-{
-    int32_t Alt;
-    int16_t Vario;
-} Altitude;
-
-int32_t __attribute__((noinline)) mul(int16_t a, int16_t b);
-void rotateV32(t_int32_t_vector *v, int16_t *delta);
-int16_t _atan2(int32_t y, int32_t x);
-float invSqrt(float x);
-
-extern uint8_t smallAngle25;
-extern Configuration conf;
-
 class IMU
 {
 private:
@@ -144,24 +59,12 @@ private:
 #endif
 
     // indicators
-    Attitude att;
-    Altitude alt;
-    int16_t gyroWeighted[3];
+    int16_t accSmooth[3]{0, 0, 0};
+    uint32_t accLPF[3]{0, 0, 0};
 
+    int16_t gyroWeighted[3];
     int16_t gyroPrevWeight[3] = {0, 0, 0};
     int16_t gyroWeight[3];
-    uint32_t estPrevTime;
-    int16_t accSmooth[3];
-    uint32_t accLPF[3];
-
-    t_int32_t_vector estimatedGyroData;
-    t_int32_t_vector estimatedMagData;
-
-    int16_t accZ;
-
-    #if defined(TEST_ALTHOLD)
-    int32_t testAltBase;
-    #endif
 
 public:
     IMU();
@@ -172,8 +75,6 @@ public:
     void UpdateMag(uint32_t currentTime);
     void UpdateBaro(uint32_t currentTime);
     void UpdateSonar(uint32_t currentTime);
-    void UpdateAttitude(uint32_t currentTime);
-    void UpdateAltitude(uint32_t currentTime);
 
     void GetRawData(int16_t *buf, uint8_t length);
     void GetAccData(int16_t *buf, uint8_t length);
@@ -183,15 +84,28 @@ public:
     void AccCalibration();
     void MagCalibration();
     void BaroCalibration();
-    void GetAttitude(int16_t *buf, uint8_t length);
-    void GetAltitude(int32_t *alt, int16_t *vario);
-    void GetAltitude(int32_t *alt);
-    void SetAltitudeVario(int16_t vario);
-    int16_t GetACCZ();
 
-    #if defined(TEST_ALTHOLD)
-    void SetTestAltBase(uint16_t a);
-    #endif
+    bool IsAccCalibrating() {
+#if SENSOR_ACC
+        return this->acc->IsCalibrating();
+#else
+        return false;
+#endif
+    }
+    bool IsGyroCalibrating() {
+#if SENSOR_GYRO
+        return this->gyro->IsCalibrating();
+#else
+        return false;
+#endif
+    }
+    bool IsMagCalibrating() {
+#if SSENSOR_MAG
+        return this->mag->IsCalibrating();
+#else
+        return false;
+#endif
+    }
 };
 
 #endif // IMU_H_

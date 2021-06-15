@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "def.h"
+#include "global.h"
 #include "tasks/tasks.h"
 #if !DEBUG
 #include "communication/protocol.h"
@@ -17,7 +17,7 @@ extern uint16_t cycleTime;
 extern Configuration conf;
 
 #if GPS_ENABLED
-extern GPS gps;
+extern Navigation nav;
 #endif
 
 void setup()
@@ -31,7 +31,7 @@ void setup()
 
 #if !DEBUG
 #if GPS_ENABLED
-    gps.Init();
+    nav.Init();
 #endif
     serialInit();
 #endif

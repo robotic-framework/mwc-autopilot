@@ -5,7 +5,7 @@
 #ifndef AUTOPILOT_NAVIGATION_H
 #define AUTOPILOT_NAVIGATION_H
 
-#include "config.h"
+#include "definition.h"
 #include "acs/lead_filter.h"
 
 #if GPS_ENABLED
@@ -118,6 +118,8 @@ private:
 
 public:
     Navigation();
+
+    void Init();
 
     void ResetHome();
 

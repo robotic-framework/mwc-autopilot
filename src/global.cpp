@@ -1,11 +1,10 @@
-#include "def.h"
+#include "global.h"
 
-Motors motors;
-IMU imu;
+Configuration conf;
+ACSController acs(&conf);
 uint8_t smallAngle25 = 1;
 uint16_t cycleTime = 0;
 
-Configuration conf;
 int16_t rcCommand[4] = {0, 0, 0, MINTHROTTLE};
 
 #if GPS_ENABLED

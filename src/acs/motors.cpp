@@ -1,5 +1,5 @@
 #include "motors.h"
-#include "def.h"
+#include "global.h"
 
 #define PIDMIX(X, Y, Z) rcCommand[THROTTLE] + pidOffset[ROLL] * X + pidOffset[PITCH] * Y + pidOffset[YAW] * Z
 

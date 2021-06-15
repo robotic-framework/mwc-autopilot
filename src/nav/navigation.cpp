@@ -2,7 +2,7 @@
 // Created by 李翌文 on 2021/1/11.
 //
 
-#include "def.h"
+#include "global.h"
 
 #if GPS_ENABLED
 
@@ -166,6 +166,10 @@ void Navigation::resetHome(const int32_t *posLat, const int32_t *posLon) {
     home[LON] = *posLon;
     calcLongitudeScaling(*posLat);
     isSetHome = true;
+}
+
+void Navigation::Init() {
+    gps->Init();
 }
 
 #endif

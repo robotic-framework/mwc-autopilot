@@ -1,5 +1,6 @@
 #include "pid.h"
-#include "def.h"
+#include "global.h"
+#include "utils.h"
 
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 

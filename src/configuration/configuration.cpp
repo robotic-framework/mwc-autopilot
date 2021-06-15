@@ -14,6 +14,7 @@ Configuration::Configuration() : arm(false),
 }
 
 void Configuration::loadDefault() {
+    raw.aaType = MWC;
     raw.pid[ROLL].P = 33;
     raw.pid[ROLL].I = 30;
     raw.pid[ROLL].D = 23;
