@@ -4,10 +4,12 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include "pid.h"
+#include "../configuration/configuration.h"
 
 class Motors
 {
 private:
+    Configuration *conf;
     PIDController *pid;
     uint16_t motors[8] = {};
 
@@ -17,7 +19,7 @@ private:
 public:
     static uint8_t Pins[8];
 
-    Motors();
+    Motors(Configuration *conf);
     ~Motors();
 
     void Init();

@@ -5,7 +5,6 @@
 #include "mwc_algorithm.h"
 #include "../utils.h"
 
-
 MWCAlgorithm::MWCAlgorithm(Configuration *conf): estPrevTime(0) {
     this->conf = conf;
     this->estimatedGyroData = {0, 0, (int32_t) ACC_1G_LSB << 16};

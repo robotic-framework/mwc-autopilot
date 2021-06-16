@@ -15,11 +15,12 @@ private:
     Configuration *conf;
     AttitudeAlgorithm *aa;
     IMU imu;
-    Motors motors;
+    Motors *motors;
 
 public:
     ACSController(Configuration *conf) {
         this->conf = conf;
+        this->motors = new Motors(conf);
     }
     void Init();
 

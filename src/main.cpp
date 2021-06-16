@@ -11,8 +11,7 @@ uint32_t currentTime = 0;
 uint16_t previousTime = 0;
 
 Tasks scheduler;
-extern Motors motors;
-extern IMU imu;
+extern ACSController acs;
 extern uint16_t cycleTime;
 extern Configuration conf;
 
@@ -26,8 +25,7 @@ void setup()
     debug_init();
 #endif
     LEDPIN_PINMODE
-    motors.Init();
-    imu.Init();
+    acs.Init();
 
 #if !DEBUG
 #if GPS_ENABLED
@@ -37,10 +35,6 @@ void setup()
 #endif
 
     conf.Load(0);
-
-//    imu.AccCalibration();
-//    imu.MagCalibration();
-//    imu.BaroCalibration();
 }
 
 void loop()

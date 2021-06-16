@@ -7,9 +7,10 @@
 #include "attitude_algorithm/mwc_algorithm.h"
 #include "../type_def.h"
 
-extern Configuration conf;
-
 void ACSController::Init() {
+    this->motors->Init();
+    this->imu.Init();
+
     switch (this->conf->raw.aaType) {
         case MWC:
             this->aa = new MWCAlgorithm(this->conf);
@@ -73,11 +74,11 @@ void ACSController::UpdateAltitude(uint32_t currentTime) {
 }
 
 void ACSController::UpdatePID(uint32_t currentTime) {
-    motors.UpdatePID(currentTime);
+    motors->UpdatePID(currentTime);
 }
 
 void ACSController::UpdateMotors(uint32_t currentTime) {
-    motors.UpdateMotors(currentTime);
+    motors->UpdateMotors(currentTime);
 }
 
 void ACSController::GetRawData(int16_t *buf, uint8_t length) {
@@ -132,9 +133,9 @@ void ACSController::SetTestAltBase(uint16_t a) {
 #endif
 
 void ACSController::GetMotors(uint16_t *buf, uint8_t length) {
-    motors.GetMotors(buf, length);
+    motors->GetMotors(buf, length);
 }
 
 uint8_t ACSController::GetMotorCount() {
-    return motors.GetMotorCount();
+    return motors->GetMotorCount();
 }
