@@ -176,10 +176,11 @@ void evaluateCommand(uint8_t cmd) {
             struct {
                 int16_t ct;
                 int32_t cp;
+                int32_t ccp;
             } baroRaw;
 
-            acs.GetBaroData(&baroRaw.ct, &baroRaw.cp);
-            responsePayload((uint8_t *) &baroRaw, 6);
+            acs.GetBaroData(&baroRaw.ct, &baroRaw.cp, &baroRaw.ccp);
+            responsePayload((uint8_t *) &baroRaw, 10);
             break;
         }
 

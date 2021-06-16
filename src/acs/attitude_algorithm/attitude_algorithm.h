@@ -6,15 +6,15 @@
 #define AUTOPILOT_ATTITUDE_ALGORITHM_H
 
 #include "stdint.h"
+#include "../../definition.h"
 #include "../../type_def.h"
+#include "../imu.h"
 
-typedef struct
-{
+typedef struct {
     int32_t X, Y, Z;
 } t_int32_t_vector_def;
 
-typedef struct
-{
+typedef struct {
     uint16_t XL;
     int16_t X;
     uint16_t YL;
@@ -24,8 +24,7 @@ typedef struct
 } t_int16_t_vector_def;
 
 // note: we use implicit first 16 MSB bits 32 -> 16 cast. ie V32.X>>16 = V16.X
-typedef union
-{
+typedef union {
     int32_t A32[3];
     t_int32_t_vector_def V32;
     int16_t A16[6];
@@ -45,11 +44,16 @@ typedef struct {
 class AttitudeAlgorithm {
 
 protected:
+    IMU *imu;
+
+protected:
     Attitude att{};
     Altitude alt{};
-    int16_t accData[3];
-    int16_t gyroData[3];
     int16_t accZ;
+
+#if defined(TEST_ALTHOLD)
+    int32_t testAltBase;
+#endif
 
 public:
     virtual void UpdateAttitude(uint32_t currentTime) = 0;
@@ -84,30 +88,22 @@ public:
         alt.Vario = vario;
     }
 
-    void SetAccData(const int16_t* buf, uint8_t length) {
-        AttitudeAlgorithm::injectData(this->accData, buf, length);
-    }
-
-    void SetGyroData(const int16_t* buf, uint8_t length) {
-        AttitudeAlgorithm::injectData(this->gyroData, buf, length);
+    void InjectIMU(IMU *imu) {
+        this->imu = imu;
     }
 
     int16_t GetACCZ() {
         return this->accZ;
     }
 
-private:
-    static void injectData(int16_t* target, const int16_t* source, uint8_t length) {
-        for (uint8_t i = 0; i < length; i++)
-        {
-            if (i > 2)
-            {
-                break;
-            }
+#if defined(TEST_ALTHOLD)
 
-            *(target + i) = *(source + i);
-        }
+    void SetTestAltBase(uint16_t a) {
+        testAltBase = a;
     }
+
+#endif
+
 };
 
 #endif //AUTOPILOT_ATTITUDE_ALGORITHM_H

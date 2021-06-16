@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include "config.h"
 #include "utils/led.h"
-#include "attitude_algorithm/mwc_algorithm.h"
 
 #if SENSOR_ACC
 #include "sensors/accelerator.h"
@@ -80,7 +79,8 @@ public:
     void GetAccData(int16_t *buf, uint8_t length);
     void GetGyroData(int16_t *buf, uint8_t length);
     void GetMagData(int16_t *buf, uint8_t length);
-    void GetBaroData(int16_t *ct, int32_t *cp);
+    void GetBaroData(int16_t *ct, int32_t *cp, int32_t *ccp);
+    void GetBaroLogData(float *gps, float *gts);
     void AccCalibration();
     void MagCalibration();
     void BaroCalibration();
@@ -102,6 +102,14 @@ public:
     bool IsMagCalibrating() {
 #if SSENSOR_MAG
         return this->mag->IsCalibrating();
+#else
+        return false;
+#endif
+    }
+
+    bool IsBaroCalibrating() {
+#if SENSOR_BARO
+        return this->baro->IsCalibrating();
 #else
         return false;
 #endif

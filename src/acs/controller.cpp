@@ -14,6 +14,8 @@ void ACSController::Init() {
         case MWC:
             this->aa = new MWCAlgorithm(this->conf);
     }
+
+    this->aa->InjectIMU(&imu);
 }
 
 void ACSController::UpdateAcc(uint32_t currentTime) {
@@ -56,20 +58,16 @@ void ACSController::UpdateAttitude(uint32_t currentTime) {
     }
 #endif
 
-    int16_t gyroData[3];
-    int16_t accData[3];
-
-    imu.GetGyroData(gyroData, 3);
-    imu.GetAccData(accData, 3);
-
-    aa->SetAccData(accData, 3);
-    aa->SetGyroData(gyroData, 3);
     aa->UpdateAttitude(currentTime);
 #endif
 }
 
 void ACSController::UpdateAltitude(uint32_t currentTime) {
 #if SENSOR_BARO
+    if (imu.IsBaroCalibrating()) {
+        return;
+    }
+
     aa->UpdateAltitude(currentTime);
 #endif
 }
@@ -82,3 +80,61 @@ void ACSController::UpdateMotors(uint32_t currentTime) {
     motors.UpdateMotors(currentTime);
 }
 
+void ACSController::GetRawData(int16_t *buf, uint8_t length) {
+    imu.GetRawData(buf, length);
+}
+
+void ACSController::GetAccData(int16_t *buf, uint8_t length) {
+    imu.GetAccData(buf, length);
+}
+
+void ACSController::GetGyroData(int16_t *buf, uint8_t length) {
+    imu.GetGyroData(buf, length);
+}
+
+void ACSController::GetMagData(int16_t *buf, uint8_t length) {
+    imu.GetMagData(buf, length);
+}
+
+void ACSController::GetBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
+    imu.GetBaroData(ct, cp, ccp);
+}
+
+void ACSController::AccCalibration() {
+    imu.AccCalibration();
+}
+
+void ACSController::MagCalibration() {
+    imu.MagCalibration();
+}
+
+void ACSController::BaroCalibration() {
+    imu.BaroCalibration();
+}
+
+void ACSController::GetAttitude(int16_t *buf, uint8_t length) {
+    aa->GetAttitude(buf, length);
+}
+
+void ACSController::GetAltitude(int32_t *targetAlt) {
+    aa->GetAltitude(targetAlt);
+}
+
+void ACSController::GetAltitude(int32_t *targetAlt, int16_t *targetVario) {
+    aa->GetAltitude(targetAlt, targetVario);
+}
+
+#if defined(TEST_ALTHOLD)
+void ACSController::SetTestAltBase(uint16_t a) {
+    aa->SetTestAltBase(a);
+}
+
+#endif
+
+void ACSController::GetMotors(uint16_t *buf, uint8_t length) {
+    motors.GetMotors(buf, length);
+}
+
+uint8_t ACSController::GetMotorCount() {
+    return motors.GetMotorCount();
+}

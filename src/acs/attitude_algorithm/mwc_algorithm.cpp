@@ -21,6 +21,7 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
     int32_t accZTmp = 0;
     static int16_t accZoffset = 0;
     int16_t deltaAngle[3];
+    int16_t accData[3], gyroData[3];
 
     if (estPrevTime == 0) {
         estPrevTime = currentTime;
@@ -32,8 +33,11 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
     float scale = (currentTime - estPrevTime) * (GYRO_SCALE * 65536);
     estPrevTime = currentTime;
 
-// Initialization
+// calculate delta angle
 #if SENSOR_ACC && SENSOR_GYRO
+    imu->GetAccData(accData, 3);
+    imu->GetGyroData(gyroData, 3);
+
     for (axis = 0; axis < 3; axis++) {
         // used to calculate later the magnitude of acc vector
         accMag += mul(accData[axis], accData[axis]);
@@ -101,17 +105,16 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
 }
 
 void MWCAlgorithm::UpdateAltitude(uint32_t currentTime) {
+    int16_t ct;
+    int32_t cp, ccp;
+    float gps, gts;
+    imu->GetBaroData(&ct, &cp, &ccp);
+    imu->GetBaroLogData(&gps, &gts);
     int32_t baroAlt =
-            (log(baro->GetCCPData()) - baro->GetLogBaroGroundPressureSum()) * baro->GetBaroGroundTemperatureScale();
+            (log(ccp) - gps) * gts;
     alt.Alt = (alt.Alt * 7 + baroAlt) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
 
 #if defined(TEST_ALTHOLD)
     alt.Alt = (alt.Alt * 4 + testAltBase * 4) >> 3;
 #endif
 }
-
-#if defined(TEST_ALTHOLD)
-void MWCAlgorithm::SetTestAltBase(uint16_t a) {
-    testAltBase = a;
-}
-#endif

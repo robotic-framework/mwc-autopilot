@@ -52,6 +52,7 @@ public:
 
     void Update(uint32_t currentTime);
     void Calibration(uint16_t steps);
+    bool IsCalibrating();
     uint16_t GetUTData();
     uint32_t GetUPData();
     int16_t GetCTData();

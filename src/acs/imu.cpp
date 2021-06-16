@@ -148,13 +148,25 @@ void IMU::GetMagData(int16_t *buf, uint8_t length) {
 #endif
 }
 
-void IMU::GetBaroData(int16_t *ct, int32_t *cp) {
+void IMU::GetBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
 #if SENSOR_BARO
     *ct = baro->GetCTData();
     *cp = baro->GetCPData();
+    *ccp = baro->GetCCPData();
 #else
     *ct = 0;
     *cp = 0;
+    *ccp = 0;
+#endif
+}
+
+void IMU::GetBaroLogData(float *gps, float *gts) {
+#if SENSOR_BARO
+    *gps = baro->GetLogBaroGroundPressureSum();
+    *gts = baro->GetBaroGroundTemperatureScale();
+#else
+    *gps = 0;
+    *gts = 0;
 #endif
 }
 
@@ -208,15 +220,5 @@ void IMU::UpdateBaro(uint32_t currentTime) {
 void IMU::UpdateSonar(uint32_t currentTime) {
 #if SENSOR_SONAR
     sonar->Update();
-#endif
-}
-
-void IMU::UpdateAltitude(uint32_t currentTime) {
-#if SENSOR_BARO
-    if (!baro->GetCCPData()) {
-        return;
-    }
-
-    aa->UpdateAltitude(currentTime);
 #endif
 }
