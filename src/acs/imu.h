@@ -15,7 +15,7 @@
 #include "sensors/meganetometer.h"
 #endif
 #if SENSOR_BARO
-#include "sensors/baro.h"
+#include "sensors/barometer.h"
 #endif
 
 #if defined(ACC_ADXL345)
@@ -50,11 +50,11 @@ private:
 #endif
 
 #if SENSOR_MAG
-    Meganetometer *mag;
+    Magnetometer *mag;
 #endif
 
 #if SENSOR_BARO
-    Baro *baro;
+    Barometer *baro;
 #endif
 
     // indicators

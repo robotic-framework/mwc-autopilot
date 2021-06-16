@@ -1,6 +1,6 @@
-#include "baro.h"
+#include "barometer.h"
 
-void Baro::Update(uint32_t currentTime) {
+void Barometer::Update(uint32_t currentTime) {
     this->getRawData(currentTime);
 
     if (calibrateSteps > 0) {
@@ -13,35 +13,35 @@ void Baro::Update(uint32_t currentTime) {
     }
 }
 
-void Baro::Calibration(uint16_t steps) {
+void Barometer::Calibration(uint16_t steps) {
     calibrateSteps = steps;
 }
 
-void Baro::calibration(uint32_t currentTime) {
+void Barometer::calibration(uint32_t currentTime) {
     logBaroGroundPressureSum = log(ccp);
     baroGroundTemperatureScale = ((int32_t) ct + 27315) * 29.271267f;
 }
 
-bool Baro::IsCalibrating() {
+bool Barometer::IsCalibrating() {
     return (calibrateSteps > 0);
 }
 
-uint16_t Baro::GetUTData() {
+uint16_t Barometer::GetUTData() {
     return ut.val;
 }
 
-uint32_t Baro::GetUPData() {
+uint32_t Barometer::GetUPData() {
     return up.val;
 }
 
-int16_t Baro::GetCTData() {
+int16_t Barometer::GetCTData() {
     return ct;
 }
 
-int32_t Baro::GetCPData() {
+int32_t Barometer::GetCPData() {
     return cp;
 }
 
-int32_t Baro::GetCCPData() {
+int32_t Barometer::GetCCPData() {
     return ccp;
 }

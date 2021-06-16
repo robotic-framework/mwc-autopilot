@@ -1,5 +1,5 @@
-#if !defined(MEGANETOMETER_H_)
-#define MEGANETOMETER_H_
+#if !defined(MAGNETOMETER_H_)
+#define MAGNETOMETER_H_
 
 #include <stdint.h>
 #include "i2c.h"
@@ -13,11 +13,10 @@
         data[YAW] = -Z;          \
     }
 
-class Meganetometer : public I2C
+class Magnetometer : public I2C
 {
 private:
     bool calibrating;
-    uint32_t stepTime = 0;
     uint32_t calibrationTime = 0;
 
     void calibration(uint32_t stepTime);
@@ -29,7 +28,7 @@ protected:
     virtual void getRawData() = 0;
 
 public:
-    Meganetometer(uint8_t address) : I2C(address){};
+    Magnetometer(uint8_t address) : I2C(address){};
 
     uint8_t Update(uint32_t currentTime);
     void Calibration();
@@ -37,4 +36,4 @@ public:
     void GetData(int16_t *buf, uint8_t length);
 };
 
-#endif // MEGANETOMETER_H_
+#endif // MAGNETOMETER_H_

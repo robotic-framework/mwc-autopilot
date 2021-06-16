@@ -52,10 +52,10 @@
 // Gyroscope
 #define GYRO_ITG3205
 
-// Meganetometer
+// Magnetometer
 // #define MAG_HMC5883L
 
-// Baro
+// Barometer
 #define BARO_BMP085
 
 /**

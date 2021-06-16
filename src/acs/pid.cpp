@@ -36,7 +36,7 @@ void PIDController::Update(uint32_t currentTime) {
     static int16_t errorGyroI[2] = {0, 0};
     static int32_t errorGyroI_YAW;
     static int16_t errorAngleI[2] = {0, 0};
-    int16_t PTerm = 0, ITerm = 0, DTerm, PTermACC, ITermACC;
+    int16_t PTerm, ITerm, DTerm, PTermACC, ITermACC;
     int16_t delta;
 
     static uint16_t previousTime = 0;

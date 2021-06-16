@@ -1,13 +1,13 @@
-#ifndef BARO_H_
-#define BARO_H_
+#ifndef BAROMETER_H_
+#define BAROMETER_H_
 
 #include <stdint.h>
 #include "i2c.h"
 #include "../definition.h"
 
-#define BARO_HISTORY_SIZE 21
+#define BAROMETER_HISTORY_SIZE 21
 
-class Baro : public I2C
+class Barometer : public I2C
 {
 private:
     void calibration(uint32_t stepTime);
@@ -32,19 +32,19 @@ protected:
     int16_t ct;
     int32_t cp, ccp;
 
-    int32_t historyPressure[BARO_HISTORY_SIZE];
+    int32_t historyPressure[BAROMETER_HISTORY_SIZE];
     uint8_t historyPressureIndex;
 
     virtual void getRawData(uint32_t currentTime) = 0;
 
 public:
-    Baro(uint8_t address) : I2C(address),
-                            historyPressureIndex(0),
-                            ccp(0),
-                            ct(0),
-                            cp(0)
+    Barometer(uint8_t address) : I2C(address),
+                                 historyPressureIndex(0),
+                                 ccp(0),
+                                 ct(0),
+                                 cp(0)
     {
-        for (uint8_t i = 0; i < BARO_HISTORY_SIZE; i++)
+        for (uint8_t i = 0; i < BAROMETER_HISTORY_SIZE; i++)
         {
             historyPressure[i] = 0;
         }
@@ -62,4 +62,4 @@ public:
     float GetBaroGroundTemperatureScale() { return baroGroundTemperatureScale; };
 };
 
-#endif // BARO_H_
+#endif // BAROMETER_H_

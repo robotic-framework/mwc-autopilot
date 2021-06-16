@@ -1,7 +1,7 @@
 #ifndef BMP085_H_
 #define BMP085_H_
 
-#include "baro.h"
+#include "barometer.h"
 
 #define BMP085_DEVICE 0x77  // BMP085 device address
 #define BMP085_CAL_AC1 0xAA //!< R   Calibration data (16 bits)
@@ -28,7 +28,7 @@
 #define BMP085_READTEMPCMD 0x2E     //!< Read temperature control register value
 #define BMP085_READPRESSURECMD 0x34 //!< Read pressure control register value
 
-class BMP085 : public Baro
+class BMP085 : public Barometer
 {
 private:
     struct
@@ -48,7 +48,7 @@ private:
     int32_t computeB5();
 
 public:
-    BMP085(uint8_t address) : Baro(address) {}
+    BMP085(uint8_t address) : Barometer(address) {}
 
 protected:
     void getRawData(uint32_t currentTime) override;

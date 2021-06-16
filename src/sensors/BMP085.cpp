@@ -102,7 +102,7 @@ void BMP085::calcCompensated()
 void BMP085::calcCoordinatedPressure()
 {
     uint8_t nextIndex = historyPressureIndex + 1;
-    if (nextIndex == BARO_HISTORY_SIZE)
+    if (nextIndex == BAROMETER_HISTORY_SIZE)
     {
         nextIndex = 0;
     }
