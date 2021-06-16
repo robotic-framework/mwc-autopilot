@@ -3,7 +3,7 @@
 
 #include <Wire.h>
 #include "config.h"
-#include "utils/led.h"
+#include "../mixed/led.h"
 
 #if SENSOR_ACC
 #include "sensors/accelerator.h"

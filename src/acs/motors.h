@@ -10,11 +10,9 @@ class Motors
 {
 private:
     Configuration *conf;
-    PIDController *pid;
     uint16_t motors[8] = {};
 
     void writeMotors();
-    void mixPID();
 
 public:
     static uint8_t Pins[8];
@@ -23,10 +21,10 @@ public:
     ~Motors();
 
     void Init();
-    void UpdatePID(uint32_t currentTime);
+    void MixPID(PIDController *pid);
     void UpdateMotors(uint32_t currentTime);
     void GetMotors(uint16_t *buf, uint8_t length);
-    uint8_t GetMotorCount();
+    static uint8_t GetMotorCount();
     void WriteMotorsThrottle(uint16_t throttle);
 };
 

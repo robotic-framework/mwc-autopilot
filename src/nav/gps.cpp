@@ -6,7 +6,7 @@
 #if GPS_ENABLED
 
 #include "gps.h"
-#include "utils/led.h"
+#include "../mixed/led.h"
 
 GPS::GPS() : hasFix(false) {
     gps = new TinyGPSPlus;

@@ -74,7 +74,11 @@ void ACSController::UpdateAltitude(uint32_t currentTime) {
 }
 
 void ACSController::UpdatePID(uint32_t currentTime) {
-    motors->UpdatePID(currentTime);
+    if (!conf->arm) {
+        return;
+    }
+    pid->Update(currentTime);
+    motors->MixPID(pid);
 }
 
 void ACSController::UpdateMotors(uint32_t currentTime) {

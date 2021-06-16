@@ -30,7 +30,6 @@ uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
 Motors::Motors(Configuration *conf)
 {
     this->conf = conf;
-    pid = new PIDController(conf);
 }
 
 Motors::~Motors()
@@ -113,29 +112,13 @@ void Motors::Init()
     this->WriteMotorsThrottle(MINCOMMAND);
 }
 
-void Motors::UpdatePID(uint32_t currentTime)
+void Motors::MixPID(PIDController *pid)
 {
-    if (conf->arm)
+    if (!conf->arm)
     {
-        pid->Update(currentTime);
-        mixPID();
+        return;
     }
-}
 
-void Motors::UpdateMotors(uint32_t currentTime)
-{
-    if (conf->arm)
-    {
-        writeMotors();
-    }
-    else
-    {
-        WriteMotorsThrottle(MINCOMMAND);
-    }
-}
-
-void Motors::mixPID()
-{
     uint16_t maxMotor;
     uint8_t i;
 
@@ -176,6 +159,18 @@ void Motors::mixPID()
         {
             motors[i] = MINCOMMAND;
         }
+    }
+}
+
+void Motors::UpdateMotors(uint32_t currentTime)
+{
+    if (conf->arm)
+    {
+        writeMotors();
+    }
+    else
+    {
+        WriteMotorsThrottle(MINCOMMAND);
     }
 }
 

@@ -8,6 +8,7 @@
 #include "attitude_algorithm/attitude_algorithm.h"
 #include "../configuration/configuration.h"
 #include "imu.h"
+#include "pid.h"
 #include "motors.h"
 
 class ACSController {
@@ -15,11 +16,13 @@ private:
     Configuration *conf;
     AttitudeAlgorithm *aa;
     IMU imu;
+    PIDController *pid;
     Motors *motors;
 
 public:
     ACSController(Configuration *conf) {
         this->conf = conf;
+        this->pid = new PIDController(conf);
         this->motors = new Motors(conf);
     }
     void Init();

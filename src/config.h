@@ -7,7 +7,7 @@
 /**
  * BLE Protocol
  */
-//#define BLE_SERIAL 2
+#define BLE_SERIAL 2
 #define BLE_BAUD 115200
 
 #define VERSION 100
@@ -30,7 +30,7 @@
 #define MINTHROTTLE 1150 // (*) (**)
 
 /* this is the maximum value for the ESCs at full power, this value can be increased up to 2000 */
-#define MAXTHROTTLE 1850
+#define MAXTHROTTLE 1900
 
 /* this is the value for the ESCs when they are not armed
        in some cases, this value must be lowered down to 900 for some specific ESCs, otherwise they failed to initiate */
