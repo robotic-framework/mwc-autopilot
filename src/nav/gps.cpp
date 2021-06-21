@@ -12,14 +12,14 @@ GPS::GPS() : hasFix(false) {
     gps = new TinyGPSPlus;
 }
 
-void GPS::Init() {
+void GPS::init() {
     GPS_SERIAL_DEVICE.begin(GPS_BAUD);
     while (!GPS_SERIAL_DEVICE) {}
     blinkLED(2, 20, 10);
     LEDPIN_OFF
 }
 
-void GPS::Update(uint32_t currentTime) {
+void GPS::update(uint32_t currentTime) {
     while (GPS_SERIAL_DEVICE.available()) {
         gps->encode(GPS_SERIAL_DEVICE.read());
     }

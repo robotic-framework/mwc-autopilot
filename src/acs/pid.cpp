@@ -1,6 +1,8 @@
 #include "pid.h"
 #include "utils.h"
 
+using namespace aa;
+
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 
 #define applyDeadband(value, deadband) \
@@ -22,12 +24,12 @@ extern int16_t rcCommand[4];
 int16_t PIDController::errorAltI = 0;
 
 PIDController::PIDController(Configuration *conf) :
-        isBaroModeChanged(1),
+        isAltHoldModeChanged(true),
         initialThrottleHold(0) {
-    lastBaroMode = conf->baroMode;
+    lastAltHoldMode = conf->altHoldMode;
 }
 
-void PIDController::Update(uint32_t currentTime) {
+void PIDController::update(uint32_t currentTime) {
     uint8_t axis;
     int16_t error, errorAngle;
     int16_t rc;
@@ -57,8 +59,8 @@ void PIDController::Update(uint32_t currentTime) {
 
     int16_t gyroData[3];
     int16_t attitude[3];
-    imu->GetGyroData(gyroData, 3);
-    aa->GetAttitude(attitude, 3);
+    imu->getGyroData(gyroData, 3);
+    aa->getAttitude(attitude, 3);
 
     // ROLL & PITCH
     for (axis = 0; axis < 2; axis++) {
@@ -117,21 +119,21 @@ void PIDController::Update(uint32_t currentTime) {
     pidOffset[YAW] = PTerm + ITerm;
 
     // ALT HOLD
-    if (conf->baroMode != lastBaroMode) {
-        isBaroModeChanged = 1;
-        lastBaroMode = conf->baroMode;
+    if (conf->altHoldMode != lastAltHoldMode) {
+        isAltHoldModeChanged = true;
+        lastAltHoldMode = conf->altHoldMode;
     }
-    if (isBaroModeChanged) {
-        if (conf->baroMode) {
+    if (isAltHoldModeChanged) {
+        if (conf->altHoldMode) {
             errorAltI = 0;
         }
         initialThrottleHold = rcCommand[THROTTLE];
-        isBaroModeChanged = 0;
+        isAltHoldModeChanged = false;
     }
-    if (conf->baroMode) {
+    if (conf->altHoldMode) {
         int32_t alt;
         int16_t vario;
-        aa->GetAltitude(&alt, &vario);
+        aa->getAltitude(&alt, &vario);
         int16_t errorAlt = constrain(conf->altHold - alt, -300, 300);
         // Serial.print("hold: ");
         // Serial.print(altHold);
@@ -144,7 +146,7 @@ void PIDController::Update(uint32_t currentTime) {
         errorAltI = constrain(errorAltI, -30000, 30000);
         pidOffsetAlt += errorAltI >> 9;
 
-        int16_t accZ = aa->GetACCZ();
+        int16_t accZ = aa->getAccZ();
         applyDeadband(accZ, ACC_Z_DEADBAND);
 
         static int32_t lastAlt;
@@ -162,7 +164,7 @@ void PIDController::Update(uint32_t currentTime) {
 
         vario = zVel;
         applyDeadband(vario, 5);
-        aa->SetAltitudeVario(vario);
+        aa->setAltitudeVario(vario);
         pidOffsetAlt -= constrain(conf->raw.pid[PIDALT].D * vario >> 4, -150, 150);
         // Serial.print(", accZ: ");
         // Serial.print(accZ);
@@ -176,12 +178,12 @@ void PIDController::Update(uint32_t currentTime) {
         // Serial.print(pidOffsetAlt);
     }
 
-    if (conf->baroMode /* || conf.takeOffMode || conf.landingMode */) {
+    if (conf->altHoldMode /* || conf.takeOffMode || conf.landingMode */) {
         // throttle compensation
         rcCommand[THROTTLE] = initialThrottleHold + pidOffsetAlt;
     }
 }
 
-uint16_t PIDController::MixPID(int8_t x, int8_t y, int8_t z) {
+uint16_t PIDController::mixPID(int8_t x, int8_t y, int8_t z) {
     return rcCommand[THROTTLE] + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z;
 }

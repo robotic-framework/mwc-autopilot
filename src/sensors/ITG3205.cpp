@@ -1,6 +1,6 @@
 #include "ITG3205.h"
 
-void ITG3205::init()
+void ITG3205::_init()
 {
   write(ITG3205_PWR_MGM, 0x80);
   delay(10);
@@ -19,9 +19,9 @@ void ITG3205::getRawData()
     ((_buff[4] << 8) | _buff[5]) >> 2);
 }
 
-void ITG3205::Update(uint32_t currentTime)
+void ITG3205::update(uint32_t currentTime)
 {
-  Gyroscope::Update(currentTime);
+    Gyroscope::update(currentTime);
 
   for (size_t i = 0; i < 3; i++)
   {

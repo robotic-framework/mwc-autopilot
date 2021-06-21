@@ -8,31 +8,31 @@ void taskSystem(uint32_t currentTime) {
 }
 
 void taskAll(uint32_t currentTime) {
-    acs.UpdateAcc(currentTime);
-    acs.UpdateGyro(currentTime);
-    acs.UpdateAttitude(currentTime);
-    acs.UpdatePID(currentTime);
-    acs.UpdateMotors(currentTime);
+    acs.updateAcc(currentTime);
+    acs.updateGyro(currentTime);
+    acs.updateAttitude(currentTime);
+    acs.updatePID(currentTime);
+    acs.updateMotors(currentTime);
 }
 
 void taskGetAcc(uint32_t currentTime) {
-    acs.UpdateAcc(currentTime);
+    acs.updateAcc(currentTime);
 }
 
 void taskGetGyro(uint32_t currentTime) {
-    acs.UpdateGyro(currentTime);
+    acs.updateGyro(currentTime);
 }
 
 void taskGetMag(uint32_t currentTime) {
-    acs.UpdateMag(currentTime);
+    acs.updateMag(currentTime);
 }
 
 void taskGetBaro(uint32_t currentTime) {
-    acs.UpdateBaro(currentTime);
+    acs.updateBaro(currentTime);
 }
 
 void taskGetSonar(uint32_t currentTime) {
-    acs.UpdateSonar(currentTime);
+    acs.updateSonar(currentTime);
 }
 
 void taskGetGPS(uint32_t currentTime) {
@@ -40,28 +40,28 @@ void taskGetGPS(uint32_t currentTime) {
 }
 
 void taskUpdateAttitude(uint32_t currentTime) {
-    acs.UpdateAttitude(currentTime);
+    acs.updateAttitude(currentTime);
 }
 
 void taskUpdateAltitude(uint32_t currentTime) {
-    acs.UpdateAltitude(currentTime);
+    acs.updateAltitude(currentTime);
 }
 
 void taskUpdateMotorPID(uint32_t currentTime) {
-    acs.UpdatePID(currentTime);
+    acs.updatePID(currentTime);
 }
 
 void taskUpdateMotors(uint32_t currentTime) {
-    acs.UpdateMotors(currentTime);
+    acs.updateMotors(currentTime);
 }
 
 #if GPS_ENABLED
 void taskUpdateGPS(uint32_t currentTime) {
-    nav.UpdateGPS(currentTime);
+    nav.updateGPS(currentTime);
 }
 
 void taskUpdateNav(uint32_t currentTime) {
-    nav.Update(currentTime);
+    nav.update(currentTime);
 }
 #endif
 

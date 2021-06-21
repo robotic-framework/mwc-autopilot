@@ -28,7 +28,7 @@ private:
 
 protected:
     void getRawData() override;
-    void init() override;
+    void _init() override;
 
 public:
     HMC5883L(uint8_t address) : Magnetometer(address){};

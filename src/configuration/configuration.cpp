@@ -8,7 +8,7 @@
 Configuration::Configuration() : arm(false),
                                  angleMode(true),
                                  horizonMode(true),
-                                 baroMode(false),
+                                 altHoldMode(false),
                                  altHold(0) {
 
 }
@@ -32,7 +32,7 @@ void Configuration::loadDefault() {
     raw.pid[PIDALT].D = 24;
 }
 
-void Configuration::Load(uint8_t pIndex) {
+void Configuration::load(uint8_t pIndex) {
     if (pIndex >= MAX_PROFILES) {
         return;
     }
@@ -42,7 +42,7 @@ void Configuration::Load(uint8_t pIndex) {
     }
 }
 
-void Configuration::Write(uint8_t pIndex) {
+void Configuration::write(uint8_t pIndex) {
     if (pIndex >= MAX_PROFILES) {
         return;
     }

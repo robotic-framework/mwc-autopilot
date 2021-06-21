@@ -20,7 +20,7 @@ private:
   uint32_t offsetTotal[3];
   int16_t prevData[3] = {0, 0, 0};
 
-  void calibration();
+  void _calibration();
 
 protected:
   int16_t data[3];
@@ -30,11 +30,11 @@ protected:
 public:
   Gyroscope(uint8_t address) : I2C(address) {}
 
-  void Update(uint32_t currentTime);
-  void Calibration();
-  bool IsCalibrating();
-  void GetData(int16_t *buf, uint8_t length);
-  void SetData(int16_t *data, uint8_t length);
+  void update(uint32_t currentTime);
+  void calibration();
+  bool isCalibrating();
+  void getData(int16_t *buf, uint8_t length);
+  void setData(int16_t *data, uint8_t length);
 };
 
 #endif // GYROSCOPE_H_

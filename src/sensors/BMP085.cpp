@@ -1,8 +1,8 @@
 #include "BMP085.h"
 
-void BMP085::init()
+void BMP085::_init()
 {
-    // read calibration
+    // read _calibration
     ctx.ac1 = read16(BMP085_CAL_AC1);
     ctx.ac2 = read16(BMP085_CAL_AC2);
     ctx.ac3 = read16(BMP085_CAL_AC3);

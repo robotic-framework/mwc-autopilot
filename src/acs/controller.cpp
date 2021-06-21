@@ -7,139 +7,196 @@
 #include "attitude_algorithm/mwc_algorithm.h"
 #include "../type_def.h"
 
-void ACSController::Init() {
-    this->motors->Init();
-    this->imu.Init();
+void ACSController::init() {
+    this->motors->init();
+    this->imu.init();
 
     switch (this->conf->raw.aaType) {
         case MWC:
             this->aa = new MWCAlgorithm(this->conf);
     }
 
-    this->aa->InjectIMU(&imu);
+    this->aa->injectIMU(&imu);
 }
 
-void ACSController::UpdateAcc(uint32_t currentTime) {
-    imu.UpdateAcc(currentTime);
+void ACSController::updateAcc(uint32_t currentTime) {
+    imu.updateAcc(currentTime);
 }
 
-void ACSController::UpdateGyro(uint32_t currentTime) {
-    imu.UpdateGyro(currentTime);
+void ACSController::updateGyro(uint32_t currentTime) {
+    imu.updateGyro(currentTime);
 }
 
-void ACSController::UpdateMag(uint32_t currentTime) {
-    imu.UpdateMag(currentTime);
+void ACSController::updateMag(uint32_t currentTime) {
+    imu.updateMag(currentTime);
 }
 
-void ACSController::UpdateBaro(uint32_t currentTime) {
-    imu.UpdateBaro(currentTime);
+void ACSController::updateBaro(uint32_t currentTime) {
+    imu.updateBaro(currentTime);
 }
 
-void ACSController::UpdateSonar(uint32_t currentTime) {
-    imu.UpdateSonar(currentTime);
+void ACSController::updateSonar(uint32_t currentTime) {
+    imu.updateSonar(currentTime);
 }
 
-void ACSController::UpdateAttitude(uint32_t currentTime) {
+void ACSController::updateAttitude(uint32_t currentTime) {
 #if SENSOR_ACC && SENSOR_GYRO
-    // check if is in calibration
+    // check if is in _calibration
 #if SENSOR_ACC
-    if (imu.IsAccCalibrating()) {
+    if (imu.isAccCalibrating()) {
         return;
     }
 #endif
 #if SENSOR_GYRO
-    if (imu.IsGyroCalibrating()) {
-        return;
-    }
-#endif
-#if SENSOR_MAG
-    if (imu.IsMagCalibrating())
-    {
+    if (imu.isGyroCalibrating()) {
         return;
     }
 #endif
 
-    aa->UpdateAttitude(currentTime);
+    aa->updateAttitude(currentTime);
 #endif
 }
 
-void ACSController::UpdateAltitude(uint32_t currentTime) {
+void ACSController::updateAltitude(uint32_t currentTime) {
 #if SENSOR_BARO
-    if (imu.IsBaroCalibrating()) {
+    if (imu.isBaroCalibrating()) {
         return;
     }
 
-    aa->UpdateAltitude(currentTime);
+    aa->updateAltitude(currentTime);
 #endif
 }
 
-void ACSController::UpdatePID(uint32_t currentTime) {
+void ACSController::updatePID(uint32_t currentTime) {
     if (!conf->arm) {
         return;
     }
-    pid->Update(currentTime);
-    motors->MixPID(pid);
+    pid->update(currentTime);
+    motors->mixPID(pid);
 }
 
-void ACSController::UpdateMotors(uint32_t currentTime) {
-    motors->UpdateMotors(currentTime);
+void ACSController::updateMotors(uint32_t currentTime) {
+    motors->updateMotors(currentTime);
 }
 
-void ACSController::GetRawData(int16_t *buf, uint8_t length) {
-    imu.GetRawData(buf, length);
+void ACSController::getRawData(int16_t *buf, uint8_t length) {
+    imu.getRawData(buf, length);
 }
 
-void ACSController::GetAccData(int16_t *buf, uint8_t length) {
-    imu.GetAccData(buf, length);
+void ACSController::getAccData(int16_t *buf, uint8_t length) {
+    imu.getAccData(buf, length);
 }
 
-void ACSController::GetGyroData(int16_t *buf, uint8_t length) {
-    imu.GetGyroData(buf, length);
+void ACSController::getGyroData(int16_t *buf, uint8_t length) {
+    imu.getGyroData(buf, length);
 }
 
-void ACSController::GetMagData(int16_t *buf, uint8_t length) {
-    imu.GetMagData(buf, length);
+void ACSController::getMagData(int16_t *buf, uint8_t length) {
+    imu.getMagData(buf, length);
 }
 
-void ACSController::GetBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
-    imu.GetBaroData(ct, cp, ccp);
+void ACSController::getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
+    imu.getBaroData(ct, cp, ccp);
 }
 
-void ACSController::AccCalibration() {
-    imu.AccCalibration();
+void ACSController::accCalibration() {
+    imu.accCalibration();
 }
 
-void ACSController::MagCalibration() {
-    imu.MagCalibration();
+void ACSController::magCalibration() {
+    imu.magCalibration();
 }
 
-void ACSController::BaroCalibration() {
-    imu.BaroCalibration();
+void ACSController::baroCalibration() {
+    imu.baroCalibration();
 }
 
-void ACSController::GetAttitude(int16_t *buf, uint8_t length) {
-    aa->GetAttitude(buf, length);
+void ACSController::getAttitude(int16_t *buf, uint8_t length) {
+    aa->getAttitude(buf, length);
 }
 
-void ACSController::GetAltitude(int32_t *targetAlt) {
-    aa->GetAltitude(targetAlt);
+void ACSController::getAltitude(int32_t *targetAlt) {
+    aa->getAltitude(targetAlt);
 }
 
-void ACSController::GetAltitude(int32_t *targetAlt, int16_t *targetVario) {
-    aa->GetAltitude(targetAlt, targetVario);
+void ACSController::getAltitude(int32_t *targetAlt, int16_t *targetVario) {
+    aa->getAltitude(targetAlt, targetVario);
 }
 
 #if defined(TEST_ALTHOLD)
-void ACSController::SetTestAltBase(uint16_t a) {
-    aa->SetTestAltBase(a);
+
+void ACSController::setTestAltBase(uint16_t a) {
+    aa->setTestAltBase(a);
 }
 
 #endif
 
-void ACSController::GetMotors(uint16_t *buf, uint8_t length) {
-    motors->GetMotors(buf, length);
+void ACSController::getMotors(uint16_t *buf, uint8_t length) {
+    motors->getMotors(buf, length);
 }
 
-uint8_t ACSController::GetMotorCount() {
-    return motors->GetMotorCount();
+bool ACSController::isHoldAlt() const {
+    return holdAlt;
+}
+
+void ACSController::setHoldAlt(bool hold) {
+    this->holdAlt = hold;
+}
+
+bool ACSController::isHoldHeading() const {
+    return holdHeading;
+}
+
+void ACSController::setHoldHeading(bool hold) {
+    this->holdHeading = hold;
+}
+
+bool ACSController::isHoldSpeed() const {
+    return holdSpeed;
+}
+
+void ACSController::setHoldSpeed(bool hold) {
+    this->holdSpeed = hold;
+}
+
+bool ACSController::isHoldPos() const {
+    return holdPos;
+}
+
+void ACSController::setHoldPos(bool hold) {
+    this->holdPos = hold;
+}
+
+void ACSController::getTargetAlt(int32_t *target) const {
+    *target = this->targetAlt;
+}
+
+void ACSController::setTargetAlt(int32_t target) {
+    this->targetAlt = target;
+}
+
+void ACSController::getTargetHeading(int16_t *target) const {
+    *target = this->targetHeading;
+}
+
+void ACSController::setTargetHeading(int16_t target) {
+    this->targetHeading = target;
+}
+
+void ACSController::getTargetSpeed(int16_t *target) const {
+    *target = this->targetSpeed;
+}
+
+void ACSController::setTargetSpeed(int16_t target) {
+    this->targetSpeed = target;
+}
+
+void ACSController::getTargetPos(int32_t *buf) const {
+    *buf = targetPos[0];
+    *(buf + 1) = targetPos[1];
+}
+
+void ACSController::setTargetPos(int32_t *lat, int32_t *lng) {
+    targetPos[0] = *lat;
+    targetPos[1] = *lng;
 }

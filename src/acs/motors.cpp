@@ -36,7 +36,7 @@ Motors::~Motors()
 {
 }
 
-void Motors::Init()
+void Motors::init()
 {
     for (uint8_t i = 0; i < MOTOR_COUNT; i++)
     {
@@ -59,7 +59,7 @@ void Motors::Init()
 #endif
 #if defined(MEGA)
 #if MOTOR_COUNT > 0
-    // init 16bit timer 3
+    // _init 16bit timer 3
     TCCR3A |= (1 << WGM31); // phase correct mode
     TCCR3A &= ~(1 << WGM30);
     TCCR3B |= (1 << WGM33);
@@ -72,7 +72,7 @@ void Motors::Init()
     TCCR3A |= _BV(COM3A1); // connect pin 5 to timer 3 channel A
 #endif
 #if MOTOR_COUNT > 2
-    // init 16bit timer 4
+    // _init 16bit timer 4
     TCCR4A |= (1 << WGM41); // phase correct mode
     TCCR4A &= ~(1 << WGM40);
     TCCR4B |= (1 << WGM43);
@@ -101,7 +101,7 @@ void Motors::Init()
     delay(4000);
     WriteMotorsTrottle(ECS_CALIBRATE_LOW);
     blinkLED(3, 20, 2);
-    // use loop to stop init, never start
+    // use loop to stop _init, never start
     while (1)
     {
         delay(5000);
@@ -109,10 +109,10 @@ void Motors::Init()
     }
 #endif // ENABLE_ECS_CALIBRATION
 
-    this->WriteMotorsThrottle(MINCOMMAND);
+    this->writeMotorsThrottle(MINCOMMAND);
 }
 
-void Motors::MixPID(PIDController *pid)
+void Motors::mixPID(PIDController *pid)
 {
     if (!conf->arm)
     {
@@ -122,10 +122,10 @@ void Motors::MixPID(PIDController *pid)
     uint16_t maxMotor;
     uint8_t i;
 
-    motors[0] = pid->MixPID(-1, 1, -1);
-    motors[1] = pid->MixPID(-1, -1, 1);
-    motors[2] = pid->MixPID(1, 1, 1);
-    motors[3] = pid->MixPID(1, -1, -1);
+    motors[0] = pid->mixPID(-1, 1, -1);
+    motors[1] = pid->mixPID(-1, -1, 1);
+    motors[2] = pid->mixPID(1, 1, 1);
+    motors[3] = pid->mixPID(1, -1, -1);
 
     // Serial.print(", throttle: ");
     // Serial.print(rcCommand[THROTTLE]);
@@ -162,7 +162,7 @@ void Motors::MixPID(PIDController *pid)
     }
 }
 
-void Motors::UpdateMotors(uint32_t currentTime)
+void Motors::updateMotors(uint32_t currentTime)
 {
     if (conf->arm)
     {
@@ -170,11 +170,11 @@ void Motors::UpdateMotors(uint32_t currentTime)
     }
     else
     {
-        WriteMotorsThrottle(MINCOMMAND);
+        writeMotorsThrottle(MINCOMMAND);
     }
 }
 
-void Motors::GetMotors(uint16_t *buf, uint8_t length)
+void Motors::getMotors(uint16_t *buf, uint8_t length)
 {
     length = min(length, 8);
     for (uint8_t i = 0; i < length; i++)
@@ -183,12 +183,12 @@ void Motors::GetMotors(uint16_t *buf, uint8_t length)
     }
 }
 
-uint8_t Motors::GetMotorCount()
+uint8_t Motors::getMotorCount()
 {
     return MOTOR_COUNT;
 }
 
-void Motors::WriteMotorsThrottle(uint16_t throttle)
+void Motors::writeMotorsThrottle(uint16_t throttle)
 {
     for (uint8_t i = 0; i < MOTOR_COUNT; i++)
     {

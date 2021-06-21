@@ -18,9 +18,9 @@ private:
     t_int32_t_vector estimatedMagData;
 
 public:
-    void UpdateAttitude(uint32_t currentTime) final;
+    void updateAttitude(uint32_t currentTime) final;
 
-    void UpdateAltitude(uint32_t currentTime) final;
+    void updateAltitude(uint32_t currentTime) final;
 
 public:
     MWCAlgorithm(Configuration *conf);

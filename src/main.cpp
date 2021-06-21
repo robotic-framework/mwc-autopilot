@@ -25,16 +25,16 @@ void setup()
     debug_init();
 #endif
     LEDPIN_PINMODE
-    acs.Init();
+    acs.init();
 
 #if !DEBUG
 #if GPS_ENABLED
-    nav.Init();
+    nav.init();
 #endif
     serialInit();
 #endif
 
-    conf.Load(0);
+    conf.load(0);
 }
 
 void loop()

@@ -3,12 +3,12 @@
 
 extern Configuration conf;
 
-void Gyroscope::Update(uint32_t currentTime)
+void Gyroscope::update(uint32_t currentTime)
 {
     this->getRawData();
     if (calibrateSteps > 0)
     {
-        calibration();
+        _calibration();
     }
 
     for (uint8_t i = 0; i < 3; i++)
@@ -19,7 +19,7 @@ void Gyroscope::Update(uint32_t currentTime)
     }
 }
 
-void Gyroscope::Calibration()
+void Gyroscope::calibration()
 {
     calibrateSteps = 512;
     for (size_t i = 0; i < 3; i++)
@@ -28,12 +28,12 @@ void Gyroscope::Calibration()
     }
 }
 
-bool Gyroscope::IsCalibrating()
+bool Gyroscope::isCalibrating()
 {
     return (calibrateSteps > 0);
 }
 
-void Gyroscope::calibration()
+void Gyroscope::_calibration()
 {
     LEDPIN_ON
     for (uint8_t i = 0; i < 3; i++)
@@ -44,13 +44,13 @@ void Gyroscope::calibration()
 
     if (calibrateSteps == 1)
     {
-        // calibration done
+        // _calibration done
         LEDPIN_OFF
     }
     calibrateSteps--;
 }
 
-void Gyroscope::GetData(int16_t *buf, uint8_t length)
+void Gyroscope::getData(int16_t *buf, uint8_t length)
 {
     for (uint8_t i = 0; i < length; i++)
     {
@@ -63,7 +63,7 @@ void Gyroscope::GetData(int16_t *buf, uint8_t length)
     }
 }
 
-void Gyroscope::SetData(int16_t *data, uint8_t length)
+void Gyroscope::setData(int16_t *data, uint8_t length)
 {
     for (uint8_t i = 0; i < length; i++)
     {

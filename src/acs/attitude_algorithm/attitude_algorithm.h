@@ -25,11 +25,11 @@ protected:
 #endif
 
 public:
-    virtual void UpdateAttitude(uint32_t currentTime) = 0;
+    virtual void updateAttitude(uint32_t currentTime) = 0;
 
-    virtual void UpdateAltitude(uint32_t currentTime) = 0;
+    virtual void updateAltitude(uint32_t currentTime) = 0;
 
-    void GetAttitude(int16_t *buf, uint8_t length) {
+    void getAttitude(int16_t *buf, uint8_t length) {
         if (length < 3) {
             if (length > 1) {
                 *buf = att.Angle[ROLL];
@@ -44,30 +44,30 @@ public:
         }
     }
 
-    void GetAltitude(int32_t *targetAlt, int16_t *targetVario) {
+    void getAltitude(int32_t *targetAlt, int16_t *targetVario) const {
         *targetAlt = alt.Alt;
         *targetVario = alt.Vario;
     }
 
-    void GetAltitude(int32_t *targetAlt) {
+    void getAltitude(int32_t *targetAlt) const {
         *targetAlt = alt.Alt;
     }
 
-    void SetAltitudeVario(int16_t vario) {
+    void setAltitudeVario(int16_t vario) {
         alt.Vario = vario;
     }
 
-    void InjectIMU(IMU *imu) {
+    void injectIMU(IMU *imu) {
         this->imu = imu;
     }
 
-    int16_t GetACCZ() {
+    int16_t getAccZ() const {
         return this->accZ;
     }
 
 #if defined(TEST_ALTHOLD)
 
-    void SetTestAltBase(uint16_t a) {
+    void setTestAltBase(uint16_t a) {
         testAltBase = a;
     }
 

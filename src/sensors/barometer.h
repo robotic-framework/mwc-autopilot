@@ -10,7 +10,7 @@
 class Barometer : public I2C
 {
 private:
-    void calibration(uint32_t stepTime);
+    void _calibration(uint32_t stepTime);
 
 protected:
     uint16_t calibrateSteps;
@@ -39,10 +39,10 @@ protected:
 
 public:
     Barometer(uint8_t address) : I2C(address),
-                                 historyPressureIndex(0),
-                                 ccp(0),
                                  ct(0),
-                                 cp(0)
+                                 cp(0),
+                                 ccp(0),
+                                 historyPressureIndex(0)
     {
         for (uint8_t i = 0; i < BAROMETER_HISTORY_SIZE; i++)
         {
@@ -50,16 +50,16 @@ public:
         }
     };
 
-    void Update(uint32_t currentTime);
-    void Calibration(uint16_t steps);
-    bool IsCalibrating();
-    uint16_t GetUTData();
-    uint32_t GetUPData();
-    int16_t GetCTData();
-    int32_t GetCPData();
-    int32_t GetCCPData();
-    float GetLogBaroGroundPressureSum() { return logBaroGroundPressureSum; }
-    float GetBaroGroundTemperatureScale() { return baroGroundTemperatureScale; };
+    void update(uint32_t currentTime);
+    void calibration(uint16_t steps);
+    bool isCalibrating();
+    uint16_t getUTData();
+    uint32_t getUPData();
+    int16_t getCTData();
+    int32_t getCPData();
+    int32_t getCCPData();
+    float getLogBaroGroundPressureSum() { return logBaroGroundPressureSum; }
+    float getBaroGroundTemperatureScale() { return baroGroundTemperatureScale; };
 };
 
 #endif // BAROMETER_H_

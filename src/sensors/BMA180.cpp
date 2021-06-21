@@ -1,6 +1,6 @@
 #include "BMA180.h"
 
-void BMA180::init()
+void BMA180::_init()
 {
     delay(10);
     write(0x0D, 1 << 4);

@@ -24,17 +24,17 @@ public:
         this->deviceAddress = deviceAddress;
     }
 
-    void Init()
+    void init()
     {
-        this->init();
+        this->_init();
     }
 
-    I2CError GetErrCode()
+    I2CError getErrCode()
     {
         return errCode;
     }
 
-    static uint16_t GetErrCount()
+    static uint16_t getErrCount()
     {
         return errCount;
     }
@@ -50,7 +50,7 @@ protected:
     uint16_t read16(uint8_t address);
     uint32_t read32(uint8_t address);
 
-    virtual void init() = 0;
+    virtual void _init() = 0;
 
 private:
     static uint16_t errCount;

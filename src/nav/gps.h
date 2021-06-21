@@ -33,11 +33,11 @@ private:
 public:
     GPS();
 
-    void Init();
+    void init();
 
-    void Update(uint32_t currentTime);
+    void update(uint32_t currentTime);
 
-    bool AvailableThen() {
+    bool availableThen() {
         if (isNewData) {
             isNewData = false;
             return true;
@@ -45,20 +45,20 @@ public:
         return false;
     }
 
-    bool HasFix() { return hasFix; }
+    bool isHasFix() { return hasFix; }
 
-    uint8_t GetGPSSatellites() { return satellites; }
+    uint8_t getGPSSatellites() { return satellites; }
 
-    void GetGPSPos(int32_t *lat, int32_t *lon) {
+    void getGPSPos(int32_t *lat, int32_t *lon) {
         *lat = pos[LAT];
         *lon = pos[LON];
     }
 
-    uint16_t GetGPSAltitude() { return altitude; }
+    uint16_t getGPSAltitude() { return altitude; }
 
-    uint16_t GetGroundSpeed() { return groundSpeed; }
+    uint16_t getGroundSpeed() { return groundSpeed; }
 
-    uint16_t GetGroundCourse() { return groundCourse; }
+    uint16_t getGroundCourse() { return groundCourse; }
 };
 
 #endif

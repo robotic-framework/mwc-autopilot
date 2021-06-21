@@ -1,6 +1,6 @@
 #include "ADXL345.h"
 
-void ADXL345::init()
+void ADXL345::_init()
 {
   delay(10);
   write(ADXL345_POWER_CTL, 0x08);

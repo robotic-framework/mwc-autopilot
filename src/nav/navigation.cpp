@@ -11,19 +11,19 @@
 
 extern Configuration conf;
 
-Navigation::Navigation() : mode(GPS_MODE_NONE),
-                           state(NAV_STATE_NONE) {
+Navigation::Navigation() : state(NAV_STATE_NONE),
+                           mode(GPS_MODE_NONE) {
     gps = new GPS;
 }
 
-void Navigation::Update(uint32_t currentTime) {
-    if (!gps->AvailableThen()) {
+void Navigation::update(uint32_t currentTime) {
+    if (!gps->availableThen()) {
         return;
     }
 
-    if (gps->HasFix() && gps->GetGPSSatellites() >= 5) {
+    if (gps->isHasFix() && gps->getGPSSatellites() >= 5) {
         int32_t posLat, posLon;
-        gps->GetGPSPos(&posLat, &posLon);
+        gps->getGPSPos(&posLat, &posLon);
 
         // auto set home position
         if (!isSetHome && conf.arm) {
@@ -150,13 +150,13 @@ void Navigation::calcVelocityByDeltaTime(const int32_t *posLat, const int32_t *p
 
     prevPos[LAT] = *posLat;
     prevPos[LON] = *posLon;
-    lead[LON] = lonFilter.GetPosition(*posLon, calcSpeed[LON], GPS_LAG);
-    lead[LAT] = latFilter.GetPosition(*posLat, calcSpeed[LAT], GPS_LAG);
+    lead[LON] = lonFilter.getPosition(*posLon, calcSpeed[LON], GPS_LAG);
+    lead[LAT] = latFilter.getPosition(*posLat, calcSpeed[LAT], GPS_LAG);
 }
 
-void Navigation::ResetHome() {
+void Navigation::resetHome() {
     int32_t posLat, posLon;
-    gps->GetGPSPos(&posLat, &posLon);
+    gps->getGPSPos(&posLat, &posLon);
 
     resetHome(&posLat, &posLon);
 }
@@ -168,8 +168,8 @@ void Navigation::resetHome(const int32_t *posLat, const int32_t *posLon) {
     isSetHome = true;
 }
 
-void Navigation::Init() {
-    gps->Init();
+void Navigation::init() {
+    gps->init();
 }
 
 #endif

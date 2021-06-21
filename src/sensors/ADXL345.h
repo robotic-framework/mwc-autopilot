@@ -46,7 +46,7 @@ private:
 
 protected:
   void getRawData() override;
-  void init() override;
+  void _init() override;
 
 public:
   ADXL345(uint8_t address) : Accelerator(address){}

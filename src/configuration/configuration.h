@@ -14,7 +14,7 @@ public:
     bool arm;
     bool angleMode;
     bool horizonMode;
-    bool baroMode;
+    bool altHoldMode;
     int32_t altHold;
 
     struct {
@@ -29,9 +29,9 @@ public:
 public:
     Configuration();
 
-    void Load(uint8_t pIndex = 0);
+    void load(uint8_t pIndex = 0);
 
-    void Write(uint8_t pIndex = 0);
+    void write(uint8_t pIndex = 0);
 
 private:
     void loadDefault();

@@ -137,7 +137,7 @@ void evaluateCommand(uint8_t cmd) {
                 uint8_t set;
             } stat;
             stat.cycleTime = cycleTime;
-            stat.i2cErrorCount = I2C::GetErrCount();
+            stat.i2cErrorCount = I2C::getErrCount();
             stat.sensor = SENSOR_ACC | SENSOR_BARO << 1 | SENSOR_MAG << 2 | SENSOR_GPS << 3 | SENSOR_SONAR << 4 |
                           SENSOR_GYRO << 5;
 
@@ -167,7 +167,7 @@ void evaluateCommand(uint8_t cmd) {
                 int16_t mag[3];
             } imuData;
 
-            acs.GetRawData(imuData.acc, 9);
+            acs.getRawData(imuData.acc, 9);
             responsePayload((uint8_t *) &imuData, 18);
             break;
         }
@@ -179,14 +179,14 @@ void evaluateCommand(uint8_t cmd) {
                 int32_t ccp;
             } baroRaw;
 
-            acs.GetBaroData(&baroRaw.ct, &baroRaw.cp, &baroRaw.ccp);
+            acs.getBaroData(&baroRaw.ct, &baroRaw.cp, &baroRaw.ccp);
             responsePayload((uint8_t *) &baroRaw, 10);
             break;
         }
 
         case MSP_ATTITUDE: {
             int16_t att[3];
-            acs.GetAttitude(att, 3);
+            acs.getAttitude(att, 3);
             responsePayload((uint8_t *) att, 6);
             break;
         }
@@ -196,7 +196,7 @@ void evaluateCommand(uint8_t cmd) {
                 int32_t alt;
                 int16_t vario;
             } altData;
-            acs.GetAltitude(&altData.alt, &altData.vario);
+            acs.getAltitude(&altData.alt, &altData.vario);
             responsePayload((uint8_t *) &altData, 6);
             break;
         }
@@ -204,7 +204,7 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_ACC_CALIBRATION: {
             responseEmpty();
             if (!conf.arm) {
-                acs.AccCalibration();
+                acs.accCalibration();
             }
             break;
         }
@@ -212,15 +212,15 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_MAG_CALIBRATION: {
             responseEmpty();
             if (!conf.arm) {
-                acs.MagCalibration();
-                acs.BaroCalibration();
+                acs.magCalibration();
+                acs.baroCalibration();
             }
             break;
         }
 
         case MSP_MOTOR: {
             uint16_t motorData[8];
-            acs.GetMotors(motorData, 8);
+            acs.getMotors(motorData, 8);
             responsePayload((uint8_t *) motorData, 16);
             break;
         }
@@ -240,15 +240,15 @@ void evaluateCommand(uint8_t cmd) {
         }
 
         case MSP_ALT_HOLD: {
-            conf.baroMode = true;
-            acs.GetAltitude(&conf.altHold);
+            conf.altHoldMode = true;
+            acs.getAltitude(&conf.altHold);
             responsePayload((uint8_t *) &conf.altHold, 4);
             break;
         }
 
         case MSP_ALT_UNLOCK: {
             responseEmpty();
-            conf.baroMode = false;
+            conf.altHoldMode = false;
             conf.altHold = 0;
             break;
         }
@@ -257,7 +257,7 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_TEST_ALTHOLD: {
             responseEmpty();
             uint16_t p = read16();
-            acs.SetTestAltBase(p);
+            acs.setTestAltBase(p);
             break;
         }
 #endif
@@ -270,7 +270,7 @@ void evaluateCommand(uint8_t cmd) {
         case MSP_SET_PID: {
             responseEmpty();
             structWrite((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
-            conf.Write(0);
+            conf.write(0);
             break;
         }
     }

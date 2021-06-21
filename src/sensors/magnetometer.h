@@ -19,7 +19,7 @@ private:
     bool calibrating;
     uint32_t calibrationTime = 0;
 
-    void calibration(uint32_t stepTime);
+    void _calibration(uint32_t stepTime);
 
 protected:
     int16_t data[3];
@@ -30,10 +30,10 @@ protected:
 public:
     Magnetometer(uint8_t address) : I2C(address){};
 
-    uint8_t Update(uint32_t currentTime);
-    void Calibration();
-    bool IsCalibrating();
-    void GetData(int16_t *buf, uint8_t length);
+    uint8_t update(uint32_t currentTime);
+    void calibration();
+    bool isCalibrating();
+    void getData(int16_t *buf, uint8_t length);
 };
 
 #endif // MAGNETOMETER_H_

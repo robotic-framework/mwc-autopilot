@@ -31,14 +31,16 @@
           "a"(intIn2)                            \
         : "r26")
 
-int32_t __attribute__((noinline)) mul(int16_t a, int16_t b);
+namespace aa {
+    int32_t __attribute__((noinline)) mul(int16_t a, int16_t b);
 
 // Rotate Estimated vector(s) with small angle approximation, according to the gyro data
-void rotateV32(t_int32_t_vector *v, int16_t *delta);
+    void rotateV32(t_int32_t_vector *v, int16_t *delta);
 
 //return angle , unit: 1/10 degree
-int16_t _atan2(int32_t y, int32_t x);
+    int16_t atan2(int32_t y, int32_t x);
 
-float invSqrt(float x);
+    float invSqrt(float x);
+}
 
 #endif //AUTOPILOT_UTILS_H

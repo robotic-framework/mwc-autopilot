@@ -12,9 +12,9 @@ public:
     LeadFilter() : _lastVelocity(0) {}
 
     // setup min and max radio values in CLI
-    int32_t GetPosition(int32_t pos, int16_t vel, float lag_in_seconds = 1.0);
+    int32_t getPosition(int32_t pos, int16_t vel, float lag_in_seconds = 1.0);
 
-    void Clear() { _lastVelocity = 0; }
+    void clear() { _lastVelocity = 0; }
 
 private:
     int16_t _lastVelocity;

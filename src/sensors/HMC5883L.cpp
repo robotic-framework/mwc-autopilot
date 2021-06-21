@@ -1,6 +1,6 @@
 #include "HMC5883L.h"
 
-void HMC5883L::init()
+void HMC5883L::_init()
 {
     bool biasErr = true;
 

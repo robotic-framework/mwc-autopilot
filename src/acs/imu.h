@@ -6,27 +6,37 @@
 #include "../mixed/led.h"
 
 #if SENSOR_ACC
+
 #include "sensors/accelerator.h"
+
 #endif
 #if SENSOR_GYRO
+
 #include "sensors/gyroscope.h"
+
 #endif
 #if SENSOR_MAG
 #include "sensors/meganetometer.h"
 #endif
 #if SENSOR_BARO
+
 #include "sensors/barometer.h"
+
 #endif
 
 #if defined(ACC_ADXL345)
 #include "sensors/ADXL345.h"
 #endif
 #if defined(ACC_BMA180)
+
 #include "sensors/BMA180.h"
+
 #endif
 
 #if defined(GYRO_ITG3205)
+
 #include "sensors/ITG3205.h"
+
 #endif
 
 #if defined(MAG_HMC5883L)
@@ -34,11 +44,12 @@
 #endif
 
 #if defined(BARO_BMP085)
+
 #include "sensors/BMP085.h"
+
 #endif
 
-class IMU
-{
+class IMU {
 private:
     // sensors
 #if SENSOR_ACC
@@ -68,48 +79,63 @@ private:
 public:
     IMU();
 
-    void Init();
-    void UpdateAcc(uint32_t currentTime);
-    void UpdateGyro(uint32_t currentTime);
-    void UpdateMag(uint32_t currentTime);
-    void UpdateBaro(uint32_t currentTime);
-    void UpdateSonar(uint32_t currentTime);
+    void init();
 
-    void GetRawData(int16_t *buf, uint8_t length);
-    void GetAccData(int16_t *buf, uint8_t length);
-    void GetGyroData(int16_t *buf, uint8_t length);
-    void GetMagData(int16_t *buf, uint8_t length);
-    void GetBaroData(int16_t *ct, int32_t *cp, int32_t *ccp);
-    void GetBaroLogData(float *gps, float *gts);
-    void AccCalibration();
-    void MagCalibration();
-    void BaroCalibration();
+    void updateAcc(uint32_t currentTime);
 
-    bool IsAccCalibrating() {
+    void updateGyro(uint32_t currentTime);
+
+    void updateMag(uint32_t currentTime);
+
+    void updateBaro(uint32_t currentTime);
+
+    void updateSonar(uint32_t currentTime);
+
+    void getRawData(int16_t *buf, uint8_t length);
+
+    void getAccData(int16_t *buf, uint8_t length);
+
+    void getGyroData(int16_t *buf, uint8_t length);
+
+    void getMagData(int16_t *buf, uint8_t length);
+
+    void getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp);
+
+    void getBaroLogData(float *gps, float *gts);
+
+    void accCalibration();
+
+    void magCalibration();
+
+    void baroCalibration();
+
+    bool isAccCalibrating() {
 #if SENSOR_ACC
-        return this->acc->IsCalibrating();
+        return this->acc->isCalibrating();
 #else
         return false;
 #endif
     }
-    bool IsGyroCalibrating() {
+
+    bool isGyroCalibrating() {
 #if SENSOR_GYRO
-        return this->gyro->IsCalibrating();
+        return this->gyro->isCalibrating();
 #else
         return false;
 #endif
     }
-    bool IsMagCalibrating() {
-#if SSENSOR_MAG
+
+    bool isMagCalibrating() {
+#if SENSOR_MAG
         return this->mag->IsCalibrating();
 #else
         return false;
 #endif
     }
 
-    bool IsBaroCalibrating() {
+    bool isBaroCalibrating() {
 #if SENSOR_BARO
-        return this->baro->IsCalibrating();
+        return this->baro->isCalibrating();
 #else
         return false;
 #endif

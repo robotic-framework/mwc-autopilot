@@ -19,7 +19,7 @@ private:
     uint32_t stepTime = 0;
     uint32_t offsetTotal[3];
 
-    void calibration(uint32_t stepTime);
+    void _calibration(uint32_t stepTime);
 
 protected:
     int16_t data[3];
@@ -29,13 +29,13 @@ protected:
 public:
     Accelerator(uint8_t address) : I2C(address) {};
 
-    void Update(uint32_t currentTime);
+    void update(uint32_t currentTime);
 
-    void Calibration();
+    void calibration();
 
-    bool IsCalibrating();
+    bool isCalibrating();
 
-    void GetData(int16_t *buf, uint8_t length);
+    void getData(int16_t *buf, uint8_t length);
 };
 
 #endif // ACC_H_

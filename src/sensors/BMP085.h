@@ -4,17 +4,17 @@
 #include "barometer.h"
 
 #define BMP085_DEVICE 0x77  // BMP085 device address
-#define BMP085_CAL_AC1 0xAA //!< R   Calibration data (16 bits)
-#define BMP085_CAL_AC2 0xAC //!< R   Calibration data (16 bits)
-#define BMP085_CAL_AC3 0xAE //!< R   Calibration data (16 bits)
-#define BMP085_CAL_AC4 0xB0 //!< R   Calibration data (16 bits)
-#define BMP085_CAL_AC5 0xB2 //!< R   Calibration data (16 bits)
-#define BMP085_CAL_AC6 0xB4 //!< R   Calibration data (16 bits)
-#define BMP085_CAL_B1 0xB6  //!< R   Calibration data (16 bits)
-#define BMP085_CAL_B2 0xB8  //!< R   Calibration data (16 bits)
-#define BMP085_CAL_MB 0xBA  //!< R   Calibration data (16 bits)
-#define BMP085_CAL_MC 0xBC  //!< R   Calibration data (16 bits)
-#define BMP085_CAL_MD 0xBE  //!< R   Calibration data (16 bits)
+#define BMP085_CAL_AC1 0xAA //!< R   _calibration data (16 bits)
+#define BMP085_CAL_AC2 0xAC //!< R   _calibration data (16 bits)
+#define BMP085_CAL_AC3 0xAE //!< R   _calibration data (16 bits)
+#define BMP085_CAL_AC4 0xB0 //!< R   _calibration data (16 bits)
+#define BMP085_CAL_AC5 0xB2 //!< R   _calibration data (16 bits)
+#define BMP085_CAL_AC6 0xB4 //!< R   _calibration data (16 bits)
+#define BMP085_CAL_B1 0xB6  //!< R   _calibration data (16 bits)
+#define BMP085_CAL_B2 0xB8  //!< R   _calibration data (16 bits)
+#define BMP085_CAL_MB 0xBA  //!< R   _calibration data (16 bits)
+#define BMP085_CAL_MC 0xBC  //!< R   _calibration data (16 bits)
+#define BMP085_CAL_MD 0xBE  //!< R   _calibration data (16 bits)
 
 #define BMP085_ULTRALOWPOWER 0 //!< Ultra low power mode
 #define BMP085_STANDARD 1      //!< Standard mode
@@ -52,7 +52,7 @@ public:
 
 protected:
     void getRawData(uint32_t currentTime) override;
-    void init() override;
+    void _init() override;
 };
 
 #endif

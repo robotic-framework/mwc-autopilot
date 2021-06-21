@@ -48,12 +48,12 @@ private:
 
 protected:
   void getRawData() override;
-  void init() override;
+  void _init() override;
 
 public:
   ITG3205(uint8_t address) : Gyroscope(address){};
 
-  void Update(uint32_t currentTime);
+  void update(uint32_t currentTime);
 };
 
 #endif // ITG3205_H_

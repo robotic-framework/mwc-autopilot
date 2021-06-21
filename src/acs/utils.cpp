@@ -4,14 +4,14 @@
 
 #include "utils.h"
 
-int32_t __attribute__((noinline)) mul(int16_t a, int16_t b) {
+int32_t __attribute__((noinline)) aa::mul(int16_t a, int16_t b) {
     int32_t r;
     MultiS16X16to32(r, a, b); //r = (int32_t)a*b; without asm requirement
     return r;
 }
 
 // Rotate Estimated vector(s) with small angle approximation, according to the gyro data
-void rotateV32(t_int32_t_vector *v, int16_t *delta) {
+void aa::rotateV32(t_int32_t_vector *v, int16_t *delta) {
     int16_t X = v->V16.X;
     int16_t Y = v->V16.Y;
     int16_t Z = v->V16.Z;
@@ -22,7 +22,7 @@ void rotateV32(t_int32_t_vector *v, int16_t *delta) {
 }
 
 //return angle , unit: 1/10 degree
-int16_t _atan2(int32_t y, int32_t x) {
+int16_t aa::atan2(int32_t y, int32_t x) {
     float z = y;
     int16_t a;
     uint8_t c;
@@ -48,7 +48,7 @@ int16_t _atan2(int32_t y, int32_t x) {
     return a;
 }
 
-float invSqrt(float x) {
+float aa::invSqrt(float x) {
     union {
         int32_t i;
         float f;

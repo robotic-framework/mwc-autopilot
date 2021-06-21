@@ -3,13 +3,13 @@
 
 extern Configuration conf;
 
-void Accelerator::Update(uint32_t currentTime)
+void Accelerator::update(uint32_t currentTime)
 {
     this->getRawData();
 
     if (calibrateSteps > 0)
     {
-        calibration(currentTime);
+        _calibration(currentTime);
     }
 
     for (uint8_t i = 0; i < 3; i++)
@@ -18,7 +18,7 @@ void Accelerator::Update(uint32_t currentTime)
     }
 }
 
-void Accelerator::Calibration()
+void Accelerator::calibration()
 {
     calibrateSteps = 512;
     for (size_t i = 0; i < 3; i++)
@@ -27,12 +27,12 @@ void Accelerator::Calibration()
     }
 }
 
-bool Accelerator::IsCalibrating()
+bool Accelerator::isCalibrating()
 {
     return (calibrateSteps > 0);
 }
 
-void Accelerator::calibration(uint32_t currentTime)
+void Accelerator::_calibration(uint32_t stepTime)
 {
     LEDPIN_ON
     for (uint8_t i = 0; i < 3; i++)
@@ -43,14 +43,14 @@ void Accelerator::calibration(uint32_t currentTime)
 
     if (calibrateSteps == 1)
     {
-        // calibration done
+        // _calibration done
         LEDPIN_OFF
         conf.raw.accOffset[YAW] -= ACC_1G_LSB;
     }
     calibrateSteps--;
 }
 
-void Accelerator::GetData(int16_t *buf, uint8_t length)
+void Accelerator::getData(int16_t *buf, uint8_t length)
 {
     for (uint8_t i = 0; i < length; i++)
     {

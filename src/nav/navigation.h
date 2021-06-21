@@ -119,13 +119,13 @@ private:
 public:
     Navigation();
 
-    void Init();
+    void init();
 
-    void ResetHome();
+    void resetHome();
 
-    void UpdateGPS(uint32_t currentTime) { gps->Update(currentTime); }
+    void updateGPS(uint32_t currentTime) { gps->update(currentTime); }
 
-    void Update(uint32_t currentTime);
+    void update(uint32_t currentTime);
 };
 
 #endif

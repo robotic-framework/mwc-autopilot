@@ -3,7 +3,7 @@
 
 extern Configuration conf;
 
-uint8_t Magnetometer::Update(uint32_t currentTime)
+uint8_t Magnetometer::update(uint32_t currentTime)
 {
     this->getRawData();
 
@@ -18,23 +18,23 @@ uint8_t Magnetometer::Update(uint32_t currentTime)
 
     if (calibrating)
     {
-        calibration(currentTime);
+        _calibration(currentTime);
     }
 
     return 1;
 }
 
-void Magnetometer::Calibration()
+void Magnetometer::calibration()
 {
     calibrating = true;
 }
 
-bool Magnetometer::IsCalibrating()
+bool Magnetometer::isCalibrating()
 {
     return calibrating;
 }
 
-void Magnetometer::calibration(uint32_t stepTime)
+void Magnetometer::_calibration(uint32_t stepTime)
 {
     static int16_t magZeroTempMin[3], magZeroTempMax[3];
 
@@ -75,7 +75,7 @@ void Magnetometer::calibration(uint32_t stepTime)
     }
 }
 
-void Magnetometer::GetData(int16_t *buf, uint8_t length)
+void Magnetometer::getData(int16_t *buf, uint8_t length)
 {
     for (uint8_t i = 0; i < length; i++)
     {

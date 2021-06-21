@@ -5,7 +5,7 @@
 #include "mwc_algorithm.h"
 #include "../utils.h"
 
-MWCAlgorithm::MWCAlgorithm(Configuration *conf): estPrevTime(0) {
+MWCAlgorithm::MWCAlgorithm(Configuration *conf) : estPrevTime(0) {
     this->conf = conf;
     this->estimatedGyroData = {0, 0, (int32_t) ACC_1G_LSB << 16};
 #if !SENSOR_MAG
@@ -13,7 +13,7 @@ MWCAlgorithm::MWCAlgorithm(Configuration *conf): estPrevTime(0) {
 #endif
 }
 
-void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
+void MWCAlgorithm::updateAttitude(uint32_t currentTime) {
     uint8_t axis;
     float invGyro; // 1/|G|
     int32_t accMag = 0;
@@ -34,12 +34,12 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
 
 // calculate delta angle
 #if SENSOR_ACC && SENSOR_GYRO
-    imu->GetAccData(accData, 3);
-    imu->GetGyroData(gyroData, 3);
+    imu->getAccData(accData, 3);
+    imu->getGyroData(gyroData, 3);
 
     for (axis = 0; axis < 3; axis++) {
         // used to calculate later the magnitude of acc vector
-        accMag += mul(accData[axis], accData[axis]);
+        accMag += aa::mul(accData[axis], accData[axis]);
         // unit: radian scaled by 2^16
         // imu.gyroADC[axis] is 14 bit long, the scale factor ensure deltaGyroAngle16[axis] is still 14 bit long
         deltaAngle[axis] = gyroData[axis] * scale;
@@ -49,8 +49,8 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
     // we rotate the intermediate 32 bit vector with the radian vector (deltaAngle), scaled by 2^16
     // however, only the first 16 MSB of the 32 bit vector is used to compute the result
     // it is ok to use this approximation as the 16 LSB are used only for the complementary filter part
-    rotateV32(&estimatedGyroData, deltaAngle);
-    rotateV32(&estimatedMagData, deltaAngle);
+    aa::rotateV32(&estimatedGyroData, deltaAngle);
+    aa::rotateV32(&estimatedMagData, deltaAngle);
 
     // Apply complimentary filter (Gyro drift correction)
 #if SENSOR_MAG
@@ -60,15 +60,15 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
     for (axis = 0; axis < 3; axis++) {
         // If accel magnitude >1.15G or <0.85G and ACC vector outside of the limit range => we neutralize the effect of accelerometers in the angle estimation.
         // To do that, we just skip filter, as EstV already rotated by Gyro
-        if ((int16_t)(accMag >> 8) > (int16_t)(0.85 * ACC_1G_LSB * ACC_1G_LSB / 256) &&
-            (int16_t)(accMag >> 8) < (int16_t)(1.15 * ACC_1G_LSB * ACC_1G_LSB / 256)) {
+        if ((int16_t) (accMag >> 8) > (int16_t) (0.85 * ACC_1G_LSB * ACC_1G_LSB / 256) &&
+            (int16_t) (accMag >> 8) < (int16_t) (1.15 * ACC_1G_LSB * ACC_1G_LSB / 256)) {
             estimatedGyroData.A32[axis] +=
-                    (int32_t)(accData[axis] - estimatedGyroData.A16[2 * axis + 1]) << (16 - GYR_CMPF_FACTOR);
+                    (int32_t) (accData[axis] - estimatedGyroData.A16[2 * axis + 1]) << (16 - GYR_CMPF_FACTOR);
         }
 #if SENSOR_MAG
         estimatedMagData.A32[axis] += (int32_t)(magData[axis] - estimatedMagData.A16[2 * axis + 1]) << (16 - GYR_CMPFM_FACTOR);
 #endif
-        accZTmp += mul(accData[axis], estimatedGyroData.A16[2 * axis + 1]);
+        accZTmp += aa::mul(accData[axis], estimatedGyroData.A16[2 * axis + 1]);
     }
 
 //    if (estimatedGyroData.V16.Z > ACCZ_25DEG) {
@@ -78,15 +78,16 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
 //    }
 
     // Attitude of the estimated vector
-    int32_t sqrtGyroXZ = mul(estimatedGyroData.V16.X, estimatedGyroData.V16.X) +
-                         mul(estimatedGyroData.V16.Z, estimatedGyroData.V16.Z);
-    invGyro = invSqrt(sqrtGyroXZ + mul(estimatedGyroData.V16.Y, estimatedGyroData.V16.Y));
-    att.Angle[ROLL] = _atan2(estimatedGyroData.V16.X, estimatedGyroData.V16.Z);
-    att.Angle[PITCH] = _atan2(estimatedGyroData.V16.Y, invSqrt(sqrtGyroXZ) * sqrtGyroXZ);
-    att.Heading = _atan2(
-            mul(estimatedMagData.V16.Z, estimatedGyroData.V16.X) - mul(estimatedMagData.V16.X, estimatedGyroData.V16.Z),
-            (estimatedMagData.V16.Y * sqrtGyroXZ - (mul(estimatedMagData.V16.X, estimatedGyroData.V16.X) +
-                                                    mul(estimatedMagData.V16.Z, estimatedGyroData.V16.Z)) *
+    int32_t sqrtGyroXZ = aa::mul(estimatedGyroData.V16.X, estimatedGyroData.V16.X) +
+                         aa::mul(estimatedGyroData.V16.Z, estimatedGyroData.V16.Z);
+    invGyro = aa::invSqrt(sqrtGyroXZ + aa::mul(estimatedGyroData.V16.Y, estimatedGyroData.V16.Y));
+    att.Angle[ROLL] = aa::atan2(estimatedGyroData.V16.X, estimatedGyroData.V16.Z);
+    att.Angle[PITCH] = aa::atan2(estimatedGyroData.V16.Y, aa::invSqrt(sqrtGyroXZ) * sqrtGyroXZ);
+    att.Heading = aa::atan2(
+            aa::mul(estimatedMagData.V16.Z, estimatedGyroData.V16.X) -
+            aa::mul(estimatedMagData.V16.X, estimatedGyroData.V16.Z),
+            (estimatedMagData.V16.Y * sqrtGyroXZ - (aa::mul(estimatedMagData.V16.X, estimatedGyroData.V16.X) +
+                                                    aa::mul(estimatedMagData.V16.Z, estimatedGyroData.V16.Z)) *
                                                    estimatedGyroData.V16.Y) *
             invGyro);
 
@@ -103,12 +104,12 @@ void MWCAlgorithm::UpdateAttitude(uint32_t currentTime) {
     accZ -= accZoffset >> 3;
 }
 
-void MWCAlgorithm::UpdateAltitude(uint32_t currentTime) {
+void MWCAlgorithm::updateAltitude(uint32_t currentTime) {
     int16_t ct;
     int32_t cp, ccp;
     float gps, gts;
-    imu->GetBaroData(&ct, &cp, &ccp);
-    imu->GetBaroLogData(&gps, &gts);
+    imu->getBaroData(&ct, &cp, &ccp);
+    imu->getBaroLogData(&gps, &gts);
     int32_t baroAlt =
             (log(ccp) - gps) * gts;
     alt.Alt = (alt.Alt * 7 + baroAlt) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
