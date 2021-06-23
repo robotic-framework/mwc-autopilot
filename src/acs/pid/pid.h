@@ -2,9 +2,9 @@
 #define _PID_H_
 
 #include "stdint.h"
-#include "../configuration/configuration.h"
-#include "imu.h"
-#include "attitude_algorithm/attitude_algorithm.h"
+#include "configuration/configuration.h"
+#include "acs/imu.h"
+#include "acs/attitude_algorithm/attitude_algorithm.h"
 
 class PIDController
 {

@@ -277,7 +277,7 @@ void evaluateCommand(uint8_t cmd) {
 }
 
 void serialInit() {
-    PROTOCOL_SERIAL.begin(BLE_BAUD);
+    PROTOCOL_SERIAL.begin(PROTOCOL_BAUD);
     while (!PROTOCOL_SERIAL) {
     }
     blinkLED(2, 20, 10);

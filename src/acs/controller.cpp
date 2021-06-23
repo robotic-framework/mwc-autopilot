@@ -17,6 +17,8 @@ void ACSController::init() {
     }
 
     this->aa->injectIMU(&imu);
+    this->pid->injectIMU(&imu);
+    this->pid->injectAttitudeAlgorithm(aa);
 }
 
 void ACSController::updateAcc(uint32_t currentTime) {

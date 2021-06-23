@@ -1,5 +1,5 @@
 #include "pid.h"
-#include "utils.h"
+#include "acs/utils.h"
 
 using namespace aa;
 
@@ -62,6 +62,13 @@ void PIDController::update(uint32_t currentTime) {
     imu->getGyroData(gyroData, 3);
     aa->getAttitude(attitude, 3);
 
+//    Serial.print("Roll: ");
+//    Serial.print(attitude[ROLL]);
+//    Serial.print(", Pitch: ");
+//    Serial.print(attitude[PITCH]);
+//    Serial.print(", Yaw: ");
+//    Serial.println(attitude[YAW]);
+
     // ROLL & PITCH
     for (axis = 0; axis < 2; axis++) {
         rc = rcCommand[axis] << 1;
@@ -117,6 +124,13 @@ void PIDController::update(uint32_t currentTime) {
 
     ITerm = constrain((int16_t) (errorGyroI_YAW >> 13), -GYRO_I_MAX, GYRO_I_MAX);
     pidOffset[YAW] = PTerm + ITerm;
+
+//    Serial.print("Roll: ");
+//    Serial.print(pidOffset[ROLL]);
+//    Serial.print(", Pitch: ");
+//    Serial.print(pidOffset[PITCH]);
+//    Serial.print(", Yaw: ");
+//    Serial.println(pidOffset[YAW]);
 
     // ALT HOLD
     if (conf->altHoldMode != lastAltHoldMode) {

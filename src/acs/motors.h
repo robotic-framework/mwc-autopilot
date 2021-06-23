@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <Arduino.h>
-#include "pid.h"
+#include "acs/pid/pid.h"
 #include "../configuration/configuration.h"
 
 class Motors

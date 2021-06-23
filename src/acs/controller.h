@@ -8,7 +8,7 @@
 #include "attitude_algorithm/attitude_algorithm.h"
 #include "../configuration/configuration.h"
 #include "imu.h"
-#include "pid.h"
+#include "acs/pid/pid.h"
 #include "motors.h"
 
 class ACSController {
