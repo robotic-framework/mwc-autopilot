@@ -21,7 +21,7 @@ protected:
     int16_t accZ;
 
 #if defined(TEST_ALTHOLD)
-    int32_t testAltBase;
+    int32_t testAltBase = 0;
 #endif
 
 public:
