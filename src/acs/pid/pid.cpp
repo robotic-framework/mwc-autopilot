@@ -27,6 +27,7 @@ PIDController::PIDController(Configuration *conf) :
         isAltHoldModeChanged(true),
         initialThrottleHold(0) {
     lastAltHoldMode = conf->altHoldMode;
+    this->conf = conf;
 }
 
 void PIDController::update(uint32_t currentTime) {

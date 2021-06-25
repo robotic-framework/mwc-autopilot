@@ -13,7 +13,7 @@ private:
     void _calibration(uint32_t stepTime);
 
 protected:
-    uint16_t calibrateSteps;
+    uint16_t calibrateSteps = 0;
     uint32_t stepTime = 0;
     float logBaroGroundPressureSum, baroGroundTemperatureScale;
 

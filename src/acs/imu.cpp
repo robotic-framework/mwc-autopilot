@@ -175,7 +175,7 @@ void IMU::updateAcc(uint32_t currentTime) {
     // update sensors data
     acc->update(currentTime);
 
-    int16_t accData[3]{0, 0, 0};
+    int16_t accData[3] = {0, 0, 0};
     acc->getData(accData, 3);
 
     for (uint8_t axis = 0; axis < 3; axis++) {
@@ -183,7 +183,6 @@ void IMU::updateAcc(uint32_t currentTime) {
         accSmooth[axis] = accLPF[axis] >> ACC_LPF_FACTOR;
         accLPF[axis] += accData[axis] - accSmooth[axis];
     }
-
 #endif
 }
 

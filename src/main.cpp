@@ -23,18 +23,20 @@ void setup()
 {
 #if DEBUG
     debug_init();
+#else
+    serialInit();
 #endif
     LEDPIN_PINMODE
+
     acs.init();
 
-#if !DEBUG
-#if GPS_ENABLED
+#if !DEBUG && GPS_ENABLED
     nav.init();
-#endif
-    serialInit();
 #endif
 
     conf.load(0);
+
+    Serial.println(conf.raw.pid[PIDLEVEL].I);
 }
 
 void loop()

@@ -69,12 +69,12 @@ private:
 #endif
 
     // indicators
-    int16_t accSmooth[3]{0, 0, 0};
-    uint32_t accLPF[3]{0, 0, 0};
+    int16_t accSmooth[3] = {0, 0, 0};
+    uint32_t accLPF[3] = {0, 0, 0};
 
-    int16_t gyroWeighted[3];
+    int16_t gyroWeighted[3] = {0, 0, 0};
     int16_t gyroPrevWeight[3] = {0, 0, 0};
-    int16_t gyroWeight[3];
+    int16_t gyroWeight[3] = {0, 0, 0};
 
 public:
     IMU();
