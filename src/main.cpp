@@ -35,8 +35,6 @@ void setup()
 #endif
 
     conf.load(0);
-
-    Serial.println(conf.raw.pid[PIDLEVEL].I);
 }
 
 void loop()

@@ -2,6 +2,7 @@
 // Created by 李翌文 on 2021/6/10.
 //
 
+#include <Arduino.h>
 #include "config.h"
 
 #ifndef AUTOPILOT_DEFINITION_H

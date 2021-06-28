@@ -1,7 +1,10 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+// enable serial debug session
 #define DEBUG 0
+// 0 = close, 1 = error, 2 = info, 3 = debug
+#define LOG_LEVEL 3
 #define TEST_ALTHOLD
 
 /**

@@ -54,6 +54,11 @@ void PIDController::update(uint32_t currentTime) {
     deltaTime = currentTime - previousTime;
     previousTime = currentTime;
 
+#if LOG_LEVEL > 0
+    Log::debugStart();
+    Log::debugln(">>>>>>>>>> Level PID update start <<<<<<<<<<");
+#endif
+
     if (conf->horizonMode) {
         prop = min(max(abs(rcCommand[PITCH]), abs(rcCommand[ROLL])), 512);
     }
@@ -63,12 +68,21 @@ void PIDController::update(uint32_t currentTime) {
     imu->getGyroData(gyroData, 3);
     aa->getAttitude(attitude, 3);
 
-//    Serial.print("Roll: ");
-//    Serial.print(attitude[ROLL]);
-//    Serial.print(", Pitch: ");
-//    Serial.print(attitude[PITCH]);
-//    Serial.print(", Yaw: ");
-//    Serial.println(attitude[YAW]);
+#if LOG_LEVEL > 0
+    Log::debugStart();
+    Log::debug("original imu data: gy_Roll: ");
+    Log::debug(gyroData[ROLL]);
+    Log::debug(", gy_Pitch: ");
+    Log::debug(gyroData[PITCH]);
+    Log::debug(", gy_Yaw: ");
+    Log::debug(gyroData[YAW]);
+    Log::debug(", att_Roll: ");
+    Log::debug(attitude[ROLL]);
+    Log::debug(", att_Pitch: ");
+    Log::debug(attitude[PITCH]);
+    Log::debug(", att_Yaw: ");
+    Log::debugln(attitude[YAW]);
+#endif
 
     // ROLL & PITCH
     for (axis = 0; axis < 2; axis++) {
@@ -96,6 +110,26 @@ void PIDController::update(uint32_t currentTime) {
             PTerm = PTermACC + ((PTerm - PTermACC) * prop >> 9);
         }
 
+#if LOG_LEVEL > 0
+        Log::debugStart();
+        Log::debug("axis: ");
+        Log::debug(axis);
+        Log::debug(", attitude: ");
+        Log::debug(attitude[axis]);
+        Log::debug(", errorAngle: ");
+        Log::debug(errorAngle);
+        Log::debug(", errorAngleI: ");
+        Log::debug(errorAngleI[axis]);
+        Log::debug(", pid.I: ");
+        Log::debug(conf->raw.pid[PIDLEVEL].I);
+        Log::debug(", ITermACC: ");
+        Log::debug(ITermACC);
+        Log::debug(", prop: ");
+        Log::debug(prop);
+        Log::debug(", ITerm: ");
+        Log::debugln(ITerm);
+#endif
+
         // PTerm -= mul(gyroData[axis], dynP[axis]) >> 6;
 
         delta = gyroData[axis] - lastGyro[axis];
@@ -106,6 +140,18 @@ void PIDController::update(uint32_t currentTime) {
 
         // DTerm = mul(DTerm, dynD[axis]) >> 5;
         pidOffset[axis] = PTerm + ITerm - DTerm;
+
+#if LOG_LEVEL > 0
+        Log::debugStart();
+        Log::debug("axis: ");
+        Log::debug(axis);
+        Log::debug(", P: ");
+        Log::debug(PTerm);
+        Log::debug(", I: ");
+        Log::debug(ITerm);
+        Log::debug(", D: ");
+        Log::debugln(DTerm);
+#endif
     }
 
     // YAW
@@ -126,12 +172,31 @@ void PIDController::update(uint32_t currentTime) {
     ITerm = constrain((int16_t) (errorGyroI_YAW >> 13), -GYRO_I_MAX, GYRO_I_MAX);
     pidOffset[YAW] = PTerm + ITerm;
 
-//    Serial.print("Roll: ");
-//    Serial.print(pidOffset[ROLL]);
-//    Serial.print(", Pitch: ");
-//    Serial.print(pidOffset[PITCH]);
-//    Serial.print(", Yaw: ");
-//    Serial.println(pidOffset[YAW]);
+#if LOG_LEVEL > 0
+    Log::debugStart();
+    Log::debug("axis: ");
+    Log::debug(YAW);
+    Log::debug(", P: ");
+    Log::debug(PTerm);
+    Log::debug(", I: ");
+    Log::debug(ITerm);
+    Log::debug(", D: ");
+    Log::debugln(DTerm);
+
+    Log::debugStart();
+    Log::debug("Roll: ");
+    Log::debug(pidOffset[ROLL]);
+    Log::debug(", Pitch: ");
+    Log::debug(pidOffset[PITCH]);
+    Log::debug(", Yaw: ");
+    Log::debugln(pidOffset[YAW]);
+
+    Log::debugStart();
+    Log::debugln(">>>>>>>>>> Level PID update end <<<<<<<<<<");
+
+    Log::debugStart();
+    Log::debugln(">>>>>>>>>> AltHold PID update start <<<<<<<<<<");
+#endif
 
     // ALT HOLD
     if (conf->altHoldMode != lastAltHoldMode) {
@@ -150,10 +215,15 @@ void PIDController::update(uint32_t currentTime) {
         int16_t vario;
         aa->getAltitude(&alt, &vario);
         int16_t errorAlt = constrain(conf->altHold - alt, -300, 300);
-        // Serial.print("hold: ");
-        // Serial.print(altHold);
-        // Serial.print(", alt: ");
-        // Serial.print(alt);
+
+#if LOG_LEVEL > 0
+        Log::debugStart();
+        Log::debug("hold: ");
+        Log::debug(conf->altHold);
+        Log::debug(", alt: ");
+        Log::debugln(alt);
+#endif
+
         applyDeadband(errorAlt, 10);
         pidOffsetAlt = constrain(conf->raw.pid[PIDALT].P * errorAlt >> 7, -150, 150);
 
@@ -181,22 +251,31 @@ void PIDController::update(uint32_t currentTime) {
         applyDeadband(vario, 5);
         aa->setAltitudeVario(vario);
         pidOffsetAlt -= constrain(conf->raw.pid[PIDALT].D * vario >> 4, -150, 150);
-        // Serial.print(", accZ: ");
-        // Serial.print(accZ);
-        // Serial.print(", dt: ");
-        // Serial.print(deltaTime);
-        // Serial.print(", altVel: ");
-        // Serial.print(altVel);
-        // Serial.print(", zVel: ");
-        // Serial.print(zVel);
-        // Serial.print(", offsetD: ");
-        // Serial.print(pidOffsetAlt);
+
+#if LOG_LEVEL > 0
+        Log::debugStart();
+        Log::debug(", accZ: ");
+        Log::debug(accZ);
+        Log::debug(", dt: ");
+        Log::debug(deltaTime);
+        Log::debug(", altVel: ");
+        Log::debug(altVel);
+        Log::debug(", zVel: ");
+        Log::debug(zVel);
+        Log::debug(", offsetD: ");
+        Log::debugln(pidOffsetAlt);
+#endif
     }
 
     if (conf->altHoldMode /* || conf.takeOffMode || conf.landingMode */) {
         // throttle compensation
         rcCommand[THROTTLE] = initialThrottleHold + pidOffsetAlt;
     }
+
+#if LOG_LEVEL > 0
+    Log::debugStart();
+    Log::debugln(">>>>>>>>>> AltHold PID update end <<<<<<<<<<");
+#endif
 }
 
 uint16_t PIDController::mixPID(int8_t x, int8_t y, int8_t z) {
