@@ -160,16 +160,6 @@ void IMU::getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
 #endif
 }
 
-void IMU::getBaroLogData(float *gps, float *gts) {
-#if SENSOR_BARO
-    *gps = baro->getLogBaroGroundPressureSum();
-    *gts = baro->getBaroGroundTemperatureScale();
-#else
-    *gps = 0;
-    *gts = 0;
-#endif
-}
-
 void IMU::updateAcc(uint32_t currentTime) {
 #if SENSOR_ACC
     // update sensors data

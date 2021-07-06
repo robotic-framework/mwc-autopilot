@@ -6,7 +6,7 @@
 #include "acs/imu.h"
 #include "acs/attitude_algorithm/attitude_algorithm.h"
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
 #include "log/log.h"
 #endif
 

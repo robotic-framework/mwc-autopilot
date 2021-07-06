@@ -107,11 +107,9 @@ void MWCAlgorithm::updateAttitude(uint32_t currentTime) {
 void MWCAlgorithm::updateAltitude(uint32_t currentTime) {
     int16_t ct;
     int32_t cp, ccp;
-    float gps, gts;
     imu->getBaroData(&ct, &cp, &ccp);
-    imu->getBaroLogData(&gps, &gts);
     int32_t baroAlt =
-            (log(ccp) - gps) * gts;
+            (log(ccp) - conf->raw.logBaroGroundPressureSum) * conf->raw.baroGroundTemperatureScale;
     alt.Alt = (alt.Alt * 7 + baroAlt) >> 3; // additional LPF to reduce baro noise (faster by 30 µs)
 
 #if defined(TEST_ALTHOLD)

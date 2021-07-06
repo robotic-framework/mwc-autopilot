@@ -18,6 +18,9 @@
 #if defined(TEST_ALTHOLD)
 #define MSP_TEST_ALTHOLD 10
 #endif
+#if defined(TEST_RCCOMMAND)
+#define MSP_TEST_RCCOMMAND 11
+#endif
 
 #define MSP_IDENT 100      //out message         multitype + multiwii version + protocol version + capability variable
 #define MSP_STATUS 101     //out message         cycletime & errors_count & sensor present & box activation & current setting number
@@ -40,11 +43,14 @@
 #define MSP_WP 118         //out message         get a WP, WP# is in the payload, returns (WP#, lat, lon, alt, flags) WP#0-home, WP#16-poshold
 #define MSP_BOXIDS 119     //out message         get the permanent IDs associated to BOXes
 #define MSP_SERVO_CONF 120 //out message         Servo settings
-
 #define MSP_NAV_STATUS 121 //out message         Returns navigation status
 #define MSP_NAV_CONFIG 122 //out message         Returns navigation parameters
 
 #define MSP_CELLS 130 //out message         FRSKY Battery Cell Voltages
+
+#define MSP_CONFIG 140 //out message
+#define MSP_FLASH_CONFIG 141 //out message
+#define MSP_SET_AA 142 //in message
 
 #define MSP_SET_RAW_RC 200      //in message          8 rc chan
 #define MSP_SET_RAW_GPS 201     //in message          fix, numsat, lat, lon, alt, speed
@@ -77,6 +83,7 @@
 #define MSP_DEBUG 254    //out message         debug1,debug2,debug3,debug4
 
 void serialInit();
+
 void protocolHandler();
 
 #endif // PROTOCOL_H_

@@ -101,8 +101,6 @@ public:
 
     void getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp);
 
-    void getBaroLogData(float *gps, float *gts);
-
     void accCalibration();
 
     void magCalibration();

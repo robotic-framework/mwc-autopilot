@@ -15,7 +15,6 @@ private:
 protected:
     uint16_t calibrateSteps = 0;
     uint32_t stepTime = 0;
-    float logBaroGroundPressureSum, baroGroundTemperatureScale;
 
     union
     {
@@ -58,8 +57,6 @@ public:
     int16_t getCTData();
     int32_t getCPData();
     int32_t getCCPData();
-    float getLogBaroGroundPressureSum() { return logBaroGroundPressureSum; }
-    float getBaroGroundTemperatureScale() { return baroGroundTemperatureScale; };
 };
 
 #endif // BAROMETER_H_

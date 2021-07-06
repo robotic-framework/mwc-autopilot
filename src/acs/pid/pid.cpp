@@ -34,18 +34,18 @@ void PIDController::update(uint32_t currentTime) {
     uint8_t axis;
     int16_t error, errorAngle;
     int16_t rc;
-    int16_t pidOffsetAlt;
+    int16_t pidOffsetAlt = 0;
     static int16_t lastGyro[2] = {0, 0};
     static int16_t errorGyroI[2] = {0, 0};
-    static int32_t errorGyroI_YAW;
+    static int32_t errorGyroI_YAW = 0;
     static int16_t errorAngleI[2] = {0, 0};
-    int16_t PTerm, ITerm, DTerm, PTermACC, ITermACC;
+    int16_t PTerm = 0, ITerm = 0, DTerm = 0, PTermACC = 0, ITermACC = 0;
     int16_t delta;
 
     static uint16_t previousTime = 0;
     uint16_t deltaTime;
 
-    static int16_t delta1[2], delta2[2];
+    static int16_t delta1[2] = {0, 0}, delta2[2] = {0, 0};
 
     if (previousTime == 0) {
         previousTime = currentTime;
@@ -54,7 +54,7 @@ void PIDController::update(uint32_t currentTime) {
     deltaTime = currentTime - previousTime;
     previousTime = currentTime;
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
     Log::debugStart();
     Log::debugln(">>>>>>>>>> Level PID update start <<<<<<<<<<");
 #endif
@@ -68,7 +68,7 @@ void PIDController::update(uint32_t currentTime) {
     imu->getGyroData(gyroData, 3);
     aa->getAttitude(attitude, 3);
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
     Log::debugStart();
     Log::debug("original imu data: gy_Roll: ");
     Log::debug(gyroData[ROLL]);
@@ -87,13 +87,6 @@ void PIDController::update(uint32_t currentTime) {
     // ROLL & PITCH
     for (axis = 0; axis < 2; axis++) {
         rc = rcCommand[axis] << 1;
-        error = rc - gyroData[axis];
-        errorGyroI[axis] = constrain(errorGyroI[axis] + error, -16000, 16000);
-        if (abs(gyroData[axis]) > 640) {
-            errorGyroI[axis] = 0;
-        }
-        ITerm = (errorGyroI[axis] >> 7) * conf->raw.pid[axis].I >> 6;
-        PTerm = mul(rc, conf->raw.pid[axis].P) >> 6;
 
         if (conf->angleMode || conf->horizonMode) {
             errorAngle = constrain(rc, -500, 500) - attitude[axis];
@@ -108,12 +101,24 @@ void PIDController::update(uint32_t currentTime) {
 
             ITerm = ITermACC + ((ITerm - ITermACC) * prop >> 9);
             PTerm = PTermACC + ((PTerm - PTermACC) * prop >> 9);
+        } else {
+            error = rc - gyroData[axis];
+            errorGyroI[axis] = constrain(errorGyroI[axis] + error, -16000, 16000);
+            if (abs(gyroData[axis]) > 640) {
+                errorGyroI[axis] = 0;
+            }
+            ITerm = (errorGyroI[axis] >> 7) * conf->raw.pid[axis].I >> 6;
+            PTerm = mul(rc, conf->raw.pid[axis].P) >> 6;
         }
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
         Log::debugStart();
         Log::debug("axis: ");
         Log::debug(axis);
+        Log::debug(", rcCommand: ");
+        Log::debug(rcCommand[axis]);
+        Log::debug(", rc: ");
+        Log::debug(rc);
         Log::debug(", attitude: ");
         Log::debug(attitude[axis]);
         Log::debug(", errorAngle: ");
@@ -141,7 +146,7 @@ void PIDController::update(uint32_t currentTime) {
         // DTerm = mul(DTerm, dynD[axis]) >> 5;
         pidOffset[axis] = PTerm + ITerm - DTerm;
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
         Log::debugStart();
         Log::debug("axis: ");
         Log::debug(axis);
@@ -172,7 +177,7 @@ void PIDController::update(uint32_t currentTime) {
     ITerm = constrain((int16_t) (errorGyroI_YAW >> 13), -GYRO_I_MAX, GYRO_I_MAX);
     pidOffset[YAW] = PTerm + ITerm;
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
     Log::debugStart();
     Log::debug("axis: ");
     Log::debug(YAW);
@@ -216,7 +221,7 @@ void PIDController::update(uint32_t currentTime) {
         aa->getAltitude(&alt, &vario);
         int16_t errorAlt = constrain(conf->altHold - alt, -300, 300);
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
         Log::debugStart();
         Log::debug("hold: ");
         Log::debug(conf->altHold);
@@ -252,7 +257,7 @@ void PIDController::update(uint32_t currentTime) {
         aa->setAltitudeVario(vario);
         pidOffsetAlt -= constrain(conf->raw.pid[PIDALT].D * vario >> 4, -150, 150);
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
         Log::debugStart();
         Log::debug(", accZ: ");
         Log::debug(accZ);
@@ -272,12 +277,35 @@ void PIDController::update(uint32_t currentTime) {
         rcCommand[THROTTLE] = initialThrottleHold + pidOffsetAlt;
     }
 
-#if LOG_LEVEL > 0
+#if TEST_LOG_LEVEL > 0
     Log::debugStart();
     Log::debugln(">>>>>>>>>> AltHold PID update end <<<<<<<<<<");
 #endif
 }
 
 uint16_t PIDController::mixPID(int8_t x, int8_t y, int8_t z) {
+#if TEST_LOG_LEVEL > 0
+    Log::debugStart();
+    Log::debugln(">>>>>>>>>> Mix motors with PID start <<<<<<<<<<");
+    Log::debug("rcCommand[throttle]: ");
+    Log::debug(rcCommand[THROTTLE]);
+    Log::debug(", pidOffset[roll]: ");
+    Log::debug(pidOffset[ROLL]);
+    Log::debug(", x: ");
+    Log::debug(x);
+    Log::debug(", pidOffset[pitch]: ");
+    Log::debug(pidOffset[PITCH]);
+    Log::debug(", y: ");
+    Log::debug(y);
+    Log::debug(", pidOffset[yaw]: ");
+    Log::debug(pidOffset[YAW]);
+    Log::debug(", z: ");
+    Log::debug(z);
+    Log::debug(", motors: ");
+    Log::debugln(rcCommand[THROTTLE] + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z);
+    Log::debugStart();
+    Log::debugln(">>>>>>>>>> Mix motors with PID end <<<<<<<<<<");
+    Log::debug("\n\n\n");
+#endif
     return rcCommand[THROTTLE] + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z;
 }

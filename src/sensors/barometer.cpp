@@ -1,4 +1,7 @@
 #include "barometer.h"
+#include "global.h"
+
+extern Configuration conf;
 
 void Barometer::update(uint32_t currentTime) {
     this->getRawData(currentTime);
@@ -18,8 +21,8 @@ void Barometer::calibration(uint16_t steps) {
 }
 
 void Barometer::_calibration(uint32_t stepTime) {
-    logBaroGroundPressureSum = log(ccp);
-    baroGroundTemperatureScale = ((int32_t) ct + 27315) * 29.271267f;
+    conf.raw.logBaroGroundPressureSum = log(ccp);
+    conf.raw.baroGroundTemperatureScale = ((int32_t) ct + 27315) * 29.271267f;
 }
 
 bool Barometer::isCalibrating() {

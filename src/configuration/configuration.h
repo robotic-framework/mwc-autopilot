@@ -23,6 +23,7 @@ public:
         int16_t accOffset[3] = {0, 0, 0};
         int16_t gyroOffset[3] = {0, 0, 0};
         int16_t magOffset[3] = {0, 0, 0};
+        float logBaroGroundPressureSum = 0, baroGroundTemperatureScale = 0;
         uint8_t checksum = 0;
     } raw{};
 

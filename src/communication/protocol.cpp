@@ -5,6 +5,7 @@
 extern ACSController acs;
 extern uint16_t cycleTime;
 extern Configuration conf;
+extern int16_t rcCommand[4];
 
 enum MSP_protocol_states {
     IDLE,
@@ -253,6 +254,27 @@ void evaluateCommand(uint8_t cmd) {
             break;
         }
 
+        case MSP_PID: {
+            responsePayload((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
+            break;
+        }
+
+        case MSP_SET_PID: {
+            responseEmpty();
+            structWrite((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
+            break;
+        }
+
+        case MSP_CONFIG: {
+            responsePayload((uint8_t *) &conf.raw, sizeof conf.raw);
+            break;
+        }
+
+        case MSP_FLASH_CONFIG: {
+            conf.write(0);
+            break;
+        }
+
 #if defined(TEST_ALTHOLD)
         case MSP_TEST_ALTHOLD: {
             responseEmpty();
@@ -262,17 +284,28 @@ void evaluateCommand(uint8_t cmd) {
         }
 #endif
 
-        case MSP_PID: {
-            responsePayload((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
-            break;
-        }
-
-        case MSP_SET_PID: {
+#if defined(TEST_RCCOMMAND)
+        case MSP_TEST_RCCOMMAND: {
             responseEmpty();
-            structWrite((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
-            conf.write(0);
+            rcCommand[0] = read16();
+            rcCommand[1] = read16();
+            rcCommand[2] = read16();
+            rcCommand[3] = read16();
+
+#if TEST_LOG_LEVEL > 0
+            Log::debugStart();
+            Log::debug("rcCommand: ");
+            Log::debug(rcCommand[0]);
+            Log::debug(", ");
+            Log::debug(rcCommand[1]);
+            Log::debug(", ");
+            Log::debug(rcCommand[2]);
+            Log::debug(", ");
+            Log::debugln(rcCommand[3]);
+#endif
             break;
         }
+#endif
     }
 }
 

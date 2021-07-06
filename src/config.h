@@ -4,8 +4,9 @@
 // enable serial debug session
 #define DEBUG 0
 // 0 = close, 1 = error, 2 = info, 3 = debug
-#define LOG_LEVEL 3
+#define TEST_LOG_LEVEL 0
 #define TEST_ALTHOLD
+#define TEST_RCCOMMAND
 
 /**
  * Protocol
