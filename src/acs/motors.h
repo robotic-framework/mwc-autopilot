@@ -2,8 +2,7 @@
 #define MOTORS_H_
 
 #include <stdint.h>
-#include <Arduino.h>
-#include "acs/pid/pid.h"
+#include "pid/pid.h"
 #include "../configuration/configuration.h"
 
 class Motors

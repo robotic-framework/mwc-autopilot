@@ -5,9 +5,8 @@
 #ifndef AUTOPILOT_CONFIGURATION_H
 #define AUTOPILOT_CONFIGURATION_H
 
-#include "type_def.h"
-
-#define MAX_PROFILES 10
+#include "../definition.h"
+#include "../type_def.h"
 
 class Configuration {
 public:
@@ -27,12 +26,28 @@ public:
         uint8_t checksum = 0;
     } raw{};
 
+    struct {
+        uint8_t wpCount = 0;
+        Waypoint wpCache[20];
+        uint8_t wpCacheCount = 0;
+    } waypoints{};
+
 public:
     Configuration();
 
     void load(uint8_t pIndex = 0);
 
     void write(uint8_t pIndex = 0);
+
+    void loadWaypoint();
+
+    void addWaypoint(Waypoint &wp);
+
+    void writeWaypoint();
+
+    void clearWaypoint();
+
+    void getWaypoint(uint8_t index, Waypoint *wp);
 
 private:
     void loadDefault();

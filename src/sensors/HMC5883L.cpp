@@ -23,7 +23,7 @@ void HMC5883L::_init()
 
     if (biasErr)
     {
-        for (size_t i = 0; i < 3; i++)
+        for (uint8_t i = 0; i < 3; i++)
         {
             magGain[i] = 820.0 * HMC5883L_X_SELF_TEST_GAUSS * 2.0 * 10.0 / magTotal[i];
         }
@@ -49,12 +49,12 @@ bool HMC5883L::biasCollect(uint8_t bias)
     int16_t absN;
 
     write(HMC5883L_CONFIG_REGA, bias);
-    for (size_t i = 0; i < 10; i++)
+    for (uint8_t i = 0; i < 10; i++)
     {
         write(HMC5883L_CONFIG_REG_MODE, 0x01); // single measurement
         delay(100);
         getRawData();
-        for (size_t axis = 0; axis < 3; axis++)
+        for (uint8_t axis = 0; axis < 3; axis++)
         {
             absN = abs(data[axis]);
             magTotal[axis] += absN;

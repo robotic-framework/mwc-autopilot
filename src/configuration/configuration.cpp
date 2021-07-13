@@ -2,8 +2,8 @@
 // Created by 李翌文 on 2021/2/4.
 //
 
-#include <EEPROM.h>
 #include "configuration.h"
+#include "../SITL/eeprom_sitl.h"
 
 Configuration::Configuration() : arm(false),
                                  angleMode(true),
@@ -40,6 +40,8 @@ void Configuration::load(uint8_t pIndex) {
     if (calcChecksum(reinterpret_cast<uint8_t *>(&raw), sizeof(raw)) != raw.checksum) {
         loadDefault();
     }
+
+    loadWaypoint();
 }
 
 void Configuration::write(uint8_t pIndex) {
@@ -56,4 +58,43 @@ uint8_t Configuration::calcChecksum(uint8_t *payload, uint8_t size) {
         checksum += *payload++;
     }
     return checksum;
+}
+
+void Configuration::loadWaypoint() {
+    eeprom_read_block(&waypoints, reinterpret_cast<const void *>(MAX_PROFILES * sizeof(raw)), 1);
+}
+
+void Configuration::addWaypoint(Waypoint &wp) {
+    if (waypoints.wpCacheCount >= 20) {
+        // write to flash
+        writeWaypoint();
+    }
+    wp.checksum = calcChecksum(reinterpret_cast<uint8_t *>(&wp), sizeof(wp));
+    waypoints.wpCache[waypoints.wpCacheCount] = wp;
+    waypoints.wpCacheCount++;
+}
+
+void Configuration::writeWaypoint() {
+    if (waypoints.wpCacheCount == 0) return;
+
+    uint8_t lastCount = waypoints.wpCount;
+    waypoints.wpCount += waypoints.wpCacheCount;
+    // write into flash with wpCount and wpCache
+    eeprom_update_block(&waypoints,
+                        reinterpret_cast<void *>(MAX_PROFILES * sizeof(raw) + lastCount * sizeof(Waypoint)),
+                        waypoints.wpCacheCount * sizeof(Waypoint) + 1);
+    waypoints.wpCacheCount = 0;
+}
+
+void Configuration::clearWaypoint() {
+    if (waypoints.wpCount == 0) return;
+
+    waypoints.wpCount = 0;
+    waypoints.wpCacheCount = 0;
+
+    eeprom_update_block(&waypoints, reinterpret_cast<void *>(MAX_PROFILES * sizeof(raw)), 1);
+}
+
+void Configuration::getWaypoint(uint8_t index, Waypoint *wp) {
+    if (waypoints.wpCount == 0) return;
 }

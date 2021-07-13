@@ -1,5 +1,5 @@
 #include "motors.h"
-#include "global.h"
+#include "../global.h"
 
 #define PIDMIX(X, Y, Z) rcCommand[THROTTLE] + pidOffset[ROLL] * X + pidOffset[PITCH] * Y + pidOffset[YAW] * Z
 
@@ -21,8 +21,9 @@
 
 #if defined(PROMINI)
 uint8_t Motors::Pins[8] = {9, 10, 11, 3, 6, 5, A2, 12};
-#endif
-#if defined(MEGA)
+#elif defined(MEGA)
+uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
+#elif defined(SITL)
 uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
 #endif
 

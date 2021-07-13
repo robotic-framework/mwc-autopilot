@@ -4,11 +4,18 @@
 
 #include "utils.h"
 
+#if defined(SITL)
+int32_t __attribute__((noinline)) aa::mul(int16_t a, int16_t b) {
+    int32_t r = a * b;
+    return r;
+}
+#else
 int32_t __attribute__((noinline)) aa::mul(int16_t a, int16_t b) {
     int32_t r;
     MultiS16X16to32(r, a, b); //r = (int32_t)a*b; without asm requirement
     return r;
 }
+#endif
 
 // Rotate Estimated vector(s) with small angle approximation, according to the gyro data
 void aa::rotateV32(t_int32_t_vector *v, int16_t *delta) {

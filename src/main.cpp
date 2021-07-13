@@ -1,8 +1,7 @@
-#include <Arduino.h>
 #include "global.h"
 #include "tasks/tasks.h"
 #if !DEBUG
-#include "communication/protocol.h"
+#include "communication/serializer_msp.h"
 #else
 #include "avr8-stub.h"
 #endif
@@ -47,3 +46,12 @@ void loop()
     previousTime = currentTime;
     scheduler.Schedule();
 }
+
+#if defined(SITL)
+int main() {
+    setup();
+    while (true) {
+        loop();
+    }
+}
+#endif

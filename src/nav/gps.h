@@ -5,11 +5,11 @@
 #ifndef AUTOPILOT_GPS_H
 #define AUTOPILOT_GPS_H
 
-#include "definition.h"
+#include "../definition.h"
 #if GPS_ENABLED
 
 #include <stdint.h>
-#include "TinyGPS++.h"
+#include "../SITL/gps_sitl.h"
 
 enum GPSPos {
     LAT,

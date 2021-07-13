@@ -89,4 +89,25 @@ typedef struct {
     int16_t Vario;
 } Altitude;
 
+enum WaypointAction: uint8_t {
+    LAND,
+    HOLD_INFINITY,
+    HOLD_TIMEOUT,
+    RETURN,
+    HEADING,
+    JUMP,
+};
+
+typedef struct {
+    uint8_t index; // max is 255 waypoints
+    int32_t pos[2];
+    WaypointAction action;
+    int16_t param1;
+    int16_t param2;
+    int16_t param3;
+    uint32_t requiredAltitude;
+    uint8_t flags;
+    uint8_t checksum;
+} Waypoint;
+
 #endif //AUTOPILOT_TYPE_DEF_H

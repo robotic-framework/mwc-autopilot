@@ -23,7 +23,7 @@ void ITG3205::update(uint32_t currentTime)
 {
     Gyroscope::update(currentTime);
 
-  for (size_t i = 0; i < 3; i++)
+  for (uint8_t i = 0; i < 3; i++)
   {
     data[i] = constrain(data[i], _prevData[i] - 800, _prevData[i] + 800);
     _prevData[i] = data[i];

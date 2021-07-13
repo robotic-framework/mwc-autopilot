@@ -5,7 +5,7 @@
 #ifndef AUTOPILOT_UTILS_H
 #define AUTOPILOT_UTILS_H
 
-#include <Arduino.h>
+#include "../global.h"
 #include "../type_def.h"
 
 #define MultiS16X16to32(longRes, intIn1, intIn2) \

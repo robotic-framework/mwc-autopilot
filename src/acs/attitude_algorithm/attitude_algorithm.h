@@ -5,7 +5,6 @@
 #ifndef AUTOPILOT_ATTITUDE_ALGORITHM_H
 #define AUTOPILOT_ATTITUDE_ALGORITHM_H
 
-#include "stdint.h"
 #include "../../definition.h"
 #include "../../type_def.h"
 #include "../imu.h"

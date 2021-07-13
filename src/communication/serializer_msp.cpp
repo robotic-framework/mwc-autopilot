@@ -1,23 +1,16 @@
+#include "serializer_msp.h"
+#if PROTOCOL_ID == 1
 #if !DEBUG
 
-#include "protocol.h"
 
 extern ACSController acs;
 extern uint16_t cycleTime;
 extern Configuration conf;
 extern int16_t rcCommand[4];
 
-enum MSP_protocol_states {
-    IDLE,
-    HEADER_START,
-    HEADER_M,
-    HEADER_ARROW,
-    HEADER_SIZE,
-    HEADER_CMD
-};
-
-#define INPUT_BUFFER_SIZE 64
-#define TX_BUFFER_SIZE 128
+#if GPS_ENABLED
+extern Navigation nav;
+#endif
 
 static uint8_t inputBuffer[INPUT_BUFFER_SIZE];
 static uint8_t inputBufferIndex = 0;
@@ -203,19 +196,19 @@ void evaluateCommand(uint8_t cmd) {
         }
 
         case MSP_ACC_CALIBRATION: {
-            responseEmpty();
             if (!conf.arm) {
                 acs.accCalibration();
             }
+            responseEmpty();
             break;
         }
 
         case MSP_MAG_CALIBRATION: {
-            responseEmpty();
             if (!conf.arm) {
                 acs.magCalibration();
                 acs.baroCalibration();
             }
+            responseEmpty();
             break;
         }
 
@@ -227,16 +220,16 @@ void evaluateCommand(uint8_t cmd) {
         }
 
         case MSP_ARM: {
-            responseEmpty();
             conf.arm = true;
             LEDPIN_ON
+            responseEmpty();
             break;
         }
 
         case MSP_DIS_ARM: {
-            responseEmpty();
             conf.arm = false;
             LEDPIN_OFF
+            responseEmpty();
             break;
         }
 
@@ -248,9 +241,9 @@ void evaluateCommand(uint8_t cmd) {
         }
 
         case MSP_ALT_UNLOCK: {
-            responseEmpty();
             conf.altHoldMode = false;
             conf.altHold = 0;
+            responseEmpty();
             break;
         }
 
@@ -260,8 +253,8 @@ void evaluateCommand(uint8_t cmd) {
         }
 
         case MSP_SET_PID: {
-            responseEmpty();
             structWrite((uint8_t *) &conf.raw.pid, 3 * PIDITEMS);
+            responseEmpty();
             break;
         }
 
@@ -274,6 +267,29 @@ void evaluateCommand(uint8_t cmd) {
             conf.write(0);
             break;
         }
+
+        case MSP_WP: {
+
+            break;
+        }
+
+        case MSP_SET_WP: {
+            break;
+        }
+
+#if GPS_ENABLED
+        case MSP_START_NAV: {
+            nav.start();
+            responseEmpty();
+            break;
+        }
+
+        case MSP_STOP_NAV: {
+            nav.stop();
+            responseEmpty();
+            break;
+        }
+#endif
 
 #if defined(TEST_ALTHOLD)
         case MSP_TEST_ALTHOLD: {
@@ -365,4 +381,5 @@ void protocolHandler() {
     }
 }
 
+#endif
 #endif

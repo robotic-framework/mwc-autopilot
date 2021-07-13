@@ -4,23 +4,7 @@
 
 #include "log.h"
 
-size_t Log::debug(const __FlashStringHelper *ifsh) {
-#if TEST_LOG_LEVEL >= 3
-    return PROTOCOL_SERIAL.print(ifsh);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::debug(const String &str) {
-#if TEST_LOG_LEVEL >= 3
-    return PROTOCOL_SERIAL.print(str);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::debug(const char *c) {
+uint8_t Log::debug(const char *c) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c);
 #else
@@ -28,7 +12,7 @@ size_t Log::debug(const char *c) {
 #endif
 }
 
-size_t Log::debug(char c) {
+uint8_t Log::debug(char c) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c);
 #else
@@ -36,7 +20,7 @@ size_t Log::debug(char c) {
 #endif
 }
 
-size_t Log::debug(unsigned char c, int base) {
+uint8_t Log::debug(unsigned char c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -44,7 +28,7 @@ size_t Log::debug(unsigned char c, int base) {
 #endif
 }
 
-size_t Log::debug(int c, int base) {
+uint8_t Log::debug(int c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -52,7 +36,7 @@ size_t Log::debug(int c, int base) {
 #endif
 }
 
-size_t Log::debug(unsigned int c, int base) {
+uint8_t Log::debug(unsigned int c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -60,7 +44,7 @@ size_t Log::debug(unsigned int c, int base) {
 #endif
 }
 
-size_t Log::debug(long c, int base) {
+uint8_t Log::debug(long c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -68,7 +52,7 @@ size_t Log::debug(long c, int base) {
 #endif
 }
 
-size_t Log::debug(unsigned long c, int base) {
+uint8_t Log::debug(unsigned long c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -76,7 +60,7 @@ size_t Log::debug(unsigned long c, int base) {
 #endif
 }
 
-size_t Log::debug(double c, int base) {
+uint8_t Log::debug(double c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -84,31 +68,7 @@ size_t Log::debug(double c, int base) {
 #endif
 }
 
-size_t Log::debug(const Printable &p) {
-#if TEST_LOG_LEVEL >= 3
-    return PROTOCOL_SERIAL.print(p);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::debugln(const __FlashStringHelper *ifsh) {
-#if TEST_LOG_LEVEL >= 3
-    return PROTOCOL_SERIAL.println(ifsh);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::debugln(const String &str) {
-#if TEST_LOG_LEVEL >= 3
-    return PROTOCOL_SERIAL.println(str);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::debugln(const char *c) {
+uint8_t Log::debugln(const char *c) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c);
 #else
@@ -116,7 +76,7 @@ size_t Log::debugln(const char *c) {
 #endif
 }
 
-size_t Log::debugln(char c) {
+uint8_t Log::debugln(char c) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c);
 #else
@@ -124,7 +84,7 @@ size_t Log::debugln(char c) {
 #endif
 }
 
-size_t Log::debugln(unsigned char c, int base) {
+uint8_t Log::debugln(unsigned char c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -132,7 +92,7 @@ size_t Log::debugln(unsigned char c, int base) {
 #endif
 }
 
-size_t Log::debugln(int c, int base) {
+uint8_t Log::debugln(int c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -140,7 +100,7 @@ size_t Log::debugln(int c, int base) {
 #endif
 }
 
-size_t Log::debugln(unsigned int c, int base) {
+uint8_t Log::debugln(unsigned int c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -148,7 +108,7 @@ size_t Log::debugln(unsigned int c, int base) {
 #endif
 }
 
-size_t Log::debugln(long c, int base) {
+uint8_t Log::debugln(long c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -156,7 +116,7 @@ size_t Log::debugln(long c, int base) {
 #endif
 }
 
-size_t Log::debugln(unsigned long c, int base) {
+uint8_t Log::debugln(unsigned long c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -164,7 +124,7 @@ size_t Log::debugln(unsigned long c, int base) {
 #endif
 }
 
-size_t Log::debugln(double c, int base) {
+uint8_t Log::debugln(double c, int base) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -172,15 +132,7 @@ size_t Log::debugln(double c, int base) {
 #endif
 }
 
-size_t Log::debugln(const Printable &p) {
-#if TEST_LOG_LEVEL >= 3
-    return PROTOCOL_SERIAL.println(p);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::debugln(void) {
+uint8_t Log::debugln(void) {
 #if TEST_LOG_LEVEL >= 3
     return PROTOCOL_SERIAL.println();
 #else
@@ -189,23 +141,7 @@ size_t Log::debugln(void) {
 }
 
 
-size_t Log::info(const __FlashStringHelper *ifsh) {
-#if TEST_LOG_LEVEL >= 2
-    return PROTOCOL_SERIAL.print(ifsh);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::info(const String &str) {
-#if TEST_LOG_LEVEL >= 2
-    return PROTOCOL_SERIAL.print(str);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::info(const char *c) {
+uint8_t Log::info(const char *c) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c);
 #else
@@ -213,7 +149,7 @@ size_t Log::info(const char *c) {
 #endif
 }
 
-size_t Log::info(char c) {
+uint8_t Log::info(char c) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c);
 #else
@@ -221,7 +157,7 @@ size_t Log::info(char c) {
 #endif
 }
 
-size_t Log::info(unsigned char c, int base) {
+uint8_t Log::info(unsigned char c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -229,7 +165,7 @@ size_t Log::info(unsigned char c, int base) {
 #endif
 }
 
-size_t Log::info(int c, int base) {
+uint8_t Log::info(int c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -237,7 +173,7 @@ size_t Log::info(int c, int base) {
 #endif
 }
 
-size_t Log::info(unsigned int c, int base) {
+uint8_t Log::info(unsigned int c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -245,7 +181,7 @@ size_t Log::info(unsigned int c, int base) {
 #endif
 }
 
-size_t Log::info(long c, int base) {
+uint8_t Log::info(long c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -253,7 +189,7 @@ size_t Log::info(long c, int base) {
 #endif
 }
 
-size_t Log::info(unsigned long c, int base) {
+uint8_t Log::info(unsigned long c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -261,7 +197,7 @@ size_t Log::info(unsigned long c, int base) {
 #endif
 }
 
-size_t Log::info(double c, int base) {
+uint8_t Log::info(double c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -269,31 +205,7 @@ size_t Log::info(double c, int base) {
 #endif
 }
 
-size_t Log::info(const Printable &p) {
-#if TEST_LOG_LEVEL >= 2
-    return PROTOCOL_SERIAL.print(p);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::infoln(const __FlashStringHelper *ifsh) {
-#if TEST_LOG_LEVEL >= 2
-    return PROTOCOL_SERIAL.println(ifsh);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::infoln(const String &str) {
-#if TEST_LOG_LEVEL >= 2
-    return PROTOCOL_SERIAL.println(str);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::infoln(const char *c) {
+uint8_t Log::infoln(const char *c) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c);
 #else
@@ -301,7 +213,7 @@ size_t Log::infoln(const char *c) {
 #endif
 }
 
-size_t Log::infoln(char c) {
+uint8_t Log::infoln(char c) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c);
 #else
@@ -309,7 +221,7 @@ size_t Log::infoln(char c) {
 #endif
 }
 
-size_t Log::infoln(unsigned char c, int base) {
+uint8_t Log::infoln(unsigned char c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -317,7 +229,7 @@ size_t Log::infoln(unsigned char c, int base) {
 #endif
 }
 
-size_t Log::infoln(int c, int base) {
+uint8_t Log::infoln(int c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -325,7 +237,7 @@ size_t Log::infoln(int c, int base) {
 #endif
 }
 
-size_t Log::infoln(unsigned int c, int base) {
+uint8_t Log::infoln(unsigned int c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -333,7 +245,7 @@ size_t Log::infoln(unsigned int c, int base) {
 #endif
 }
 
-size_t Log::infoln(long c, int base) {
+uint8_t Log::infoln(long c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -341,7 +253,7 @@ size_t Log::infoln(long c, int base) {
 #endif
 }
 
-size_t Log::infoln(unsigned long c, int base) {
+uint8_t Log::infoln(unsigned long c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -349,7 +261,7 @@ size_t Log::infoln(unsigned long c, int base) {
 #endif
 }
 
-size_t Log::infoln(double c, int base) {
+uint8_t Log::infoln(double c, int base) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -357,15 +269,7 @@ size_t Log::infoln(double c, int base) {
 #endif
 }
 
-size_t Log::infoln(const Printable &p) {
-#if TEST_LOG_LEVEL >= 2
-    return PROTOCOL_SERIAL.println(p);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::infoln(void) {
+uint8_t Log::infoln(void) {
 #if TEST_LOG_LEVEL >= 2
     return PROTOCOL_SERIAL.println();
 #else
@@ -374,23 +278,7 @@ size_t Log::infoln(void) {
 }
 
 
-size_t Log::error(const __FlashStringHelper *ifsh) {
-#if TEST_LOG_LEVEL >= 1
-    return PROTOCOL_SERIAL.print(ifsh);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::error(const String &str) {
-#if TEST_LOG_LEVEL >= 1
-    return PROTOCOL_SERIAL.print(str);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::error(const char *c) {
+uint8_t Log::error(const char *c) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c);
 #else
@@ -398,7 +286,7 @@ size_t Log::error(const char *c) {
 #endif
 }
 
-size_t Log::error(char c) {
+uint8_t Log::error(char c) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c);
 #else
@@ -406,7 +294,7 @@ size_t Log::error(char c) {
 #endif
 }
 
-size_t Log::error(unsigned char c, int base) {
+uint8_t Log::error(unsigned char c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -414,7 +302,7 @@ size_t Log::error(unsigned char c, int base) {
 #endif
 }
 
-size_t Log::error(int c, int base) {
+uint8_t Log::error(int c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -422,7 +310,7 @@ size_t Log::error(int c, int base) {
 #endif
 }
 
-size_t Log::error(unsigned int c, int base) {
+uint8_t Log::error(unsigned int c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -430,7 +318,7 @@ size_t Log::error(unsigned int c, int base) {
 #endif
 }
 
-size_t Log::error(long c, int base) {
+uint8_t Log::error(long c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -438,7 +326,7 @@ size_t Log::error(long c, int base) {
 #endif
 }
 
-size_t Log::error(unsigned long c, int base) {
+uint8_t Log::error(unsigned long c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -446,7 +334,7 @@ size_t Log::error(unsigned long c, int base) {
 #endif
 }
 
-size_t Log::error(double c, int base) {
+uint8_t Log::error(double c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.print(c, base);
 #else
@@ -454,31 +342,7 @@ size_t Log::error(double c, int base) {
 #endif
 }
 
-size_t Log::error(const Printable &p) {
-#if TEST_LOG_LEVEL >= 1
-    return PROTOCOL_SERIAL.print(p);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::errorln(const __FlashStringHelper *ifsh) {
-#if TEST_LOG_LEVEL >= 1
-    return PROTOCOL_SERIAL.println(ifsh);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::errorln(const String &str) {
-#if TEST_LOG_LEVEL >= 1
-    return PROTOCOL_SERIAL.println(str);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::errorln(const char *c) {
+uint8_t Log::errorln(const char *c) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c);
 #else
@@ -486,7 +350,7 @@ size_t Log::errorln(const char *c) {
 #endif
 }
 
-size_t Log::errorln(char c) {
+uint8_t Log::errorln(char c) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c);
 #else
@@ -494,7 +358,7 @@ size_t Log::errorln(char c) {
 #endif
 }
 
-size_t Log::errorln(unsigned char c, int base) {
+uint8_t Log::errorln(unsigned char c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -502,7 +366,7 @@ size_t Log::errorln(unsigned char c, int base) {
 #endif
 }
 
-size_t Log::errorln(int c, int base) {
+uint8_t Log::errorln(int c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -510,7 +374,7 @@ size_t Log::errorln(int c, int base) {
 #endif
 }
 
-size_t Log::errorln(unsigned int c, int base) {
+uint8_t Log::errorln(unsigned int c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -518,7 +382,7 @@ size_t Log::errorln(unsigned int c, int base) {
 #endif
 }
 
-size_t Log::errorln(long c, int base) {
+uint8_t Log::errorln(long c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -526,7 +390,7 @@ size_t Log::errorln(long c, int base) {
 #endif
 }
 
-size_t Log::errorln(unsigned long c, int base) {
+uint8_t Log::errorln(unsigned long c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -534,7 +398,7 @@ size_t Log::errorln(unsigned long c, int base) {
 #endif
 }
 
-size_t Log::errorln(double c, int base) {
+uint8_t Log::errorln(double c, int base) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println(c, base);
 #else
@@ -542,15 +406,7 @@ size_t Log::errorln(double c, int base) {
 #endif
 }
 
-size_t Log::errorln(const Printable &p) {
-#if TEST_LOG_LEVEL >= 1
-    return PROTOCOL_SERIAL.println(p);
-#else
-    return 0;
-#endif
-}
-
-size_t Log::errorln(void) {
+uint8_t Log::errorln(void) {
 #if TEST_LOG_LEVEL >= 1
     return PROTOCOL_SERIAL.println();
 #else

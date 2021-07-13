@@ -2,8 +2,12 @@
 // Created by 李翌文 on 2021/6/10.
 //
 
-#include <Arduino.h>
 #include "config.h"
+#if defined(SITL)
+#include "SITL/ardu_sitl.h"
+#else
+#include <Arduino.h>
+#endif
 
 #ifndef AUTOPILOT_DEFINITION_H
 #define AUTOPILOT_DEFINITION_H
@@ -30,6 +34,7 @@
 #endif
 
 #if defined(PROMINI)
+#define MAX_PROFILES 3
 #define LEDPIN_PINMODE pinMode(13, OUTPUT);
 #define LEDPIN_TOGGLE PINB |= 1 << 5; //switch LEDPIN state (digital PIN 13)
 #define LEDPIN_OFF PORTB &= ~(1 << 5);
@@ -53,7 +58,13 @@
 
 #endif
 
+
+#if defined(PROMINI)
+#define MAX_PROFILES 3
+#endif
+
 #if defined(MEGA)
+#define MAX_PROFILES 10
 #define LEDPIN_PINMODE   \
     pinMode(13, OUTPUT); \
     pinMode(30, OUTPUT);
@@ -91,6 +102,70 @@
 #endif
 #else
 #define PROTOCOL_SERIAL Serial
+#endif
+#endif
+
+#if defined(STM32)
+#define MAX_PROFILES 10
+
+#if defined(GPS_SERIAL)
+#if GPS_SERIAL == 1
+#define GPS_SERIAL_DEVICE Serial1
+#elif GPS_SERIAL == 2
+#define GPS_SERIAL_DEVICE Serial2
+#elif GGPS_SERIAL == 3
+#define GPS_SERIAL_DEVICE Serial3
+#else
+#error "Mega do not supportted Serial port more than 3"
+#endif
+#endif
+
+#if defined(BLE_SERIAL)
+#if BLE_SERIAL == 1
+#define PROTOCOL_SERIAL Serial1
+#elif BLE_SERIAL == 2
+#define PROTOCOL_SERIAL Serial2
+#elif BLE_SERIAL == 3
+#define PROTOCOL_SERIAL Serial3
+#else
+#error "Mega do not supportted Serial port more than 3"
+#endif
+#else
+#define PROTOCOL_SERIAL Serial
+#endif
+#endif
+
+#if defined(SITL)
+#define MAX_PROFILES 10
+#define LEDPIN_PINMODE ;
+#define LEDPIN_TOGGLE ;
+#define LEDPIN_ON ;
+#define LEDPIN_OFF ;
+
+#if defined(GPS_SERIAL)
+#if GPS_SERIAL == 1
+#define GPS_SERIAL_DEVICE SerialSITL1
+#elif GPS_SERIAL == 2
+#define GPS_SERIAL_DEVICE SerialSITL2
+#elif GGPS_SERIAL == 3
+#define GPS_SERIAL_DEVICE SerialSITL3
+#else
+#error "SITL do not supportted Serial port more than 3"
+#endif
+#endif
+
+#if defined(BLE_SERIAL)
+#if BLE_SERIAL == 1
+#define PROTOCOL_SERIAL SerialSITL1
+#elif BLE_SERIAL == 2
+#define PROTOCOL_SERIAL SerialSITL2
+#elif BLE_SERIAL == 3
+#define PROTOCOL_SERIAL SerialSITL3
+#else
+#error "Mega do not supportted Serial port more than 3"
+#endif
+#else
+#define PROTOCOL_SERIAL SerialSITL
 #endif
 #endif
 

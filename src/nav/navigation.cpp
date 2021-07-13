@@ -2,18 +2,24 @@
 // Created by 李翌文 on 2021/1/11.
 //
 
-#include "global.h"
+#include "../global.h"
 
 #if GPS_ENABLED
 
-#include "Arduino.h"
 #include "navigation.h"
 
-extern Configuration conf;
-
-Navigation::Navigation() : state(NAV_STATE_NONE),
+Navigation::Navigation(Configuration *conf) : state(NAV_STATE_NONE),
                            mode(GPS_MODE_NONE) {
     gps = new GPS;
+    this->conf = conf;
+}
+
+void Navigation::start() {
+    state = NAV_STATE_PROCESS_NEXT;
+}
+
+void Navigation::stop() {
+    state = NAV_STATE_HOLD_INFINIT;
 }
 
 void Navigation::update(uint32_t currentTime) {
@@ -26,7 +32,7 @@ void Navigation::update(uint32_t currentTime) {
         gps->getGPSPos(&posLat, &posLon);
 
         // auto set home position
-        if (!isSetHome && conf.arm) {
+        if (!isSetHome && conf->arm) {
             resetHome(&posLat, &posLon);
         }
 

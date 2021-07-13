@@ -2,7 +2,6 @@
 #define ITG3205_H_
 
 #include <stdint.h>
-#include <Arduino.h>
 #include "gyroscope.h"
 
 #define ITG3205_DEVICE 0x68

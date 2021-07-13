@@ -1,8 +1,8 @@
 #if !defined(I2C_H_)
 #define I2C_H_
 
-#include <Arduino.h>
-#include <Wire.h>
+#include "../definition.h"
+#include "../SITL/wire_sitl.h"
 #include <stdint.h>
 
 enum I2CError

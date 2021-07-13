@@ -1,18 +1,18 @@
 #ifndef IMU_H_
 #define IMU_H_
 
-#include <Wire.h>
-#include "config.h"
+#include "../config.h"
+#include "../SITL/wire_sitl.h"
 #include "../mixed/led.h"
 
 #if SENSOR_ACC
 
-#include "sensors/accelerator.h"
+#include "../sensors/accelerator.h"
 
 #endif
 #if SENSOR_GYRO
 
-#include "sensors/gyroscope.h"
+#include "../sensors/gyroscope.h"
 
 #endif
 #if SENSOR_MAG
@@ -20,7 +20,7 @@
 #endif
 #if SENSOR_BARO
 
-#include "sensors/barometer.h"
+#include "../sensors/barometer.h"
 
 #endif
 
@@ -29,13 +29,13 @@
 #endif
 #if defined(ACC_BMA180)
 
-#include "sensors/BMA180.h"
+#include "../sensors/BMA180.h"
 
 #endif
 
 #if defined(GYRO_ITG3205)
 
-#include "sensors/ITG3205.h"
+#include "../sensors/ITG3205.h"
 
 #endif
 
@@ -45,7 +45,7 @@
 
 #if defined(BARO_BMP085)
 
-#include "sensors/BMP085.h"
+#include "../sensors/BMP085.h"
 
 #endif
 

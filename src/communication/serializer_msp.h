@@ -2,9 +2,10 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
-#include <Arduino.h>
 #include <stdint.h>
-#include "global.h"
+#include "../global.h"
+
+#if PROTOCOL_ID == 1
 
 /************************************** MultiWii Serial Protocol *******************************************************/
 // Multiwii Serial Protocol 100
@@ -67,6 +68,8 @@
 #define MSP_SET_SERVO_CONF 212  //in message          Servo settings
 #define MSP_SET_MOTOR 214       //in message          PropBalance function
 #define MSP_SET_NAV_CONFIG 215  //in message          Sets nav config parameters - write to the eeprom
+#define MSP_START_NAV 216 //in message
+#define MSP_STOP_NAV 217 //in message
 
 #define MSP_SET_ACC_TRIM 239 //in message          set acc angle trim values
 #define MSP_ACC_TRIM 240     //out message         get acc angle trim values
@@ -86,5 +89,18 @@ void serialInit();
 
 void protocolHandler();
 
+enum MSPProtocolStates {
+    IDLE,
+    HEADER_START,
+    HEADER_M,
+    HEADER_ARROW,
+    HEADER_SIZE,
+    HEADER_CMD
+};
+
+#define INPUT_BUFFER_SIZE 64
+#define TX_BUFFER_SIZE 128
+
 #endif // PROTOCOL_H_
+#endif
 #endif

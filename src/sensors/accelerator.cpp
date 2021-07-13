@@ -16,7 +16,7 @@ void Accelerator::update(uint32_t currentTime) {
 
 void Accelerator::calibration() {
     calibrateSteps = 512;
-    for (size_t i = 0; i < 3; i++) {
+    for (uint8_t i = 0; i < 3; i++) {
         offsetTotal[i] = 0;
     }
 }

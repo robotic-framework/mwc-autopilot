@@ -3,6 +3,8 @@
 
 // enable serial debug session
 #define DEBUG 0
+// enable SITL mode
+//#define SITL
 // 0 = close, 1 = error, 2 = info, 3 = debug
 #define TEST_LOG_LEVEL 0
 #define TEST_ALTHOLD
@@ -13,7 +15,8 @@
  */
 //#define BLE_SERIAL 2
 #define PROTOCOL_BAUD 115200
-
+// 1 = MSP, 2 = MAVLink
+#define PROTOCOL_ID 1
 #define VERSION 100
 /**
  * Robot type
@@ -65,9 +68,9 @@
 /**
  * GPS
  */
-//#define GPS_SERIAL 1
-//#define GPS_BAUD 38400
-//#define GPS_LAG 1.0f
+#define GPS_SERIAL 1
+#define GPS_BAUD 38400
+#define GPS_LAG 1.0f
 
 /**
  * Mission

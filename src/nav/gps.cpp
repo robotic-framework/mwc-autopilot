@@ -2,7 +2,7 @@
 // Created by 李翌文 on 2021/1/8.
 //
 
-#include "definition.h"
+#include "../definition.h"
 #if GPS_ENABLED
 
 #include "gps.h"
@@ -31,8 +31,8 @@ void GPS::update(uint32_t currentTime) {
         gps->course.isValid()) {
         satellites = gps->satellites.value();
 
-        pos[LAT] = gps->location.lat();
-        pos[LON] = gps->location.lng();
+        pos[LAT] = gps->location.lat32();
+        pos[LON] = gps->location.lng32();
 
         if (gps->sentencesWithFix() > 0) {
             hasFix = true;
