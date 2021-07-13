@@ -3,7 +3,7 @@
 //
 
 #include "ardu_sitl.h"
-#include "../config.h"
+#include "../../src/config.h"
 
 #if defined(SITL)
 void pinMode(uint8_t pin, uint8_t mode) {}

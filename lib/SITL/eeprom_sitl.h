@@ -8,7 +8,7 @@
 #if defined(SITL)
 #include "eeprom_implement.h"
 #else
-#include <EEPROM.h>
+#include "../../../../../../.platformio/packages/framework-arduino-avr/libraries/EEPROM/src/EEPROM.h"
 #endif
 
 #endif //AUTOPILOT_EEPROM_SITL_H

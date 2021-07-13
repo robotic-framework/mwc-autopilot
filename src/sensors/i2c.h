@@ -2,7 +2,7 @@
 #define I2C_H_
 
 #include "../definition.h"
-#include "../SITL/wire_sitl.h"
+#include "../../lib/SITL/wire_sitl.h"
 #include <stdint.h>
 
 enum I2CError

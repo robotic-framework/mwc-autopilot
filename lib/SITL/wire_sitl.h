@@ -8,7 +8,7 @@
 #if defined(SITL)
 #include "wire_implement.h"
 #else
-#include <Wire.h>
+#include "../../../../../../.platformio/packages/framework-arduino-avr/libraries/Wire/src/Wire.h"
 #endif
 
 #endif //AUTOPILOT_WIRE_SITL_H
