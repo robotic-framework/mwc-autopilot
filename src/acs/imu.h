@@ -2,7 +2,11 @@
 #define IMU_H_
 
 #include "../config.h"
-#include "../../lib/SITL/wire_sitl.h"
+#if defined(SITL)
+#include "../../lib/SITL/wire_implement.h"
+#else
+#include <Wire.h>
+#endif
 #include "../mixed/led.h"
 
 #if SENSOR_ACC

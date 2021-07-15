@@ -48,7 +48,28 @@ void loop()
 }
 
 #if defined(SITL)
-int main() {
+#include <unistd.h>
+#include "networks.h"
+
+int main(int argc, char* argv[]) {
+    int opt = 0;
+    string host;
+    uint16_t port;
+    while((opt = getopt(argc, argv, "h:p:")) != -1) {
+        switch (opt) {
+            case 'h':
+                host = string(optarg);
+                break;
+            case 'p':
+                port = atoi(optarg);
+                break;
+        }
+    }
+
+    if (!initNetwork(host, port)) {
+        return -1;
+    }
+
     setup();
     while (true) {
         loop();

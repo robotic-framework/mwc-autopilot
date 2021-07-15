@@ -9,7 +9,11 @@
 #if GPS_ENABLED
 
 #include <stdint.h>
-#include "../../lib/SITL/gps_sitl.h"
+#if defined(SITL)
+#include "../../lib/SITL/gps_implement.h"
+#else
+#include "TinyGPS++.h"
+#endif
 
 enum GPSPos {
     LAT,

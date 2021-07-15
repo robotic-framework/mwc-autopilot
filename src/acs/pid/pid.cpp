@@ -60,7 +60,7 @@ void PIDController::update(uint32_t currentTime) {
 #endif
 
     if (conf->horizonMode) {
-        prop = min(max(abs(rcCommand[PITCH]), abs(rcCommand[ROLL])), 512);
+        prop = min2(max2(abs(rcCommand[PITCH]), abs(rcCommand[ROLL])), 512);
     }
 
     int16_t gyroData[3];

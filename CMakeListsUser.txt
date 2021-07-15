@@ -1,4 +1,20 @@
-UNSET(CMAKE_C_COMPILER)
-UNSET(CMAKE_CXX_COMPILER)
-UNSET(CMAKE_CXX_FLAGS)
-UNSET(CMAKE_C_FLAGS)
+if (CMAKE_BUILD_TYPE MATCHES "")
+    UNSET(CMAKE_C_COMPILER)
+    UNSET(CMAKE_CXX_COMPILER)
+    UNSET(CMAKE_CXX_FLAGS)
+    UNSET(CMAKE_C_FLAGS)
+
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/include")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/src")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/SITL")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/sockpp/include")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/sockpp/src")
+endif()
+
+if (CMAKE_BUILD_TYPE MATCHES "stm32")
+
+endif()
+
+if (CMAKE_BUILD_TYPE MATCHES "avr")
+
+endif()

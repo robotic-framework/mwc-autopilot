@@ -4,7 +4,7 @@
 // enable serial debug session
 #define DEBUG 0
 // enable SITL mode
-//#define SITL
+#define SITL
 // 0 = close, 1 = error, 2 = info, 3 = debug
 #define TEST_LOG_LEVEL 0
 #define TEST_ALTHOLD

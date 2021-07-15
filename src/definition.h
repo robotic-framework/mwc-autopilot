@@ -12,6 +12,9 @@
 #ifndef AUTOPILOT_DEFINITION_H
 #define AUTOPILOT_DEFINITION_H
 
+#define min2(a,b) ((a)<(b)?(a):(b))
+#define max2(a,b) ((a)>(b)?(a):(b))
+
 /**
  * definition (do not modify anything)
  */

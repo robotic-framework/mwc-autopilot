@@ -3,7 +3,11 @@
 //
 
 #include "configuration.h"
-#include "../../lib/SITL/eeprom_sitl.h"
+#if defined(SITL)
+#include "../../lib/SITL/eeprom_implement.h"
+#else
+#include <EEPROM.h>
+#endif
 
 Configuration::Configuration() : arm(false),
                                  angleMode(true),

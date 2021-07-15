@@ -77,7 +77,7 @@ void IMU::baroCalibration() {
 
 // Attention: the 'length' must be consistent with the length of the array pointed to by the 'buf'
 void IMU::getRawData(int16_t *buf, uint8_t length) {
-    uint8_t stepLength = min(3, length);
+    uint8_t stepLength = min2(3, length);
     for (uint8_t i = 0; i < stepLength; i++) {
 #if SENSOR_ACC
         *(buf + i) = accSmooth[i];
@@ -90,7 +90,7 @@ void IMU::getRawData(int16_t *buf, uint8_t length) {
     }
 
     length -= stepLength;
-    stepLength = min(3, length);
+    stepLength = min2(3, length);
     for (uint8_t i = 0; i < stepLength; i++) {
 #if SENSOR_GYRO
         *(buf + 3 + i) = gyroWeighted[i];
@@ -104,7 +104,7 @@ void IMU::getRawData(int16_t *buf, uint8_t length) {
     }
 
     length -= stepLength;
-    stepLength = min(3, length);
+    stepLength = min2(3, length);
 
 #if SENSOR_MAG
     mag->GetData(buf + 6, stepLength);
@@ -116,7 +116,7 @@ void IMU::getRawData(int16_t *buf, uint8_t length) {
 }
 
 void IMU::getAccData(int16_t *buf, uint8_t length) {
-    length = min(length, 3);
+    length = min2(length, 3);
     for (uint8_t i = 0; i < length; i++) {
 #if SENSOR_ACC
         *(buf + i) = accSmooth[i];
@@ -127,7 +127,7 @@ void IMU::getAccData(int16_t *buf, uint8_t length) {
 }
 
 void IMU::getGyroData(int16_t *buf, uint8_t length) {
-    length = min(length, 3);
+    length = min2(length, 3);
     for (uint8_t i = 0; i < length; i++) {
 #if SENSOR_GYRO
         *(buf + i) = gyroWeighted[i];
@@ -141,7 +141,7 @@ void IMU::getMagData(int16_t *buf, uint8_t length) {
 #if SENSOR_MAG
     mag->GetData(buf, length);
 #else
-    length = min(length, 3);
+    length = min2(length, 3);
     for (uint8_t i = 0; i < length; i++) {
         *(buf + i) = 0;
     }

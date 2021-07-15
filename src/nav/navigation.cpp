@@ -58,7 +58,7 @@ void Navigation::update(uint32_t currentTime) {
         deltaTime = (float) (currentMillis - prevTime) / 1000.f;
         prevTime = currentMillis;
 
-        deltaTime = min(deltaTime, 1.0);
+        deltaTime = min2(deltaTime, 1.0);
         calcVelocityByDeltaTime(&posLat, &posLon);
         navigation(&posLat, &posLon, currentTime);
     }

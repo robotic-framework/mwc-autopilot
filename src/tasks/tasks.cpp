@@ -307,7 +307,7 @@ void Tasks::Schedule() {
             timeToNextRealtimeTask = 0;
         } else {
             const uint32_t newTimeInterval = nextExecuteAt - currentTime;
-            timeToNextRealtimeTask = min(timeToNextRealtimeTask, newTimeInterval);
+            timeToNextRealtimeTask = min2(timeToNextRealtimeTask, newTimeInterval);
         }
     }
     const bool outsideRealtimeGuardInterval = (timeToNextRealtimeTask > 0);

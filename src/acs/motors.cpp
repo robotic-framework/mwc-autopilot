@@ -177,7 +177,7 @@ void Motors::updateMotors(uint32_t currentTime)
 
 void Motors::getMotors(uint16_t *buf, uint8_t length)
 {
-    length = min(length, 8);
+    length = min2(length, 8);
     for (uint8_t i = 0; i < length; i++)
     {
         *buf++ = motors[i];
