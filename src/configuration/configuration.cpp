@@ -4,7 +4,7 @@
 
 #include "configuration.h"
 #if defined(SITL)
-#include "../../lib/SITL/eeprom_implement.h"
+#include "eeprom_implement.h"
 #else
 #include <EEPROM.h>
 #endif

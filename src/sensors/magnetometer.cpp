@@ -1,5 +1,5 @@
 #include "magnetometer.h"
-#include "../global.h"
+#include "global.h"
 
 extern Configuration conf;
 

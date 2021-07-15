@@ -1,4 +1,4 @@
-#include "imu.h"
+#include "acs/imu.h"
 
 IMU::IMU() {
 #if defined(ACC_ADXL345)

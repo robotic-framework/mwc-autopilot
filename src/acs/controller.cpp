@@ -2,10 +2,8 @@
 // Created by 李翌文 on 2021/6/15.
 //
 
-#include "controller.h"
-#include "../global.h"
-#include "attitude_algorithm/mwc_algorithm.h"
-#include "../type_def.h"
+#include "acs/controller.h"
+#include "acs/attitude_algorithm/mwc_algorithm.h"
 
 void ACSController::init() {
     this->motors->init();

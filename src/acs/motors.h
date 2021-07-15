@@ -2,8 +2,8 @@
 #define MOTORS_H_
 
 #include <stdint.h>
-#include "pid/pid.h"
-#include "../configuration/configuration.h"
+#include "acs/pid/pid.h"
+#include "configuration/configuration.h"
 
 class Motors
 {

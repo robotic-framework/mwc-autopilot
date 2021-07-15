@@ -5,12 +5,12 @@
 #ifndef AUTOPILOT_GPS_H
 #define AUTOPILOT_GPS_H
 
-#include "../definition.h"
+#include "definition.h"
 #if GPS_ENABLED
 
 #include <stdint.h>
 #if defined(SITL)
-#include "../../lib/SITL/gps_implement.h"
+#include "gps_implement.h"
 #else
 #include "TinyGPS++.h"
 #endif

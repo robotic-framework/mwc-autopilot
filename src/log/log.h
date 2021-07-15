@@ -6,7 +6,7 @@
 #define AUTOPILOT_LOG_H
 
 #include <stdint.h>
-#include "../definition.h"
+#include "definition.h"
 
 namespace Log {
 

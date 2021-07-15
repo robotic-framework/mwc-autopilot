@@ -5,11 +5,11 @@
 #ifndef AUTOPILOT_CONTROLLER_H
 #define AUTOPILOT_CONTROLLER_H
 
-#include "attitude_algorithm/attitude_algorithm.h"
-#include "../configuration/configuration.h"
-#include "imu.h"
-#include "pid/pid.h"
-#include "motors.h"
+#include "acs/attitude_algorithm/attitude_algorithm.h"
+#include "configuration/configuration.h"
+#include "acs/imu.h"
+#include "acs/pid/pid.h"
+#include "acs/motors.h"
 
 class ACSController {
 private:

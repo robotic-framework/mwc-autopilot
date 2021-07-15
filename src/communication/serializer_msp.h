@@ -3,7 +3,7 @@
 #define PROTOCOL_H_
 
 #include <stdint.h>
-#include "../global.h"
+#include "global.h"
 
 #if PROTOCOL_ID == 1
 

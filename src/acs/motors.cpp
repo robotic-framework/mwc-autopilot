@@ -1,7 +1,4 @@
-#include "motors.h"
-#include "../global.h"
-
-#define PIDMIX(X, Y, Z) rcCommand[THROTTLE] + pidOffset[ROLL] * X + pidOffset[PITCH] * Y + pidOffset[YAW] * Z
+#include "acs/motors.h"
 
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 

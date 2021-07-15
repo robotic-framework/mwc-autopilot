@@ -5,8 +5,8 @@
 #ifndef AUTOPILOT_CONFIGURATION_H
 #define AUTOPILOT_CONFIGURATION_H
 
-#include "../definition.h"
-#include "../type_def.h"
+#include "definition.h"
+#include "type_def.h"
 
 class Configuration {
 public:

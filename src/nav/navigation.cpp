@@ -2,7 +2,7 @@
 // Created by 李翌文 on 2021/1/11.
 //
 
-#include "../global.h"
+#include "global.h"
 
 #if GPS_ENABLED
 

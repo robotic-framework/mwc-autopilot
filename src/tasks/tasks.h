@@ -6,7 +6,7 @@
 #define AUTOPILOT_TASKS_H
 
 #include "stdint.h"
-#include "../global.h"
+#include "global.h"
 
 #define TASK_PERIOD_HZ(hz) (1000000 / (hz))
 #define TASK_PERIOD_MS(ms) ((ms) * 1000)

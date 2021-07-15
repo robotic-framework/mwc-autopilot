@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "i2c.h"
-#include "../definition.h"
+#include "definition.h"
 
 #define BAROMETER_HISTORY_SIZE 21
 

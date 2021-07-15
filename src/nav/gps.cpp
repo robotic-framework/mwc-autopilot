@@ -2,11 +2,11 @@
 // Created by 李翌文 on 2021/1/8.
 //
 
-#include "../definition.h"
+#include "definition.h"
 #if GPS_ENABLED
 
 #include "gps.h"
-#include "../mixed/led.h"
+#include "mixed/led.h"
 
 GPS::GPS() : hasFix(false) {
     gps = new TinyGPSPlus;

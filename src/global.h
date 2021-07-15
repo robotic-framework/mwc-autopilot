@@ -3,7 +3,7 @@
 
 #include "config.h"
 #if defined(SITL)
-#include "../lib/SITL/ardu_sitl.h"
+#include "ardu_sitl.h"
 #else
 #include <Arduino.h>
 #endif

@@ -1,9 +1,9 @@
 #if !defined(I2C_H_)
 #define I2C_H_
 
-#include "../definition.h"
+#include "definition.h"
 #if defined(SITL)
-#include "../../lib/SITL/wire_implement.h"
+#include "wire_implement.h"
 #else
 #include <Wire.h>
 #endif

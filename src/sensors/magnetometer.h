@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include "i2c.h"
-#include "../config.h"
-#include "../type_def.h"
+#include "config.h"
+#include "type_def.h"
 
 #define MAG_ORIENTATION(X, Y, Z) \
     {                            \
