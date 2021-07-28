@@ -5,12 +5,10 @@
 #ifndef AUTOPILOT_ARDU_SITL_H
 #define AUTOPILOT_ARDU_SITL_H
 
-#include "../../src/config.h"
+#include "config.h"
 #include <stdint.h>
 #include <stdbool.h>
-#if defined(SITL)
 #include <cstring>
-#endif
 #include <math.h>
 
 /*
