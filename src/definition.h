@@ -198,25 +198,25 @@
 #endif
 
 // sensor flag
-#if defined(ACC_ADXL345) || defined(ACC_BMA180)
+#if defined(ACC_ADXL345) || defined(ACC_BMA180) || defined(SITL)
 #define SENSOR_ACC 1
 #else
 #define SENSOR_ACC 0
 #endif
 
-#if defined(GYRO_ITG3205)
+#if defined(GYRO_ITG3205) || defined(SITL)
 #define SENSOR_GYRO 1
 #else
 #define SENSOR_GYRO 0
 #endif
 
-#if defined(MAG_HMC5883L)
+#if defined(MAG_HMC5883L) || defined(SITL)
 #define SENSOR_MAG 1
 #else
 #define SENSOR_MAG 0
 #endif
 
-#if defined(BARO_BMP085)
+#if defined(BARO_BMP085) || defined(SITL)
 #define SENSOR_BARO 1
 #else
 #define SENSOR_BARO 0
@@ -225,7 +225,7 @@
 #define SENSOR_GPS 0
 #define SENSOR_SONAR 0
 
-#if defined(GPS_SERIAL)
+#if defined(GPS_SERIAL) || defined(SITL)
 #define GPS_ENABLED 1
 #else
 #define GPS_ENABLED 0

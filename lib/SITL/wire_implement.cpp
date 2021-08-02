@@ -10,39 +10,27 @@ void WireImplement::begin() {
 
 }
 
-void WireImplement::beginTransmission(uint8_t) {
-
+void WireImplement::beginTransmission(uint8_t addr) {
+    beginTransmission((int) addr);
 }
 
-void WireImplement::beginTransmission(int) {
-
+void WireImplement::beginTransmission(int addr) {
+    if (addr == ADXL345_DEVICE || addr == BMA180_DEVICE) {
+        currentDevice = DEVICE_ACC;
+    } else if (addr == BMP085_DEVICE) {
+        currentDevice = DEVICE_BAROMETER;
+    } else if (addr == HMC5883L_DEVICE) {
+        currentDevice = DEVICE_MAG;
+    } else if (addr == ITG3205_DEVICE) {
+        currentDevice = DEVICE_GYRO;
+    }
 }
 
 uint8_t WireImplement::endTransmission(void) {
     return 0;
 }
 
-uint8_t WireImplement::endTransmission(uint8_t) {
-    return 0;
-}
-
 uint8_t WireImplement::requestFrom(uint8_t, uint8_t) {
-    return 0;
-}
-
-uint8_t WireImplement::requestFrom(uint8_t, uint8_t, uint8_t) {
-    return 0;
-}
-
-uint8_t WireImplement::requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t) {
-    return 0;
-}
-
-uint8_t WireImplement::requestFrom(int, int) {
-    return 0;
-}
-
-uint8_t WireImplement::requestFrom(int, int, int) {
     return 0;
 }
 

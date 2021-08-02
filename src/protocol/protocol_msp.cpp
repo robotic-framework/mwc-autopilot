@@ -100,19 +100,19 @@ void ProtocolMSP::processPacket(uint8_t *buffer, uint8_t length) {
 
     switch (packet.type) {
         case TYPE_SIM_IMU: {
-            msg_sim_imu msg;
+            msg_response_sim_imu msg;
             msg.decode(packet.payload, packet.length);
             handler->msgSimImuHandler(msg);
             break;
         }
         case TYPE_SIM_ACC: {
-            msg_sim_acc msg;
+            msg_response_sim_acc msg;
             msg.decode(packet.payload, packet.length);
-
+            handler->msgSimAccHandler(msg);
             break;
         }
         case TYPE_SIM_GYRO: {
-            msg_sim_gyro msg;
+            msg_response_sim_gyro msg;
             msg.decode(packet.payload, packet.length);
 
             break;

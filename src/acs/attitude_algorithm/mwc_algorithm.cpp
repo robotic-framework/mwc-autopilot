@@ -55,7 +55,7 @@ void MWCAlgorithm::updateAttitude(uint32_t currentTime) {
     // Apply complimentary filter (Gyro drift correction)
 #if SENSOR_MAG
     int16_t magData[3];
-    mag->GetData(magData, 3);
+    imu->getMagData(magData, 3);
 #endif
     for (axis = 0; axis < 3; axis++) {
         // If accel magnitude >1.15G or <0.85G and ACC vector outside of the limit range => we neutralize the effect of accelerometers in the angle estimation.

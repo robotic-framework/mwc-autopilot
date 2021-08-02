@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 #include "global.h"
+#include "sensors/i2c.h"
+#include "mixed/led.h"
 
 #if PROTOCOL_ID == 1
 

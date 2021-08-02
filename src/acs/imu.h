@@ -1,147 +1,49 @@
-#ifndef IMU_H_
-#define IMU_H_
+//
+// Created by 李翌文 on 2021/7/29.
+//
 
-#include "config.h"
-#if defined(SITL)
-#include "wire_implement.h"
-#else
-#include <Wire.h>
-#endif
-#include "mixed/led.h"
+#ifndef AUTOPILOT_IMU_H
+#define AUTOPILOT_IMU_H
 
-#if SENSOR_ACC
-
-#include "sensors/accelerator.h"
-
-#endif
-#if SENSOR_GYRO
-
-#include "sensors/gyroscope.h"
-
-#endif
-#if SENSOR_MAG
-#include "sensors/meganetometer.h"
-#endif
-#if SENSOR_BARO
-
-#include "sensors/barometer.h"
-
-#endif
-
-#if defined(ACC_ADXL345)
-#include "sensors/ADXL345.h"
-#endif
-#if defined(ACC_BMA180)
-
-#include "sensors/BMA180.h"
-
-#endif
-
-#if defined(GYRO_ITG3205)
-
-#include "sensors/ITG3205.h"
-
-#endif
-
-#if defined(MAG_HMC5883L)
-#include "sensors/HMC5883L.h"
-#endif
-
-#if defined(BARO_BMP085)
-
-#include "sensors/BMP085.h"
-
-#endif
+#include <stdint.h>
 
 class IMU {
-private:
-    // sensors
-#if SENSOR_ACC
-    Accelerator *acc;
-#endif
-
-#if SENSOR_GYRO
-    Gyroscope *gyro;
-#endif
-
-#if SENSOR_MAG
-    Magnetometer *mag;
-#endif
-
-#if SENSOR_BARO
-    Barometer *baro;
-#endif
-
-    // indicators
-    int16_t accSmooth[3] = {0, 0, 0};
-    uint32_t accLPF[3] = {0, 0, 0};
-
-    int16_t gyroWeighted[3] = {0, 0, 0};
-    int16_t gyroPrevWeight[3] = {0, 0, 0};
-    int16_t gyroWeight[3] = {0, 0, 0};
-
 public:
-    IMU();
+    virtual void init() = 0;
 
-    void init();
+    virtual void updateAcc(uint32_t currentTime) = 0;
 
-    void updateAcc(uint32_t currentTime);
+    virtual void updateGyro(uint32_t currentTime) = 0;
 
-    void updateGyro(uint32_t currentTime);
+    virtual void updateMag(uint32_t currentTime) = 0;
 
-    void updateMag(uint32_t currentTime);
+    virtual void updateBaro(uint32_t currentTime) = 0;
 
-    void updateBaro(uint32_t currentTime);
+    virtual void updateSonar(uint32_t currentTime) = 0;
 
-    void updateSonar(uint32_t currentTime);
+    virtual void getRawData(int16_t *buf, uint8_t length) = 0;
 
-    void getRawData(int16_t *buf, uint8_t length);
+    virtual void getAccData(int16_t *buf, uint8_t length) = 0;
 
-    void getAccData(int16_t *buf, uint8_t length);
+    virtual void getGyroData(int16_t *buf, uint8_t length) = 0;
 
-    void getGyroData(int16_t *buf, uint8_t length);
+    virtual void getMagData(int16_t *buf, uint8_t length) = 0;
 
-    void getMagData(int16_t *buf, uint8_t length);
+    virtual void getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) = 0;
 
-    void getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp);
+    virtual void accCalibration() = 0;
 
-    void accCalibration();
+    virtual void magCalibration() = 0;
 
-    void magCalibration();
+    virtual void baroCalibration() = 0;
 
-    void baroCalibration();
+    virtual bool isAccCalibrating() = 0;
 
-    bool isAccCalibrating() {
-#if SENSOR_ACC
-        return this->acc->isCalibrating();
-#else
-        return false;
-#endif
-    }
+    virtual bool isGyroCalibrating() = 0;
 
-    bool isGyroCalibrating() {
-#if SENSOR_GYRO
-        return this->gyro->isCalibrating();
-#else
-        return false;
-#endif
-    }
+    virtual bool isMagCalibrating() = 0;
 
-    bool isMagCalibrating() {
-#if SENSOR_MAG
-        return this->mag->IsCalibrating();
-#else
-        return false;
-#endif
-    }
-
-    bool isBaroCalibrating() {
-#if SENSOR_BARO
-        return this->baro->isCalibrating();
-#else
-        return false;
-#endif
-    }
+    virtual bool isBaroCalibrating() = 0;
 };
 
-#endif // IMU_H_
+#endif //AUTOPILOT_IMU_H

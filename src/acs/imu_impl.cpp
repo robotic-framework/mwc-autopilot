@@ -1,6 +1,6 @@
-#include "acs/imu.h"
+#include "acs/imu_impl.h"
 
-IMU::IMU() {
+ImuImpl::ImuImpl() {
 #if defined(ACC_ADXL345)
     acc = new ADXL345(ADXL345_DEVICE);
 #endif
@@ -22,7 +22,7 @@ IMU::IMU() {
 
 }
 
-void IMU::init() {
+void ImuImpl::init() {
     Wire.begin();
 
     while (1) {
@@ -35,7 +35,7 @@ void IMU::init() {
 #endif
 
 #if SENSOR_MAG
-        mag->Init();
+        mag->init();
 #endif
 
 #if SENSOR_BARO
@@ -53,7 +53,7 @@ void IMU::init() {
     LEDPIN_OFF;
 }
 
-void IMU::accCalibration() {
+void ImuImpl::accCalibration() {
 #if SENSOR_ACC
     acc->calibration();
 #endif
@@ -63,20 +63,20 @@ void IMU::accCalibration() {
 #endif
 }
 
-void IMU::magCalibration() {
+void ImuImpl::magCalibration() {
 #if SENSOR_MAG
-    mag->Calibration();
+    mag->calibration();
 #endif
 }
 
-void IMU::baroCalibration() {
+void ImuImpl::baroCalibration() {
 #if SENSOR_BARO
     baro->calibration(200);
 #endif
 }
 
 // Attention: the 'length' must be consistent with the length of the array pointed to by the 'buf'
-void IMU::getRawData(int16_t *buf, uint8_t length) {
+void ImuImpl::getRawData(int16_t *buf, uint8_t length) {
     uint8_t stepLength = min2(3, length);
     for (uint8_t i = 0; i < stepLength; i++) {
 #if SENSOR_ACC
@@ -107,7 +107,7 @@ void IMU::getRawData(int16_t *buf, uint8_t length) {
     stepLength = min2(3, length);
 
 #if SENSOR_MAG
-    mag->GetData(buf + 6, stepLength);
+    mag->getData(buf + 6, stepLength);
 #else
     for (uint8_t i = 0; i < stepLength; i++) {
         *(buf + 6 + i) = 0;
@@ -115,7 +115,7 @@ void IMU::getRawData(int16_t *buf, uint8_t length) {
 #endif
 }
 
-void IMU::getAccData(int16_t *buf, uint8_t length) {
+void ImuImpl::getAccData(int16_t *buf, uint8_t length) {
     length = min2(length, 3);
     for (uint8_t i = 0; i < length; i++) {
 #if SENSOR_ACC
@@ -126,7 +126,7 @@ void IMU::getAccData(int16_t *buf, uint8_t length) {
     }
 }
 
-void IMU::getGyroData(int16_t *buf, uint8_t length) {
+void ImuImpl::getGyroData(int16_t *buf, uint8_t length) {
     length = min2(length, 3);
     for (uint8_t i = 0; i < length; i++) {
 #if SENSOR_GYRO
@@ -137,9 +137,9 @@ void IMU::getGyroData(int16_t *buf, uint8_t length) {
     }
 }
 
-void IMU::getMagData(int16_t *buf, uint8_t length) {
+void ImuImpl::getMagData(int16_t *buf, uint8_t length) {
 #if SENSOR_MAG
-    mag->GetData(buf, length);
+    mag->getData(buf, length);
 #else
     length = min2(length, 3);
     for (uint8_t i = 0; i < length; i++) {
@@ -148,7 +148,7 @@ void IMU::getMagData(int16_t *buf, uint8_t length) {
 #endif
 }
 
-void IMU::getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
+void ImuImpl::getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
 #if SENSOR_BARO
     *ct = baro->getCTData();
     *cp = baro->getCPData();
@@ -160,7 +160,7 @@ void IMU::getBaroData(int16_t *ct, int32_t *cp, int32_t *ccp) {
 #endif
 }
 
-void IMU::updateAcc(uint32_t currentTime) {
+void ImuImpl::updateAcc(uint32_t currentTime) {
 #if SENSOR_ACC
     // update sensors data
     acc->update(currentTime);
@@ -176,7 +176,7 @@ void IMU::updateAcc(uint32_t currentTime) {
 #endif
 }
 
-void IMU::updateGyro(uint32_t currentTime) {
+void ImuImpl::updateGyro(uint32_t currentTime) {
 #if SENSOR_GYRO
     // calc gyro weights
     gyro->update(currentTime);
@@ -194,19 +194,19 @@ void IMU::updateGyro(uint32_t currentTime) {
 #endif
 }
 
-void IMU::updateMag(uint32_t currentTime) {
+void ImuImpl::updateMag(uint32_t currentTime) {
 #if SENSOR_MAG
-    mag->Update();
+    mag->update(currentTime);
 #endif
 }
 
-void IMU::updateBaro(uint32_t currentTime) {
+void ImuImpl::updateBaro(uint32_t currentTime) {
 #if SENSOR_BARO
     baro->update(currentTime);
 #endif
 }
 
-void IMU::updateSonar(uint32_t currentTime) {
+void ImuImpl::updateSonar(uint32_t currentTime) {
 #if SENSOR_SONAR
 
 #endif

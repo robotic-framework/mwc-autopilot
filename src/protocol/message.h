@@ -57,35 +57,38 @@ struct msg_request_sim_imu : message {
 };
 
 // length 28
-struct msg_sim_imu : message {
+struct msg_response_sim_imu : message {
     int16_t acc[3];
     int16_t gyro[3];
     int16_t mag[3];
     int16_t ct;
     int32_t cp;
     int32_t ccp;
+    int16_t att[3];
+    int32_t alt;
+    int16_t vario;
 
-    msg_sim_imu() : message(TYPE_SIM_IMU) {}
+    msg_response_sim_imu() : message(TYPE_SIM_IMU) {}
 
     void decode(uint8_t *buf, uint8_t length) override;
 
     uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
 };
 
-struct msg_sim_acc : message {
+struct msg_response_sim_acc : message {
     int16_t acc[3];
 
-    msg_sim_acc() : message(TYPE_SIM_ACC) {}
+    msg_response_sim_acc() : message(TYPE_SIM_ACC) {}
 
     void decode(uint8_t *buf, uint8_t length) override;
 
     uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
 };
 
-struct msg_sim_gyro : message {
+struct msg_response_sim_gyro : message {
     int16_t gyro[3];
 
-    msg_sim_gyro() : message(TYPE_SIM_GYRO) {}
+    msg_response_sim_gyro() : message(TYPE_SIM_GYRO) {}
 
     void decode(uint8_t *buf, uint8_t length) override;
 

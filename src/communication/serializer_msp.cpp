@@ -1,7 +1,5 @@
 #include "serializer_msp.h"
-#if PROTOCOL_ID == 1
 #if !DEBUG
-
 
 extern ACSController acs;
 extern uint16_t cycleTime;
@@ -381,5 +379,4 @@ void protocolHandler() {
     }
 }
 
-#endif
 #endif

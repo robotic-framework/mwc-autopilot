@@ -5,9 +5,9 @@
 #ifndef AUTOPILOT_ATTITUDE_ALGORITHM_H
 #define AUTOPILOT_ATTITUDE_ALGORITHM_H
 
-#include "../../definition.h"
-#include "../../type_def.h"
-#include "../imu.h"
+#include "definition.h"
+#include "type_def.h"
+#include "acs/imu.h"
 
 class AttitudeAlgorithm {
 

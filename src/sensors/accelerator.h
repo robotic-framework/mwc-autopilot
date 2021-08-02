@@ -8,8 +8,8 @@
 
 #define ACC_ORIENTATION(X, Y, Z) \
     {                            \
-        data[ROLL] = -X;         \
-        data[PITCH] = -Y;        \
+        data[ROLL] = -(X);         \
+        data[PITCH] = -(Y);        \
         data[YAW] = Z;           \
     }
 

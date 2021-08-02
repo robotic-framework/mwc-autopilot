@@ -53,7 +53,7 @@ void loop() {
 #include <unistd.h>
 #include "networks.h"
 #include "protocol_msp.h"
-#include "communication/common_handler.h"
+#include "common_handler.h"
 
 int main(int argc, char *argv[]) {
     int opt = 0;
@@ -70,8 +70,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    auto handler = new CommonHandler;
-    auto protocol = new ProtocolMSP(handler);
+    auto protocol = new ProtocolMSP(&handler);
     if (!initNetwork(host, out_port,
                      std::bind(&ProtocolMSP::receiveStream,
                                protocol,
