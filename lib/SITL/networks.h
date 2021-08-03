@@ -21,6 +21,6 @@ typedef std::function<uint8_t (message *msg, uint8_t *buf, uint8_t size)> Packet
 
 bool initNetwork(const string &host, const uint16_t &port, ParseFunc parser, PacketFunc packager);
 
-void send(message *msg);
+void request(message *msg);
 
 #endif //AUTOPILOT_NETWORKS_H

@@ -28,8 +28,6 @@ bool initNetwork(const string &host, const uint16_t &port, ParseFunc receiver, P
 
     thread connectThr(connectSimulator, host, port);
     connectThr.detach();
-    thread readThr(readSimulator);
-    readThr.detach();
     return true;
 }
 
@@ -56,14 +54,6 @@ void connectSimulator(const string &host, const uint16_t &port) {
             receiveThr.detach();
             break;
         }
-    }
-}
-
-void readSimulator() {
-    while (true) {
-        msg_request_sim_imu msg;
-        request(&msg);
-        sleep(1);
     }
 }
 

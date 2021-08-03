@@ -45,7 +45,7 @@ void loop() {
     currentTime = micros();
     cycleTime = currentTime - previousTime;
     previousTime = currentTime;
-    scheduler.Schedule();
+    scheduler.schedule();
 }
 
 #if defined(SITL)

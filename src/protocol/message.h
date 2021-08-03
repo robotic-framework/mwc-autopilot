@@ -36,6 +36,7 @@ typedef enum : uint8_t {
     TYPE_SIM_GYRO,
     TYPE_SIM_MAG,
     TYPE_SIM_BAROMETER,
+    TYPE_SIM_CONTROL,
 } msg_type_e;
 
 struct message {
@@ -89,6 +90,16 @@ struct msg_response_sim_gyro : message {
     int16_t gyro[3];
 
     msg_response_sim_gyro() : message(TYPE_SIM_GYRO) {}
+
+    void decode(uint8_t *buf, uint8_t length) override;
+
+    uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
+};
+
+struct msg_request_control : message {
+    uint16_t motors[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+    msg_request_control() : message(TYPE_SIM_CONTROL) {}
 
     void decode(uint8_t *buf, uint8_t length) override;
 

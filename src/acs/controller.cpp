@@ -5,14 +5,24 @@
 #include "acs/controller.h"
 #include "acs/attitude_algorithm/mwc_algorithm.h"
 #include "attitude_algorithm_implement.h"
+#if defined(SITL)
+#include "imu_implement.h"
+#include "motors_implement.h"
+#else
+#include "acs/imu_impl.h"
+#include "acs/motors_impl.h"
+#endif
 
 void ACSController::init() {
 #if defined(SITL)
     this->imu = new ImuSITLImpl;
+    this->motors = new MotorSITLImpl(conf);
 #else
     this->imu = new ImuImpl;
+    this->motors = new MotorImpl(conf);
 #endif
 
+    this->pid = new PIDController(conf);
     this->motors->init();
     this->imu->init();
 

@@ -7,13 +7,9 @@
 
 #include "acs/attitude_algorithm/attitude_algorithm.h"
 #include "configuration/configuration.h"
-#if defined(SITL)
-#include "imu_implement.h"
-#else
-#include "acs/imu_impl.h"
-#endif
 #include "acs/pid/pid.h"
 #include "acs/motors.h"
+#include "acs/imu.h"
 
 class ACSController {
 private:
@@ -70,8 +66,6 @@ public:
 public:
     ACSController(Configuration *conf) {
         this->conf = conf;
-        this->pid = new PIDController(conf);
-        this->motors = new Motors(conf);
     }
 
     void init();

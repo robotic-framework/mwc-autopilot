@@ -56,6 +56,7 @@ void taskUpdateMotors(uint32_t currentTime) {
 }
 
 #if GPS_ENABLED
+
 void taskUpdateGPS(uint32_t currentTime) {
     nav.updateGPS(currentTime);
 }
@@ -63,6 +64,15 @@ void taskUpdateGPS(uint32_t currentTime) {
 void taskUpdateNav(uint32_t currentTime) {
     nav.update(currentTime);
 }
+
+#endif
+
+#if defined(SITL)
+
+void taskSimRequestImu(uint32_t currentTime) {
+    request(new msg_request_sim_imu);
+}
+
 #endif
 
 Task_t Tasks::tasks[TASK_COUNT] = {
@@ -125,6 +135,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #endif
+
 #if SENSOR_GPS
         [TASK_GET_GPS] = {
                 .taskName = "GPS",
@@ -161,6 +172,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #endif
+
         [TASK_UPDATE_MOTORS] = {
                 .taskName = "MOTOR",
                 .checkFunc = NULL,
@@ -185,6 +197,23 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .desiredPeriod = TASK_PERIOD_HZ(100),
         },
 #endif
+
+#if defined(SITL)
+        [TASK_SIM_REQUEST_IMU] = {
+                .taskName = "SIM_REQUEST_IMU",
+                .checkFunc = NULL,
+                .taskFunc = taskSimRequestImu,
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_HZ(10),
+        },
+        [TASK_SIM_REQUEST_CONTROL] = {
+                .taskName = "SIM_REQUEST_CONTROL",
+                .checkFunc = NULL,
+                .taskFunc = taskUpdateMotors,
+                .staticPriority = TASK_PRIORITY_REALTIME,
+                .desiredPeriod = TASK_PERIOD_HZ(100),
+        },
+#endif
 };
 
 Tasks::Tasks() {
@@ -196,39 +225,44 @@ Tasks::~Tasks() {}
 void Tasks::init() {
     queueClear();
     queueAdd(&tasks[TASK_SYSTEM]);
-    // SetTaskEnabled(TASK_ALL, true);
+    // setTaskEnabled(TASK_ALL, true);
 
 #if SENSOR_ACC
-    SetTaskEnabled(TASK_GET_ACC, true);
+    setTaskEnabled(TASK_GET_ACC, true);
 #endif
 #if SENSOR_GYRO
-    SetTaskEnabled(TASK_GET_GYRO, true);
+    setTaskEnabled(TASK_GET_GYRO, true);
 #endif
 #if SENSOR_MAG
-    SetTaskEnabled(TASK_GET_MAG, true);
+    setTaskEnabled(TASK_GET_MAG, true);
 #endif
 #if SENSOR_BARO
-    SetTaskEnabled(TASK_GET_BARO, true);
+    setTaskEnabled(TASK_GET_BARO, true);
 #endif
 #if SENSOR_SONAR
-    SetTaskEnabled(TASK_GET_SONAR, true);
+    setTaskEnabled(TASK_GET_SONAR, true);
 #endif
 #if SENSOR_GPS
-    SetTaskEnabled(TASK_GET_GPS, true);
+    setTaskEnabled(TASK_GET_GPS, true);
 #endif
 #if SENSOR_ACC || SENSOR_GYRO
-    SetTaskEnabled(TASK_UPDATE_ATT, true);
+    setTaskEnabled(TASK_UPDATE_ATT, true);
 #endif
 #if SENSOR_BARO || SENSOR_SONAR
-    SetTaskEnabled(TASK_UPDATE_ALT, true);
+    setTaskEnabled(TASK_UPDATE_ALT, true);
 #endif
 #if SENSOR_ACC || SENSOR_GYRO
-    SetTaskEnabled(TASK_MOTOR_PID, true);
+    setTaskEnabled(TASK_MOTOR_PID, true);
 #endif
-    SetTaskEnabled(TASK_UPDATE_MOTORS, true);
 #if GPS_ENABLED
-    SetTaskEnabled(TASK_GPS, true);
-    SetTaskEnabled(TASK_NAV, true);
+    setTaskEnabled(TASK_GPS, true);
+    setTaskEnabled(TASK_NAV, true);
+#endif
+#if defined(SITL)
+    setTaskEnabled(TASK_SIM_REQUEST_IMU, true);
+    setTaskEnabled(TASK_SIM_REQUEST_CONTROL, true);
+#else
+    setTaskEnabled(TASK_UPDATE_MOTORS, true);
 #endif
 }
 
@@ -286,7 +320,7 @@ Task_t *Tasks::queueNext() {
     return queue[++queuePos];
 }
 
-void Tasks::SetTaskEnabled(TaskId_e taskID, bool enabled) {
+void Tasks::setTaskEnabled(TaskId_e taskID, bool enabled) {
     if (taskID == TASK_SELF || taskID < TASK_COUNT) {
         Task_t *task = taskID == TASK_SELF ? currentTask : &tasks[taskID];
         if (enabled && task->taskFunc) {
@@ -297,7 +331,7 @@ void Tasks::SetTaskEnabled(TaskId_e taskID, bool enabled) {
     }
 }
 
-void Tasks::Schedule() {
+void Tasks::schedule() {
     const uint32_t currentTime = micros();
     uint32_t timeToNextRealtimeTask = UINT32_MAX;
     for (const Task_t *task = queueFirst();

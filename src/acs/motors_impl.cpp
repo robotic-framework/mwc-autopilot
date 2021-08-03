@@ -1,4 +1,4 @@
-#include "acs/motors.h"
+#include "acs/motors_impl.h"
 
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 
@@ -17,28 +17,21 @@
     }
 
 #if defined(PROMINI)
-uint8_t Motors::Pins[8] = {9, 10, 11, 3, 6, 5, A2, 12};
+uint8_t MotorImpl::Pins[8] = {9, 10, 11, 3, 6, 5, A2, 12};
 #elif defined(MEGA)
-uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
+uint8_t MotorImpl::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
 #elif defined(SITL)
-uint8_t Motors::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
+uint8_t MotorImpl::Pins[8] = {3, 5, 6, 2, 7, 8, 9, 10};
 #endif
 
 
-Motors::Motors(Configuration *conf)
-{
-    this->conf = conf;
-}
+MotorImpl::MotorImpl(Configuration *conf): Motors(conf) {}
 
-Motors::~Motors()
-{
-}
+MotorImpl::~MotorImpl() = default;
 
-void Motors::init()
-{
-    for (uint8_t i = 0; i < MOTOR_COUNT; i++)
-    {
-        pinMode(Motors::Pins[i], OUTPUT);
+void MotorImpl::init() {
+    for (uint8_t i = 0; i < MOTOR_COUNT; i++) {
+        pinMode(MotorImpl::Pins[i], OUTPUT);
     }
 
 #if defined(PROMINI)
@@ -110,10 +103,8 @@ void Motors::init()
     this->writeMotorsThrottle(MINCOMMAND);
 }
 
-void Motors::mixPID(PIDController *pid)
-{
-    if (!conf->arm)
-    {
+void MotorImpl::mixPID(PIDController *pid) {
+    if (!conf->arm) {
         return;
     }
 
@@ -138,65 +129,46 @@ void Motors::mixPID(PIDController *pid)
     // Serial.println(") ");
 
     maxMotor = motors[0];
-    for (i = 0; i < MOTOR_COUNT; i++)
-    {
-        if (motors[i] > maxMotor)
-        {
+    for (i = 0; i < MOTOR_COUNT; i++) {
+        if (motors[i] > maxMotor) {
             maxMotor = motors[i];
         }
     }
-    for (i = 0; i < MOTOR_COUNT; i++)
-    {
-        if (maxMotor > MAXTHROTTLE)
-        {
+    for (i = 0; i < MOTOR_COUNT; i++) {
+        if (maxMotor > MAXTHROTTLE) {
             motors[i] -= maxMotor - MAXTHROTTLE;
         }
         motors[i] = constrain(motors[i], MINTHROTTLE, MAXTHROTTLE);
 
-        if (!conf->arm)
-        {
+        if (!conf->arm) {
             motors[i] = MINCOMMAND;
         }
     }
 }
 
-void Motors::updateMotors(uint32_t currentTime)
-{
-    if (conf->arm)
-    {
+void MotorImpl::updateMotors(uint32_t currentTime) {
+    if (conf->arm) {
         writeMotors();
-    }
-    else
-    {
+    } else {
         writeMotorsThrottle(MINCOMMAND);
     }
 }
 
-void Motors::getMotors(uint16_t *buf, uint8_t length)
-{
+void MotorImpl::getMotors(uint16_t *buf, uint8_t length) {
     length = min2(length, 8);
-    for (uint8_t i = 0; i < length; i++)
-    {
+    for (uint8_t i = 0; i < length; i++) {
         *buf++ = motors[i];
     }
 }
 
-uint8_t Motors::getMotorCount()
-{
-    return MOTOR_COUNT;
-}
-
-void Motors::writeMotorsThrottle(uint16_t throttle)
-{
-    for (uint8_t i = 0; i < MOTOR_COUNT; i++)
-    {
+void MotorImpl::writeMotorsThrottle(uint16_t throttle) {
+    for (uint8_t i = 0; i < MOTOR_COUNT; i++) {
         this->motors[i] = throttle;
     }
     this->writeMotors();
 }
 
-void Motors::writeMotors()
-{
+void MotorImpl::writeMotors() {
 #if defined(PROMINI)
 #if MOTOR_COUNT > 0
     OCR1A = this->motors[0] >> 3; // pin 9

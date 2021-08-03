@@ -8,6 +8,10 @@
 #include "stdint.h"
 #include "global.h"
 
+#if defined(SITL)
+#include "networks.h"
+#endif
+
 #define TASK_PERIOD_HZ(hz) (1000000 / (hz))
 #define TASK_PERIOD_MS(ms) ((ms) * 1000)
 #define TASK_PERIOD_US(us) (us)
@@ -57,6 +61,10 @@ typedef enum {
     TASK_GPS,
     TASK_NAV,
 #endif
+#if defined(SITL)
+    TASK_SIM_REQUEST_IMU,
+    TASK_SIM_REQUEST_CONTROL,
+#endif
     TASK_COUNT,
     TASK_NONE = TASK_COUNT,
     TASK_SELF
@@ -82,6 +90,10 @@ extern ACSController acs;
 extern Navigation nav;
 #endif
 
+#if defined(SITL)
+extern sockpp::tcp_connector conn;
+#endif
+
 class Tasks {
 public:
     Tasks();
@@ -90,9 +102,9 @@ public:
 
 public:
 
-    void SetTaskEnabled(TaskId_e taskID, bool enabled);
+    void setTaskEnabled(TaskId_e taskID, bool enabled);
 
-    void Schedule();
+    void schedule();
 
 private:
     static Task_t tasks[TASK_COUNT];

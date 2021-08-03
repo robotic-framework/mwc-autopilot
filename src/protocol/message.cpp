@@ -55,3 +55,9 @@ uint8_t msg_request_sim_imu::encode(uint8_t *buf, uint8_t maxLength) {
 }
 
 void msg_request_sim_imu::decode(uint8_t *buf, uint8_t length) {}
+
+void msg_request_control::decode(uint8_t *buf, uint8_t length) {}
+
+uint8_t msg_request_control::encode(uint8_t *buf, uint8_t maxLength) {
+    return read(buf, (uint8_t *)motors, 0, 16);
+}
