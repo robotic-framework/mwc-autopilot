@@ -204,13 +204,13 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskSimRequestImu,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(10),
+                .desiredPeriod = TASK_PERIOD_HZ(100),
         },
         [TASK_SIM_REQUEST_CONTROL] = {
                 .taskName = "SIM_REQUEST_CONTROL",
                 .checkFunc = NULL,
                 .taskFunc = taskUpdateMotors,
-                .staticPriority = TASK_PRIORITY_REALTIME,
+                .staticPriority = TASK_PRIORITY_HIGH,
                 .desiredPeriod = TASK_PERIOD_HZ(100),
         },
 #endif

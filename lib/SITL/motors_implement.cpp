@@ -43,13 +43,9 @@ void MotorSITLImpl::mixPID(PIDController *pid) {
 }
 
 void MotorSITLImpl::updateMotors(uint32_t currentTime) {
-    static uint64_t step = 0;
     msg_request_control msg;
     read((uint8_t *)msg.motors, (uint8_t *)motors, 16);
     request(&msg);
-
-    cout << "[" << step << "] updateMotors" << endl;
-    step++;
 }
 
 void MotorSITLImpl::getMotors(uint16_t *buf, uint8_t length) {

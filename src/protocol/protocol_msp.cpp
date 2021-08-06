@@ -21,15 +21,17 @@ std::map<msg_type_e, uint8_t> msg_type_msp_command_mapping = {
         {TYPE_SIM_ACC,       MSP_SIM_ACC},
         {TYPE_SIM_GYRO,      MSP_SIM_GYRO},
         {TYPE_SIM_MAG,       MSP_SIM_MAG},
-        {TYPE_SIM_BAROMETER, MSP_SIM_BARO}
+        {TYPE_SIM_BAROMETER, MSP_SIM_BARO},
+        {TYPE_SIM_CONTROL,   MSP_SIM_CONTROL}
 };
 
 std::map<uint8_t, msg_type_e> msp_command_msg_type_mapping = {
-        {MSP_SIM_IMU,  TYPE_SIM_IMU},
-        {MSP_SIM_ACC,  TYPE_SIM_ACC},
-        {MSP_SIM_GYRO, TYPE_SIM_GYRO},
-        {MSP_SIM_MAG,  TYPE_SIM_MAG},
-        {MSP_SIM_BARO, TYPE_SIM_BAROMETER}
+        {MSP_SIM_IMU,     TYPE_SIM_IMU},
+        {MSP_SIM_ACC,     TYPE_SIM_ACC},
+        {MSP_SIM_GYRO,    TYPE_SIM_GYRO},
+        {MSP_SIM_MAG,     TYPE_SIM_MAG},
+        {MSP_SIM_BARO,    TYPE_SIM_BAROMETER},
+        {MSP_SIM_CONTROL, TYPE_SIM_CONTROL}
 };
 
 bool ProtocolMSP::decode(uint8_t c) {

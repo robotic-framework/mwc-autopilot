@@ -8,26 +8,29 @@
 #include <stdint.h>
 
 static uint8_t __attribute__((noinline)) read(uint8_t *target, uint8_t *source, uint8_t sourceLength) {
+    uint8_t length = sourceLength;
     while (sourceLength--)
         *target++ = *source++;
-    return sourceLength;
+    return length;
 }
 
 static uint8_t __attribute__((noinline))
 read(uint8_t *target, uint8_t *source, uint8_t sourceOffset, uint8_t sourceLength) {
+    uint8_t length = sourceLength;
     source += sourceOffset;
     while (sourceLength--)
         *target++ = *source++;
-    return sourceLength;
+    return length;
 }
 
 static uint8_t __attribute__((noinline))
 read(uint8_t *target, uint8_t targetOffset, uint8_t *source, uint8_t sourceOffset, uint8_t sourceLength) {
+    uint8_t length = sourceLength;
     source += sourceOffset;
     target += targetOffset;
     while (sourceLength--)
         *target++ = *source++;
-    return sourceLength;
+    return length;
 }
 
 typedef enum : uint8_t {
@@ -38,6 +41,25 @@ typedef enum : uint8_t {
     TYPE_SIM_BAROMETER,
     TYPE_SIM_CONTROL,
 } msg_type_e;
+
+inline const char *msg_type_e_to_string(msg_type_e v) {
+    switch (v) {
+        case TYPE_SIM_IMU:
+            return "TYPE_SIM_IMU";
+        case TYPE_SIM_ACC:
+            return "TYPE_SIM_ACC";
+        case TYPE_SIM_GYRO:
+            return "TYPE_SIM_GYRO";
+        case TYPE_SIM_MAG:
+            return "TYPE_SIM_MAG";
+        case TYPE_SIM_BAROMETER:
+            return "TYPE_SIM_BAROMETER";
+        case TYPE_SIM_CONTROL:
+            return "TYPE_SIM_CONTROL";
+        default:
+            return "[Unknown msg_type]";
+    }
+}
 
 struct message {
     msg_type_e type;
