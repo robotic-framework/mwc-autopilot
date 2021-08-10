@@ -42,17 +42,21 @@ void request(message *msg) {
 void connectSimulator(const string &host, const uint16_t &port) {
     cout << "connectSimulator host: " << host << ", port: " << port << endl;
     while (true) {
-        if (!conn.connect(sockpp::inet_address(host, port))) {
-            cerr << "Unable to connecting to Simulator server at "
-                 << sockpp::inet_address(host, port)
-                 << "\n\twith message: \"" << conn.last_error_str() << "\"" << endl;
-            sleep(1);
-        } else {
-            cout << "Simulator server connected" << endl;
+        try {
+            if (!conn.connect(sockpp::inet_address(host, port))) {
+                cerr << "Unable to connecting to Simulator server at "
+                     << sockpp::inet_address(host, port)
+                     << "\n\twith message: \"" << conn.last_error_str() << "\"" << endl;
+                sleep(1);
+            } else {
+                cout << "Simulator server connected" << endl;
 
-            thread receiveThr(receiveStream);
-            receiveThr.detach();
-            break;
+                thread receiveThr(receiveStream);
+                receiveThr.detach();
+                break;
+            }
+        } catch (...) {
+            cout << "connectSimulator oops!" << endl;
         }
     }
 }
@@ -60,7 +64,11 @@ void connectSimulator(const string &host, const uint16_t &port) {
 void receiveStream() {
     int length;
     uint8_t buf[255];
-    while ((length = conn.read(buf, sizeof(buf))) > 0) {
-        responseParser(buf, length);
+    try {
+        while ((length = conn.read(buf, sizeof(buf))) > 0) {
+            responseParser(buf, length);
+        }
+    } catch (...) {
+        cout << "receiveStream oops!" << endl;
     }
 }

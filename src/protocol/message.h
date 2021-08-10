@@ -6,6 +6,7 @@
 #define AUTOPILOT_MESSAGE_H
 
 #include <stdint.h>
+#include <iostream>
 
 static uint8_t __attribute__((noinline)) read(uint8_t *target, uint8_t *source, uint8_t sourceLength) {
     uint8_t length = sourceLength;

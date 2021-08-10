@@ -84,9 +84,14 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    setup();
-    while (true) {
-        loop();
+    try {
+        setup();
+        conf.arm = true;
+        while (true) {
+            loop();
+        }
+    } catch (...) {
+        cout << "oops!" << endl;
     }
 }
 

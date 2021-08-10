@@ -61,7 +61,6 @@ bool ProtocolMSP::decode(uint8_t c) {
             } else {
                 dataSize = c;
                 checksum = c;
-                dataOffset = 0;
                 state = MSP_HEADER_SIZE;
             }
             break;
@@ -69,6 +68,7 @@ bool ProtocolMSP::decode(uint8_t c) {
         case MSP_HEADER_SIZE: {
             // expect cmd
             checksum ^= c;
+            dataOffset = 0;
             state = MSP_HEADER_CMD;
             break;
         }
@@ -78,10 +78,11 @@ bool ProtocolMSP::decode(uint8_t c) {
                 dataOffset++;
             } else {
                 // the last byte is checksum, check if equel
+                state = MSP_IDLE;
+
                 if (checksum == c) {
                     return true;
                 }
-                state = MSP_IDLE;
             }
             break;
         }
@@ -90,6 +91,9 @@ bool ProtocolMSP::decode(uint8_t c) {
 }
 
 void ProtocolMSP::processPacket(uint8_t *buffer, uint8_t length) {
+    if (length < 6) {
+        return;
+    }
     msg_packet_t packet;
     uint8_t payload[length];
 
