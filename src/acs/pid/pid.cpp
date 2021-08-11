@@ -5,7 +5,7 @@ using namespace aa;
 
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 
-#define applyDeadband(value, deadband) \
+#define apply_deadband(value, deadband) \
     if (abs(value) < (deadband))         \
     {                                  \
         (value) = 0;                     \
@@ -19,13 +19,11 @@ using namespace aa;
         (value) += (deadband);             \
     }
 
-extern int16_t rcCommand[4];
-
 int16_t PIDController::errorAltI = 0;
 
 PIDController::PIDController(Configuration *conf) :
         isAltHoldModeChanged(true),
-        initialThrottleHold(0) {
+        altOffset(0) {
     lastAltHoldMode = conf->altHoldMode;
     this->conf = conf;
 }
@@ -33,8 +31,7 @@ PIDController::PIDController(Configuration *conf) :
 void PIDController::update(uint32_t currentTime) {
     uint8_t axis;
     int16_t error, errorAngle;
-    int16_t rc;
-    int16_t pidOffsetAlt = 0;
+    int16_t rcCommand;
     static int16_t lastGyro[2] = {0, 0};
     static int16_t errorGyroI[2] = {0, 0};
     static int32_t errorGyroI_YAW = 0;
@@ -60,7 +57,7 @@ void PIDController::update(uint32_t currentTime) {
 #endif
 
     if (conf->horizonMode) {
-        prop = min2(max2(abs(rcCommand[PITCH]), abs(rcCommand[ROLL])), 512);
+        prop = min2(max2(abs(rc.getCommand(PITCH)), abs(rc.getCommand(ROLL))), 512);
     }
 
     int16_t gyroData[3];
@@ -86,10 +83,10 @@ void PIDController::update(uint32_t currentTime) {
 
     // ROLL & PITCH
     for (axis = 0; axis < 2; axis++) {
-        rc = rcCommand[axis] << 1;
+        rcCommand = rc.getCommand((e_rc_axis)axis) << 1;
 
         if (conf->angleMode || conf->horizonMode) {
-            errorAngle = constrain(rc, -500, 500) - attitude[axis];
+            errorAngle = constrain(rcCommand, -500, 500) - attitude[axis];
             errorAngleI[axis] = constrain(errorAngleI[axis] + errorAngle, -10000, 10000);
 
             PTermACC = mul(errorAngle, conf->raw.pid[PIDLEVEL].P) >> 7;
@@ -102,13 +99,13 @@ void PIDController::update(uint32_t currentTime) {
             ITerm = ITermACC + ((ITerm - ITermACC) * prop >> 9);
             PTerm = PTermACC + ((PTerm - PTermACC) * prop >> 9);
         } else {
-            error = rc - gyroData[axis];
+            error = rcCommand - gyroData[axis];
             errorGyroI[axis] = constrain(errorGyroI[axis] + error, -16000, 16000);
             if (abs(gyroData[axis]) > 640) {
                 errorGyroI[axis] = 0;
             }
             ITerm = (errorGyroI[axis] >> 7) * conf->raw.pid[axis].I >> 6;
-            PTerm = mul(rc, conf->raw.pid[axis].P) >> 6;
+            PTerm = mul(rcCommand, conf->raw.pid[axis].P) >> 6;
         }
 
 #if TEST_LOG_LEVEL > 0
@@ -116,7 +113,7 @@ void PIDController::update(uint32_t currentTime) {
         Log::debug("axis: ");
         Log::debug(axis);
         Log::debug(", rcCommand: ");
-        Log::debug(rcCommand[axis]);
+        Log::debug(rc.getCommand(axis));
         Log::debug(", rc: ");
         Log::debug(rc);
         Log::debug(", attitude: ");
@@ -163,11 +160,11 @@ void PIDController::update(uint32_t currentTime) {
 #define GYRO_P_MAX 300
 #define GYRO_I_MAX 250
 
-    rc = mul(rcCommand[YAW], 30) >> 5;
-    error = rc - gyroData[YAW];
+    rcCommand = mul(rc.getCommand(YAW), 30) >> 5;
+    error = rcCommand - gyroData[YAW];
     errorGyroI_YAW += mul(error, conf->raw.pid[YAW].I);
     errorGyroI_YAW = constrain(errorGyroI_YAW, 2 - ((int32_t) 1 << 28), -2 + ((int32_t) 1 << 28));
-    if (abs(rc) > 50) {
+    if (abs(rcCommand) > 50) {
         errorGyroI_YAW = 0;
     }
     PTerm = mul(error, conf->raw.pid[YAW].P) >> 6;
@@ -212,7 +209,6 @@ void PIDController::update(uint32_t currentTime) {
         if (conf->altHoldMode) {
             errorAltI = 0;
         }
-        initialThrottleHold = rcCommand[THROTTLE];
         isAltHoldModeChanged = false;
     }
     if (conf->altHoldMode) {
@@ -229,22 +225,22 @@ void PIDController::update(uint32_t currentTime) {
         Log::debugln(alt);
 #endif
 
-        applyDeadband(errorAlt, 10);
-        pidOffsetAlt = constrain(conf->raw.pid[PIDALT].P * errorAlt >> 7, -150, 150);
+        apply_deadband(errorAlt, 10);
+        altOffset = constrain(conf->raw.pid[PIDALT].P * errorAlt >> 7, -150, 150);
 
         errorAltI += conf->raw.pid[PIDALT].I * errorAlt >> 6;
         errorAltI = constrain(errorAltI, -30000, 30000);
-        pidOffsetAlt += errorAltI >> 9;
+        altOffset += errorAltI >> 9;
 
         int16_t accZ = aa->getAccZ();
-        applyDeadband(accZ, ACC_Z_DEADBAND);
+        apply_deadband(accZ, ACC_Z_DEADBAND);
 
         static int32_t lastAlt;
         static float zVel = 0.f;
         int16_t altVel = mul((alt - lastAlt), 40); // altitude update interval is 40Hz
         lastAlt = alt;
         altVel = constrain(altVel, -300, 300);
-        applyDeadband(altVel, 10);
+        apply_deadband(altVel, 10);
 
         // Integrator - velocity, cm/sec
         zVel += accZ * ACC_VelScale * deltaTime;
@@ -253,9 +249,9 @@ void PIDController::update(uint32_t currentTime) {
         zVel = zVel * 0.985f + altVel * 0.015f;
 
         vario = zVel;
-        applyDeadband(vario, 5);
+        apply_deadband(vario, 5);
         aa->setAltitudeVario(vario);
-        pidOffsetAlt -= constrain(conf->raw.pid[PIDALT].D * vario >> 4, -150, 150);
+        altOffset -= constrain(conf->raw.pid[PIDALT].D * vario >> 4, -150, 150);
 
 #if TEST_LOG_LEVEL > 0
         Log::debugStart();
@@ -272,11 +268,6 @@ void PIDController::update(uint32_t currentTime) {
 #endif
     }
 
-    if (conf->altHoldMode /* || conf.takeOffMode || conf.landingMode */) {
-        // throttle compensation
-        rcCommand[THROTTLE] = initialThrottleHold + pidOffsetAlt;
-    }
-
 #if TEST_LOG_LEVEL > 0
     Log::debugStart();
     Log::debugln(">>>>>>>>>> AltHold PID update end <<<<<<<<<<");
@@ -288,7 +279,7 @@ uint16_t PIDController::mixPID(int8_t x, int8_t y, int8_t z) {
     Log::debugStart();
     Log::debugln(">>>>>>>>>> Mix motors with PID start <<<<<<<<<<");
     Log::debug("rcCommand[throttle]: ");
-    Log::debug(rcCommand[THROTTLE]);
+    Log::debug(rc.getCommand(THROTTLE));
     Log::debug(", pidOffset[roll]: ");
     Log::debug(pidOffset[ROLL]);
     Log::debug(", x: ");
@@ -302,10 +293,10 @@ uint16_t PIDController::mixPID(int8_t x, int8_t y, int8_t z) {
     Log::debug(", z: ");
     Log::debug(z);
     Log::debug(", motors: ");
-    Log::debugln(rcCommand[THROTTLE] + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z);
+    Log::debugln(rc.getCommand(THROTTLE) + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z);
     Log::debugStart();
     Log::debugln(">>>>>>>>>> Mix motors with PID end <<<<<<<<<<");
     Log::debug("\n\n\n");
 #endif
-    return rcCommand[THROTTLE] + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z;
+    return rc.getCommand(THROTTLE) + altOffset + pidOffset[ROLL] * x + pidOffset[PITCH] * y + pidOffset[YAW] * z;
 }

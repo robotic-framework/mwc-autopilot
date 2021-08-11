@@ -13,13 +13,6 @@ uint32_t currentTime = 0;
 uint16_t previousTime = 0;
 
 Tasks scheduler;
-extern ACSController acs;
-extern uint16_t cycleTime;
-extern Configuration conf;
-
-#if GPS_ENABLED
-extern Navigation nav;
-#endif
 
 void setup() {
 #if DEBUG
@@ -29,6 +22,7 @@ void setup() {
 #endif
     LEDPIN_PINMODE
 
+    rc.init();
     acs.init();
 
 #if !DEBUG && GPS_ENABLED

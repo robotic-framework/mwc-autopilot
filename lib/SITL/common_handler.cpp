@@ -3,7 +3,6 @@
 //
 
 #include "common_handler.h"
-#include "stdio.h"
 
 CommonHandler handler;
 
@@ -19,6 +18,6 @@ void CommonHandler::msgSimImuHandler(msg_response_sim_imu msg) {
     vario = msg.vario;
 }
 
-void CommonHandler::msgSimAccHandler(msg_response_sim_acc msg) {
-
+void CommonHandler::msgSimCommandHandler(msg_request_command msg) {
+    read((uint8_t *) command, (uint8_t *) msg.command, 24);
 }

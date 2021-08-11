@@ -7,7 +7,7 @@
 
 #include "stdint.h"
 
-enum RC {
+enum e_rc_axis {
     ROLL,
     PITCH,
     YAW,
@@ -19,7 +19,8 @@ enum RC {
     AUX5,
     AUX6,
     AUX7,
-    AUX8
+    AUX8,
+    RC_AXIS_COUNT
 };
 
 struct PID {
@@ -28,11 +29,11 @@ struct PID {
     uint8_t D;
 };
 
-enum AAType {
+enum e_aa_type {
     MWC,
 };
 
-enum PIDType {
+enum e_pid_type {
     PIDROLL,
     PIDPITCH,
     PIDYAW,
@@ -46,7 +47,7 @@ enum PIDType {
     PIDITEMS
 };
 
-enum BoxType {
+enum e_box_type {
     ARM,
 #if SENSOR_ACC
     ANGLE,

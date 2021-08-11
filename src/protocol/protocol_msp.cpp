@@ -17,21 +17,15 @@
 #define INPUT_BUFFER_SIZE 64
 
 std::map<msg_type_e, uint8_t> msg_type_msp_command_mapping = {
-        {TYPE_SIM_IMU,       MSP_SIM_IMU},
-        {TYPE_SIM_ACC,       MSP_SIM_ACC},
-        {TYPE_SIM_GYRO,      MSP_SIM_GYRO},
-        {TYPE_SIM_MAG,       MSP_SIM_MAG},
-        {TYPE_SIM_BAROMETER, MSP_SIM_BARO},
-        {TYPE_SIM_CONTROL,   MSP_SIM_CONTROL}
+        {TYPE_SIM_IMU,     MSP_SIM_IMU},
+        {TYPE_SIM_CONTROL, MSP_SIM_CONTROL},
+        {TYPE_SIM_COMMAND, MSP_SIM_COMMAND}
 };
 
 std::map<uint8_t, msg_type_e> msp_command_msg_type_mapping = {
         {MSP_SIM_IMU,     TYPE_SIM_IMU},
-        {MSP_SIM_ACC,     TYPE_SIM_ACC},
-        {MSP_SIM_GYRO,    TYPE_SIM_GYRO},
-        {MSP_SIM_MAG,     TYPE_SIM_MAG},
-        {MSP_SIM_BARO,    TYPE_SIM_BAROMETER},
-        {MSP_SIM_CONTROL, TYPE_SIM_CONTROL}
+        {MSP_SIM_CONTROL, TYPE_SIM_CONTROL},
+        {MSP_SIM_COMMAND, TYPE_SIM_COMMAND}
 };
 
 bool ProtocolMSP::decode(uint8_t c) {
@@ -111,22 +105,6 @@ void ProtocolMSP::processPacket(uint8_t *buffer, uint8_t length) {
             handler->msgSimImuHandler(msg);
             break;
         }
-        case TYPE_SIM_ACC: {
-            msg_response_sim_acc msg;
-            msg.decode(packet.payload, packet.length);
-            handler->msgSimAccHandler(msg);
-            break;
-        }
-        case TYPE_SIM_GYRO: {
-            msg_response_sim_gyro msg;
-            msg.decode(packet.payload, packet.length);
-
-            break;
-        }
-        case TYPE_SIM_MAG:
-            break;
-        case TYPE_SIM_BAROMETER:
-            break;
     }
 }
 

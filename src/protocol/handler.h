@@ -11,7 +11,7 @@ class MsgHandler {
 public:
     virtual void msgSimImuHandler(msg_response_sim_imu msg) = 0;
 
-    virtual void msgSimAccHandler(msg_response_sim_acc msg) = 0;
+    virtual void msgSimCommandHandler(msg_request_command msg) = 0;
 };
 
 #endif //AUTOPILOT_HANDLER_H

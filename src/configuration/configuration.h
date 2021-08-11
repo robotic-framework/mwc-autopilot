@@ -17,7 +17,7 @@ public:
     int32_t altHold;
 
     struct {
-        AAType aaType;
+        e_aa_type aaType;
         PID pid[PIDITEMS];
         int16_t accOffset[3] = {0, 0, 0};
         int16_t gyroOffset[3] = {0, 0, 0};

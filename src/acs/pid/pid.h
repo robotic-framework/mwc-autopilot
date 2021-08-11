@@ -22,7 +22,7 @@ private:
     static int16_t errorAltI;
     uint8_t lastAltHoldMode;
     bool isAltHoldModeChanged;
-    int16_t initialThrottleHold;
+    int16_t altOffset;
 
 public:
     PIDController(Configuration *conf);

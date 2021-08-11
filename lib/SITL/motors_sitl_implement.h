@@ -2,8 +2,8 @@
 // Created by 李翌文 on 2021/8/2.
 //
 
-#ifndef AUTOPILOT_MOTORS_IMPLEMENT_H
-#define AUTOPILOT_MOTORS_IMPLEMENT_H
+#ifndef AUTOPILOT_MOTORS_SITL_IMPLEMENT_H
+#define AUTOPILOT_MOTORS_SITL_IMPLEMENT_H
 
 #include "acs/motors.h"
 
@@ -23,4 +23,4 @@ public:
 };
 
 
-#endif //AUTOPILOT_MOTORS_IMPLEMENT_H
+#endif //AUTOPILOT_MOTORS_SITL_IMPLEMENT_H

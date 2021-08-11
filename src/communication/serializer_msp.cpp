@@ -1,14 +1,6 @@
 #include "serializer_msp.h"
+
 #if !DEBUG
-
-extern ACSController acs;
-extern uint16_t cycleTime;
-extern Configuration conf;
-extern int16_t rcCommand[4];
-
-#if GPS_ENABLED
-extern Navigation nav;
-#endif
 
 static uint8_t inputBuffer[INPUT_BUFFER_SIZE];
 static uint8_t inputBufferIndex = 0;
@@ -218,15 +210,13 @@ void evaluateCommand(uint8_t cmd) {
         }
 
         case MSP_ARM: {
-            conf.arm = true;
-            LEDPIN_ON
+            conf.arm = true;LEDPIN_ON
             responseEmpty();
             break;
         }
 
         case MSP_DIS_ARM: {
-            conf.arm = false;
-            LEDPIN_OFF
+            conf.arm = false;LEDPIN_OFF
             responseEmpty();
             break;
         }
@@ -301,21 +291,21 @@ void evaluateCommand(uint8_t cmd) {
 #if defined(TEST_RCCOMMAND)
         case MSP_TEST_RCCOMMAND: {
             responseEmpty();
-            rcCommand[0] = read16();
-            rcCommand[1] = read16();
-            rcCommand[2] = read16();
-            rcCommand[3] = read16();
+            rc.setCommand(ROLL, (int16_t) read16());
+            rc.setCommand(PITCH, (int16_t) read16());
+            rc.setCommand(YAW, (int16_t) read16());
+            rc.setCommand(THROTTLE, (int16_t) read16());
 
 #if TEST_LOG_LEVEL > 0
             Log::debugStart();
             Log::debug("rcCommand: ");
-            Log::debug(rcCommand[0]);
+            Log::debug(rc.getCommand(0));
             Log::debug(", ");
-            Log::debug(rcCommand[1]);
+            Log::debug(rc.getCommand(1));
             Log::debug(", ");
-            Log::debug(rcCommand[2]);
+            Log::debug(rc.getCommand(2));
             Log::debug(", ");
-            Log::debugln(rcCommand[3]);
+            Log::debugln(rc.getCommand(3));
 #endif
             break;
         }
@@ -327,8 +317,7 @@ void serialInit() {
     PROTOCOL_SERIAL.begin(PROTOCOL_BAUD);
     while (!PROTOCOL_SERIAL) {
     }
-    blinkLED(2, 20, 10);
-    LEDPIN_OFF
+    blinkLED(2, 20, 10);LEDPIN_OFF
 }
 
 void protocolHandler() {

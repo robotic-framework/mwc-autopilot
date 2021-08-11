@@ -2,7 +2,7 @@
 
 #define ACC_Z_DEADBAND (ACC_1G_LSB >> 5) // was 40 instead of 32 now
 
-#define applyDeadband(value, deadband) \
+#define apply_deadband(value, deadband) \
     if (abs(value) < deadband)         \
     {                                  \
         value = 0;                     \
@@ -117,7 +117,7 @@ void MotorImpl::mixPID(PIDController *pid) {
     motors[3] = pid->mixPID(1, -1, -1);
 
     // Serial.print(", throttle: ");
-    // Serial.print(rcCommand[THROTTLE]);
+    // Serial.print(rc.getCommand(THROTTLE));
     // Serial.print(", motors: (");
     // Serial.print(motors[0]);
     // Serial.print(", ");

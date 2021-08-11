@@ -36,31 +36,9 @@ read(uint8_t *target, uint8_t targetOffset, uint8_t *source, uint8_t sourceOffse
 
 typedef enum : uint8_t {
     TYPE_SIM_IMU,
-    TYPE_SIM_ACC,
-    TYPE_SIM_GYRO,
-    TYPE_SIM_MAG,
-    TYPE_SIM_BAROMETER,
     TYPE_SIM_CONTROL,
+    TYPE_SIM_COMMAND,
 } msg_type_e;
-
-inline const char *msg_type_e_to_string(msg_type_e v) {
-    switch (v) {
-        case TYPE_SIM_IMU:
-            return "TYPE_SIM_IMU";
-        case TYPE_SIM_ACC:
-            return "TYPE_SIM_ACC";
-        case TYPE_SIM_GYRO:
-            return "TYPE_SIM_GYRO";
-        case TYPE_SIM_MAG:
-            return "TYPE_SIM_MAG";
-        case TYPE_SIM_BAROMETER:
-            return "TYPE_SIM_BAROMETER";
-        case TYPE_SIM_CONTROL:
-            return "TYPE_SIM_CONTROL";
-        default:
-            return "[Unknown msg_type]";
-    }
-}
 
 struct message {
     msg_type_e type;
@@ -99,30 +77,20 @@ struct msg_response_sim_imu : message {
     uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
 };
 
-struct msg_response_sim_acc : message {
-    int16_t acc[3];
-
-    msg_response_sim_acc() : message(TYPE_SIM_ACC) {}
-
-    void decode(uint8_t *buf, uint8_t length) override;
-
-    uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
-};
-
-struct msg_response_sim_gyro : message {
-    int16_t gyro[3];
-
-    msg_response_sim_gyro() : message(TYPE_SIM_GYRO) {}
-
-    void decode(uint8_t *buf, uint8_t length) override;
-
-    uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
-};
-
 struct msg_request_control : message {
     uint16_t motors[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     msg_request_control() : message(TYPE_SIM_CONTROL) {}
+
+    void decode(uint8_t *buf, uint8_t length) override;
+
+    uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
+};
+
+struct msg_request_command : message {
+    int16_t command[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    msg_request_command() : message(TYPE_SIM_COMMAND) {}
 
     void decode(uint8_t *buf, uint8_t length) override;
 

@@ -1,8 +1,6 @@
 #include "magnetometer.h"
 #include "global.h"
 
-extern Configuration conf;
-
 uint8_t Magnetometer::update(uint32_t currentTime)
 {
     this->getRawData();

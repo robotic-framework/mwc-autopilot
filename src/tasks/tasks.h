@@ -29,6 +29,7 @@ typedef enum {
 typedef enum {
     TASK_SYSTEM,
     TASK_ALL,
+    TASK_RC,
 #if SENSOR_ACC
     TASK_GET_ACC,
 #endif
@@ -83,12 +84,6 @@ typedef struct {
     uint16_t dynamicPriority;
     uint32_t lastExecutedAt;
 } Task_t;
-
-extern ACSController acs;
-
-#if GPS_ENABLED
-extern Navigation nav;
-#endif
 
 #if defined(SITL)
 extern sockpp::tcp_connector conn;

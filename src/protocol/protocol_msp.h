@@ -25,12 +25,9 @@
 #define MSP_TEST_RCCOMMAND 11
 #endif
 
-#define MSP_SIM_IMU 30
-#define MSP_SIM_ACC 31
-#define MSP_SIM_GYRO 32
-#define MSP_SIM_MAG 33
-#define MSP_SIM_BARO 34
-#define MSP_SIM_CONTROL 35
+#define MSP_SIM_IMU 30      //out message
+#define MSP_SIM_CONTROL 31  //out message
+#define MSP_SIM_COMMAND 32  //in message
 
 #define MSP_IDENT 100      //out message         multitype + multiwii version + protocol version + capability variable
 #define MSP_STATUS 101     //out message         cycletime & errors_count & sensor present & box activation & current setting number

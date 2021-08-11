@@ -32,24 +32,6 @@ uint8_t msg_response_sim_imu::encode(uint8_t *buf, uint8_t maxLength) {
     return length;
 }
 
-void msg_response_sim_acc::decode(uint8_t *buf, uint8_t length) {
-    if (length < 6) return;
-    read((uint8_t *) acc, buf, 0, 6);
-}
-
-uint8_t msg_response_sim_acc::encode(uint8_t *buf, uint8_t maxLength) {
-    return read(buf, (uint8_t *) acc, 0, 6);
-}
-
-void msg_response_sim_gyro::decode(uint8_t *buf, uint8_t length) {
-    if (length < 6) return;
-    read((uint8_t *) gyro, buf, 0, 6);
-}
-
-uint8_t msg_response_sim_gyro::encode(uint8_t *buf, uint8_t maxLength) {
-    return read(buf, (uint8_t *) gyro, 0, 6);
-}
-
 uint8_t msg_request_sim_imu::encode(uint8_t *buf, uint8_t maxLength) {
     return 0;
 }
@@ -60,4 +42,13 @@ void msg_request_control::decode(uint8_t *buf, uint8_t length) {}
 
 uint8_t msg_request_control::encode(uint8_t *buf, uint8_t maxLength) {
     return read(buf, (uint8_t *)motors, 0, 16);
+}
+
+void msg_request_command::decode(uint8_t *buf, uint8_t length) {
+    if (length < 24) return;
+    read((uint8_t *) command, buf, 0, 24);
+}
+
+uint8_t msg_request_command::encode(uint8_t *buf, uint8_t maxLength) {
+    return read(buf, (uint8_t *) command, 0, 24);
 }

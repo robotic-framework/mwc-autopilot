@@ -2,8 +2,8 @@
 // Created by 李翌文 on 2021/7/29.
 //
 
-#ifndef AUTOPILOT_IMU_IMPLEMENT_H
-#define AUTOPILOT_IMU_IMPLEMENT_H
+#ifndef AUTOPILOT_IMU_SITL_IMPLEMENT_H
+#define AUTOPILOT_IMU_SITL_IMPLEMENT_H
 
 #include "definition.h"
 #include "acs/imu.h"
@@ -66,4 +66,4 @@ public:
 };
 
 
-#endif //AUTOPILOT_IMU_IMPLEMENT_H
+#endif //AUTOPILOT_IMU_SITL_IMPLEMENT_H

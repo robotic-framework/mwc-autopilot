@@ -1,8 +1,6 @@
 #include "barometer.h"
 #include "global.h"
 
-extern Configuration conf;
-
 void Barometer::update(uint32_t currentTime) {
     this->getRawData(currentTime);
 

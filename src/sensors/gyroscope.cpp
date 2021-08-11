@@ -1,8 +1,6 @@
 #include "gyroscope.h"
 #include "global.h"
 
-extern Configuration conf;
-
 void Gyroscope::update(uint32_t currentTime)
 {
     this->getRawData();

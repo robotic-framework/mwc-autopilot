@@ -15,6 +15,10 @@ void taskAll(uint32_t currentTime) {
     acs.updateMotors(currentTime);
 }
 
+void taskRC(uint32_t currentTime) {
+    rc.update(currentTime);
+}
+
 void taskGetAcc(uint32_t currentTime) {
     acs.updateAcc(currentTime);
 }
@@ -89,6 +93,13 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .taskFunc = taskAll,
                 .staticPriority = TASK_PRIORITY_REALTIME,
                 .desiredPeriod = TASK_PERIOD_US(2800),
+        },
+        [TASK_RC] = {
+                .taskName = "e_rc_axis",
+                .checkFunc = NULL,
+                .taskFunc = taskRC,
+                .staticPriority = TASK_PRIORITY_HIGH,
+                .desiredPeriod = TASK_PERIOD_US(2000),
         },
 #if SENSOR_ACC
         [TASK_GET_ACC] = {
@@ -226,6 +237,7 @@ void Tasks::init() {
     queueClear();
     queueAdd(&tasks[TASK_SYSTEM]);
     // setTaskEnabled(TASK_ALL, true);
+    setTaskEnabled(TASK_RC, true);
 
 #if SENSOR_ACC
     setTaskEnabled(TASK_GET_ACC, true);

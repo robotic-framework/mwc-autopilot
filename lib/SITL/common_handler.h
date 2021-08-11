@@ -18,10 +18,12 @@ public:
     int16_t att[3];
     int32_t alt;
     int16_t vario;
+
+    int16_t command[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 public:
     void msgSimImuHandler(msg_response_sim_imu msg) override;
 
-    void msgSimAccHandler(msg_response_sim_acc msg) override;
+    void msgSimCommandHandler(msg_request_command msg) override;
 };
 
 extern CommonHandler handler;

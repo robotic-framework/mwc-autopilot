@@ -6,8 +6,8 @@
 #include "acs/attitude_algorithm/mwc_algorithm.h"
 #include "attitude_algorithm_implement.h"
 #if defined(SITL)
-#include "imu_implement.h"
-#include "motors_implement.h"
+#include "imu_sitl_implement.h"
+#include "motors_sitl_implement.h"
 #else
 #include "acs/imu_impl.h"
 #include "acs/motors_impl.h"

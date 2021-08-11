@@ -1,8 +1,6 @@
 #include "accelerator.h"
 #include "global.h"
 
-extern Configuration conf;
-
 void Accelerator::update(uint32_t currentTime) {
     this->getRawData();
 
