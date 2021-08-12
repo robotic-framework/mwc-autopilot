@@ -23,7 +23,7 @@ public:
 public:
     void msgSimImuHandler(msg_response_sim_imu msg) override;
 
-    void msgSimCommandHandler(msg_request_command msg) override;
+    void msgSimCommandHandler(msg_response_command msg) override;
 };
 
 extern CommonHandler handler;

@@ -105,6 +105,11 @@ void ProtocolMSP::processPacket(uint8_t *buffer, uint8_t length) {
             handler->msgSimImuHandler(msg);
             break;
         }
+        case TYPE_SIM_COMMAND: {
+            msg_response_command msg;
+            msg.decode(packet.payload, packet.length);
+            handler->msgSimCommandHandler(msg);
+        }
     }
 }
 

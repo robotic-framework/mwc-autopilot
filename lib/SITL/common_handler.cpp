@@ -18,6 +18,6 @@ void CommonHandler::msgSimImuHandler(msg_response_sim_imu msg) {
     vario = msg.vario;
 }
 
-void CommonHandler::msgSimCommandHandler(msg_request_command msg) {
+void CommonHandler::msgSimCommandHandler(msg_response_command msg) {
     read((uint8_t *) command, (uint8_t *) msg.command, 24);
 }

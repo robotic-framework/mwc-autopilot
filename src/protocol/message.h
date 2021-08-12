@@ -88,9 +88,17 @@ struct msg_request_control : message {
 };
 
 struct msg_request_command : message {
+    msg_request_command() : message(TYPE_SIM_COMMAND) {}
+
+    void decode(uint8_t *buf, uint8_t length) override;
+
+    uint8_t encode(uint8_t *buf, uint8_t maxLength) override;
+};
+
+struct msg_response_command : message {
     int16_t command[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    msg_request_command() : message(TYPE_SIM_COMMAND) {}
+    msg_response_command() : message(TYPE_SIM_COMMAND) {}
 
     void decode(uint8_t *buf, uint8_t length) override;
 
