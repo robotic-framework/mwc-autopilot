@@ -47,25 +47,29 @@ void loop() {
 #include <unistd.h>
 #include "networks.h"
 #include "protocol_msp.h"
+#include "protocol_mavlink.h"
 #include "common_handler.h"
 
 int main(int argc, char *argv[]) {
     int opt = 0;
     string host;
-    uint16_t out_port;
-    while ((opt = getopt(argc, argv, "h:p:")) != -1) {
+    uint16_t in_port, out_port;
+    while ((opt = getopt(argc, argv, "h:i:o:")) != -1) {
         switch (opt) {
             case 'h':
                 host = string(optarg);
                 break;
-            case 'p':
+            case 'i':
+                in_port = atoi(optarg);
+                break;
+            case 'o':
                 out_port = atoi(optarg);
                 break;
         }
     }
 
     auto protocol = new ProtocolMSP(&handler);
-    if (!initNetwork(host, out_port,
+    if (!initNetwork(host, in_port, out_port,
                      std::bind(&ProtocolMSP::receiveStream,
                                protocol,
                                std::placeholders::_1,

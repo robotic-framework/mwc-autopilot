@@ -3,12 +3,12 @@
 //
 
 #include "acs/controller.h"
-#include "acs/attitude_algorithm/mwc_algorithm.h"
-#include "attitude_algorithm_implement.h"
 #if defined(SITL)
 #include "imu_sitl_implement.h"
 #include "motors_sitl_implement.h"
+#include "attitude_algorithm_implement.h"
 #else
+#include "acs/attitude_algorithm/mwc_algorithm.h"
 #include "acs/imu_impl.h"
 #include "acs/motors_impl.h"
 #endif

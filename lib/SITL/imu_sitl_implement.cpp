@@ -17,6 +17,12 @@ void ImuSITLImpl::updateAcc(uint32_t currentTime) {
 
 void ImuSITLImpl::updateGyro(uint32_t currentTime) {
     read((uint8_t *) gyro, (uint8_t *) handler.gyro, 6);
+
+    for (uint8_t i = 0; i < 3; ++i) {
+        gyroWeight[i] = gyro[i] * 2;
+        gyro[i] = (gyroWeight[i] + gyroPrevWeight[i]) / 3;
+        gyroPrevWeight[i] = gyro[i] >> 1;
+    }
 }
 
 void ImuSITLImpl::updateMag(uint32_t currentTime) {

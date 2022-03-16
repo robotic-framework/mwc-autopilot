@@ -32,6 +32,7 @@ void PIDController::update(uint32_t currentTime) {
     uint8_t axis;
     int16_t error, errorAngle;
     int16_t rcCommand;
+    static int16_t lastErrorAngle[3] = {0, 0, 0};
     static int16_t lastGyro[2] = {0, 0};
     static int16_t errorGyroI[2] = {0, 0};
     static int32_t errorGyroI_YAW = 0;
@@ -83,7 +84,7 @@ void PIDController::update(uint32_t currentTime) {
 
     // ROLL & PITCH
     for (axis = 0; axis < 2; axis++) {
-        rcCommand = rc.getCommand((e_rc_axis)axis) << 1;
+        rcCommand = rc.getCommand((e_rc_axis) axis) << 1;
 
         if (conf->angleMode || conf->horizonMode) {
             errorAngle = constrain(rcCommand, -500, 500) - attitude[axis];
@@ -139,6 +140,9 @@ void PIDController::update(uint32_t currentTime) {
         DTerm = delta1[axis] + delta2[axis] + delta;
         delta2[axis] = delta1[axis];
         delta1[axis] = delta;
+
+//        DTerm = (errorAngle - lastErrorAngle[axis]) * conf->raw.pid[axis].D >> 7;
+//        lastErrorAngle[axis] = errorAngle;
 
         // DTerm = mul(DTerm, dynD[axis]) >> 5;
         pidOffset[axis] = PTerm + ITerm - DTerm;

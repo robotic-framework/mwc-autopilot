@@ -13,7 +13,7 @@ protected:
     int16_t command[RC_AXIS_COUNT]{};
 public:
     RC() {
-        for (short & i : command) {
+        for (int16_t & i : command) {
             i = 0;
         }
     }

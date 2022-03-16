@@ -86,7 +86,7 @@ typedef struct {
 } Task_t;
 
 #if defined(SITL)
-extern sockpp::tcp_connector conn;
+extern sockpp::udp_socket conn;
 #endif
 
 class Tasks {

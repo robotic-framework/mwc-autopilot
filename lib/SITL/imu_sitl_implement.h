@@ -17,6 +17,9 @@ private:
     int32_t cp;
     int32_t ccp;
 
+    int16_t gyroPrevWeight[3] = {0, 0, 0};
+    int16_t gyroWeight[3] = {0, 0, 0};
+
 public:
     ImuSITLImpl();
 

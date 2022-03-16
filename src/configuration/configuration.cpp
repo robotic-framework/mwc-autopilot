@@ -28,9 +28,9 @@ void Configuration::loadDefault() {
     raw.pid[YAW].P = 68;
     raw.pid[YAW].I = 45;
     raw.pid[YAW].D = 0;
-    raw.pid[PIDLEVEL].P = 90;
-    raw.pid[PIDLEVEL].I = 10;
-    raw.pid[PIDLEVEL].D = 100;
+    raw.pid[PIDLEVEL].P = 30;
+    raw.pid[PIDLEVEL].I = 0;
+    raw.pid[PIDLEVEL].D = 70;
     raw.pid[PIDALT].P = 64;
     raw.pid[PIDALT].I = 25;
     raw.pid[PIDALT].D = 24;

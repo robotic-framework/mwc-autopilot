@@ -3,69 +3,60 @@
 //
 
 #include "networks.h"
-#include "config.h"
 #include <iostream>
 #include <thread>
 
-sockpp::tcp_connector conn;
+sockpp::udp_socket conn;
 PacketFunc requestPackager;
 ParseFunc responseParser;
-
-void connectSimulator(const string &host, const uint16_t &port);
-
-void readSimulator();
+sockpp::inet_address outAddr;
 
 void receiveStream();
 
-bool initNetwork(const string &host, const uint16_t &port, ParseFunc receiver, PacketFunc packager) {
-    if (host.empty() || !port) {
-        cerr << "Unable to start server, must specify host and port" << endl;
+bool initNetwork(const string &host, const uint16_t &in_port, const uint16_t &out_port, ParseFunc receiver, PacketFunc packager) {
+    if (host.empty() || !in_port || !out_port) {
+        cerr << "Unable to start UDP server, must specify host and in_port and out_port" << endl;
         return false;
     }
+
+    if (!conn) {
+        cerr << "Unable to start UDP server, " << conn.last_error_str() << endl;
+        return false;
+    }
+
+    sockpp::inet_address inAddr("127.0.0.1", in_port);
+    outAddr.create(host, out_port);
+    if (!conn.bind(inAddr)) {
+        cerr << "Unable to start UDP server, cannot bind to " << inAddr.to_string() << endl;
+        return false;
+    }
+    cout << "UDP server bind at " << inAddr.to_string() << endl;
 
     requestPackager = packager;
     responseParser = receiver;
 
-    thread connectThr(connectSimulator, host, port);
-    connectThr.detach();
+    cout << "UDP server initialized." << endl;
+
+    thread receiveThr(receiveStream);
+    receiveThr.detach();
     return true;
 }
 
 void request(message *msg) {
-    if (conn.is_connected()) {
-        uint8_t data[255];
-        uint8_t length = requestPackager(msg, data, sizeof(data));
-        conn.write(data, length);
-    }
-}
+    if (!conn) return;
 
-void connectSimulator(const string &host, const uint16_t &port) {
-    cout << "connectSimulator host: " << host << ", port: " << port << endl;
-    while (true) {
-        try {
-            if (!conn.connect(sockpp::inet_address(host, port))) {
-                cerr << "Unable to connecting to Simulator server at "
-                     << sockpp::inet_address(host, port)
-                     << "\n\twith message: \"" << conn.last_error_str() << "\"" << endl;
-                sleep(1);
-            } else {
-                cout << "Simulator server connected" << endl;
-
-                thread receiveThr(receiveStream);
-                receiveThr.detach();
-                break;
-            }
-        } catch (...) {
-            cout << "connectSimulator oops!" << endl;
-        }
-    }
+    uint8_t data[255];
+    uint8_t length = requestPackager(msg, data, sizeof(data));
+    conn.send_to(data, length, outAddr);
 }
 
 void receiveStream() {
     int length;
     uint8_t buf[255];
+
+    cout << "UDP server start listening..." << endl;
     try {
-        while ((length = conn.read(buf, sizeof(buf))) > 0) {
+        while ((length = conn.recv_from(buf, sizeof(buf))) > 0) {
             responseParser(buf, length);
         }
     } catch (...) {

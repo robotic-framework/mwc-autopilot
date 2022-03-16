@@ -215,7 +215,7 @@ Task_t Tasks::tasks[TASK_COUNT] = {
                 .checkFunc = NULL,
                 .taskFunc = taskSimRequestImu,
                 .staticPriority = TASK_PRIORITY_HIGH,
-                .desiredPeriod = TASK_PERIOD_HZ(100),
+                .desiredPeriod = TASK_PERIOD_HZ(200),
         },
         [TASK_SIM_REQUEST_CONTROL] = {
                 .taskName = "SIM_REQUEST_CONTROL",

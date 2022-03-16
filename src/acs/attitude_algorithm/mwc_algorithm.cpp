@@ -41,7 +41,7 @@ void MWCAlgorithm::updateAttitude(uint32_t currentTime) {
         // used to calculate later the magnitude of acc vector
         accMag += aa::mul(accData[axis], accData[axis]);
         // unit: radian scaled by 2^16
-        // imu.gyroADC[axis] is 14 bit long, the scale factor ensure deltaGyroAngle16[axis] is still 14 bit long
+        // gyroData[axis] is 14 bit long, the scale factor ensure deltaAngle[axis] is still 14 bit long
         deltaAngle[axis] = gyroData[axis] * scale;
     }
 #endif
